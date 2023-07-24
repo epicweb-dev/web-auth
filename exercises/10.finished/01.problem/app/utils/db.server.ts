@@ -5,11 +5,7 @@ import { singleton } from './singleton.server.ts'
 const prisma = singleton('prisma', () => {
 	// NOTE: if you change anything in this function you'll need to restart
 	// the dev server to see your changes.
-
-	// we'll set the logThreshold to 0 so you see all the queries, but in a
-	// production app you'd probably want to fine-tune this value to something
-	// you're more comfortable with.
-	const logThreshold = 0
+	const logThreshold = 20
 
 	const client = new PrismaClient({
 		log: [
