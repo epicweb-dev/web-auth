@@ -1,0 +1,33 @@
+node_modules
+.DS_store
+
+/build
+/public/build
+/server-build
+# Normally you'd ignore this file, but for the workshop we'll commit it
+# .env
+tsconfig.tsbuildinfo
+*.ignored.*
+
+# normally you don't commit your database, but we're doing it here for the workshop
+# /prisma/data.db
+/prisma/data.db-journal
+/tests/prisma
+
+/test-results/
+/playwright-report/
+/playwright/.cache/
+/tests/fixtures/email/
+/coverage
+
+/other/cache.db
+
+# Easy way to create temporary files/folders that won't accidentally be added to git
+*.local.*
+
+# generated files
+# Normally these are ignored, but we're committing it so they don't have to be
+# generated on the fly for the workshop
+# We're not changing these duing the workshop anyway
+# /app/components/ui/icon.svg
+# /app/components/ui/icon.tsx

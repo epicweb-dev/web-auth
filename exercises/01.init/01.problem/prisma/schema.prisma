@@ -1,0 +1,78 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String  @id @unique @default(cuid())
+  email    String  @unique
+  username String  @unique
+  name     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  image Image?
+  notes Note[]
+}
+
+model Note {
+  id      String @id @unique @default(cuid())
+  title   String
+  content String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  ownerId String
+
+  images Image[]
+
+  // foreign key
+  @@index([ownerId])
+  // This helps our order by in the user search a LOT
+  @@index([ownerId, updatedAt])
+}
+
+model File {
+  id          String @id @unique @default(cuid())
+  contentType String
+  blob        Bytes
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  image   Image  @relation(fields: [imageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  imageId String @unique
+
+  // foreign key
+  @@index([imageId])
+}
+
+model Image {
+  id      String  @unique @default(cuid())
+  altText String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  note   Note?   @relation(fields: [noteId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  noteId String?
+
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String? @unique
+
+  file File?
+
+  // foreign key
+  @@index([noteId])
+  @@index([userId])
+}

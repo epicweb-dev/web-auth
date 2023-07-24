@@ -1,0 +1,11 @@
+node_modules
+
+**/build/**
+**/public/build/**
+.env
+
+**/package.json
+**/tsconfig.json
+
+**/package-lock.json
+**/playwright-report/**
