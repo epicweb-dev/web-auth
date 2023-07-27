@@ -7,6 +7,15 @@ import {
 } from '../playwright-utils.ts'
 import { createUser } from 'tests/db-utils.ts'
 
+const usernamesToDelete = new Set<string>()
+
+test.afterEach(async () => {
+	for (const username of usernamesToDelete) {
+		await deleteUserByUsername(username)
+	}
+	usernamesToDelete.clear()
+})
+
 test('onboarding with link', async ({ page }) => {
 	const onboardingData = {
 		...createUser(),
@@ -37,6 +46,7 @@ test('onboarding with link', async ({ page }) => {
 	await page.getByLabel(/offers/i).check()
 	await page.getByLabel(/remember me/i).check()
 	await page.getByRole('button', { name: /Create an account/i }).click()
+	usernamesToDelete.add(onboardingData.username)
 
 	await expect(page).toHaveURL(`/`)
 
@@ -46,9 +56,6 @@ test('onboarding with link', async ({ page }) => {
 
 	await page.getByRole('button', { name: /logout/i }).click()
 	await expect(page).toHaveURL(`/`)
-
-	// have to do this here because we didn't use insertNewUser (because we're testing user create)
-	await deleteUserByUsername(onboardingData.username)
 })
 
 test('login as existing user', async ({ page }) => {
