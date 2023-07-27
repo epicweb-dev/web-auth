@@ -5,7 +5,7 @@ import { GeneralErrorBoundary } from '~/components/error-boundary.tsx'
 import { ErrorList } from '~/components/forms.tsx'
 import { SearchBar } from '~/components/search-bar.tsx'
 import { prisma } from '~/utils/db.server.ts'
-import { cn, getUserImgSrc, useDelayedIsSubmitting } from '~/utils/misc.ts'
+import { cn, getUserImgSrc, useDelayedIsSubmitting } from '~/utils/misc.tsx'
 
 const UserSearchResultSchema = z.object({
 	id: z.string(),

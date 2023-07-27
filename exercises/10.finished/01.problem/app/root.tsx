@@ -1,6 +1,9 @@
-import { KCDShop } from './kcdshop.tsx'
 import { cssBundleHref } from '@remix-run/css-bundle'
-import { json, type LinksFunction } from '@remix-run/node'
+import {
+	json,
+	type DataFunctionArgs,
+	type LinksFunction,
+} from '@remix-run/node'
 import {
 	Link,
 	Links,
@@ -15,14 +18,25 @@ import {
 } from '@remix-run/react'
 import os from 'node:os'
 import faviconAssetUrl from './assets/favicon.svg'
-import fontStylestylesheetUrl from './styles/font.css'
-import tailwindStylesheetUrl from './styles/tailwind.css'
-import { getEnv } from './utils/env.server.ts'
 import { GeneralErrorBoundary } from './components/error-boundary.tsx'
 import { SearchBar } from './components/search-bar.tsx'
+import { Button } from './components/ui/button.tsx'
+import { href as iconHref } from './components/ui/icon.tsx'
+import { KCDShop } from './kcdshop.tsx'
+import { ThemeSwitch, useTheme } from './routes/resources+/theme/index.tsx'
+import { getTheme } from './routes/resources+/theme/theme.server.ts'
+import fontStylestylesheetUrl from './styles/font.css'
+import tailwindStylesheetUrl from './styles/tailwind.css'
+import { authenticator, getUserId } from './utils/auth.server.ts'
+import { prisma } from './utils/db.server.ts'
+import { getEnv } from './utils/env.server.ts'
+import { getUserImgSrc } from './utils/misc.tsx'
+import { useOptionalUser } from './utils/user.ts'
 
 export const links: LinksFunction = () => {
 	return [
+		// Preload svg sprite as a resource to avoid render blocking
+		{ rel: 'preload', href: iconHref, as: 'image' },
 		{ rel: 'icon', type: 'image/svg+xml', href: faviconAssetUrl },
 		{ rel: 'stylesheet', href: fontStylestylesheetUrl },
 		{ rel: 'stylesheet', href: tailwindStylesheetUrl },
@@ -30,13 +44,46 @@ export const links: LinksFunction = () => {
 	].filter(Boolean)
 }
 
-export async function loader() {
-	return json({ username: os.userInfo().username, ENV: getEnv() })
+export async function loader({ request }: DataFunctionArgs) {
+	const userId = await getUserId(request)
+
+	const user = userId
+		? await prisma.user.findUnique({
+				where: { id: userId },
+				select: {
+					id: true,
+					name: true,
+					username: true,
+					image: { select: { id: true } },
+				},
+		  })
+		: null
+	if (userId && !user) {
+		console.info('something weird happened')
+		// something weird happened... The user is authenticated but we can't find
+		// them in the database. Maybe they were deleted? Let's log them out.
+		await authenticator.logout(request, { redirectTo: '/' })
+	}
+
+	return json({
+		username: os.userInfo().username,
+		user,
+		theme: getTheme(request),
+		ENV: getEnv(),
+	})
 }
 
-function Document({ children }: { children: React.ReactNode }) {
+function Document({
+	children,
+	theme,
+	env,
+}: {
+	children: React.ReactNode
+	theme?: 'dark' | 'light'
+	env?: Record<string, string>
+}) {
 	return (
-		<html lang="en" className="h-full overflow-x-hidden">
+		<html lang="en" className={`${theme} h-full overflow-x-hidden`}>
 			<head>
 				<Meta />
 				<meta charSet="utf-8" />
@@ -45,6 +92,11 @@ function Document({ children }: { children: React.ReactNode }) {
 			</head>
 			<body className="flex h-full flex-col justify-between bg-background text-foreground">
 				{children}
+				<script
+					dangerouslySetInnerHTML={{
+						__html: `window.ENV = ${JSON.stringify(env)}`,
+					}}
+				/>
 				<ScrollRestoration />
 				<Scripts />
 				<KCDShop />
@@ -56,10 +108,12 @@ function Document({ children }: { children: React.ReactNode }) {
 
 export default function App() {
 	const data = useLoaderData<typeof loader>()
+	const user = useOptionalUser()
+	const theme = useTheme()
 	const matches = useMatches()
 	const isOnSearchPage = matches.find(m => m.id === 'routes/users+/index')
 	return (
-		<Document>
+		<Document theme={theme} env={data.ENV}>
 			<header className="container mx-auto py-6">
 				<nav className="flex items-center justify-between">
 					<Link to="/">
@@ -71,9 +125,29 @@ export default function App() {
 							<SearchBar status="idle" />
 						</div>
 					)}
-					<Link className="underline" to="/users/kody/notes">
-						Kody's Notes
-					</Link>
+					<div className="flex items-center gap-10">
+						{user ? (
+							<Button asChild variant="secondary">
+								<Link
+									to={`/users/${user.username}`}
+									className="flex items-center gap-2"
+								>
+									<img
+										className="h-8 w-8 rounded-full object-cover"
+										alt={user.name ?? user.username}
+										src={getUserImgSrc(user.image?.id)}
+									/>
+									<span className="text-body-sm font-bold">
+										{user.name ?? user.username}
+									</span>
+								</Link>
+							</Button>
+						) : (
+							<Button asChild variant="default" size="sm">
+								<Link to="/login">Log In</Link>
+							</Button>
+						)}
+					</div>
 				</nav>
 			</header>
 
@@ -86,14 +160,12 @@ export default function App() {
 					<div className="font-light">epic</div>
 					<div className="font-bold">notes</div>
 				</Link>
-				<p>Built with ♥️ by {data.username}</p>
+				<div className="flex gap-2 items-center">
+					<p>Built with ♥️ by {data.username}</p>
+					<ThemeSwitch userPreference={data.theme} />
+				</div>
 			</div>
 			<div className="h-5" />
-			<script
-				dangerouslySetInnerHTML={{
-					__html: `window.ENV = ${JSON.stringify(data.ENV)}`,
-				}}
-			/>
 		</Document>
 	)
 }

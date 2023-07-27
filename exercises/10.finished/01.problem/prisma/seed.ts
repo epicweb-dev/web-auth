@@ -1,37 +1,10 @@
 import { faker } from '@faker-js/faker'
 import { PrismaClient } from '@prisma/client'
-import { UniqueEnforcer } from 'enforce-unique'
 import fs from 'node:fs'
 import { promiseHash } from 'remix-utils'
+import { createPassword, createUser } from 'tests/db-utils.ts'
 
 const prisma = new PrismaClient()
-
-const uniqueUsernameEnforcer = new UniqueEnforcer()
-
-export function createUser() {
-	const firstName = faker.person.firstName()
-	const lastName = faker.person.lastName()
-
-	const username = uniqueUsernameEnforcer
-		.enforce(() => {
-			return (
-				faker.string.alphanumeric({ length: 2 }) +
-				'_' +
-				faker.internet.userName({
-					firstName: firstName.toLowerCase(),
-					lastName: lastName.toLowerCase(),
-				})
-			)
-		})
-		.slice(0, 20)
-		.toLowerCase()
-		.replace(/[^a-z0-9_]/g, '_')
-	return {
-		username,
-		name: `${firstName} ${lastName}`,
-		email: `${username}@example.com`,
-	}
-}
 
 async function img({
 	altText,
@@ -57,9 +30,27 @@ async function seed() {
 
 	console.time('🧹 Cleaned up the database...')
 	await prisma.user.deleteMany()
+	await prisma.permission.deleteMany()
+	await prisma.role.deleteMany()
 	console.timeEnd('🧹 Cleaned up the database...')
 
-	const totalUsers = 20
+	console.time(`👑 Created admin role/permission...`)
+	await prisma.role.create({
+		data: {
+			name: 'admin',
+			description: 'Administrator',
+			permissions: {
+				create: {
+					name: 'admin',
+					description:
+						'The admin permission allows users to do anything they want',
+				},
+			},
+		},
+	})
+	console.timeEnd(`👑 Created admin role/permission...`)
+
+	const totalUsers = 5
 	console.time(`👤 Created ${totalUsers} users...`)
 	const noteImages = await Promise.all([
 		img({
@@ -112,11 +103,13 @@ async function seed() {
 	)
 
 	for (let index = 0; index < totalUsers; index++) {
+		const userData = createUser()
 		await prisma.user
 			.create({
 				select: { id: true },
 				data: {
-					...createUser(),
+					...userData,
+					password: { create: createPassword(userData.username) },
 					image: { create: userImages[index % 10] },
 					notes: {
 						create: Array.from({
@@ -185,6 +178,7 @@ async function seed() {
 			username: 'kody',
 			name: 'Kody',
 			image: { create: kodyImages.kodyUser },
+			password: { create: createPassword('kodylovesyou') },
 			notes: {
 				create: [
 					{

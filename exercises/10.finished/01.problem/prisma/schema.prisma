@@ -20,7 +20,11 @@ model User {
   updatedAt DateTime @updatedAt
 
   image Image?
-  notes Note[]
+
+  password Password?
+  notes    Note[]
+  roles    Role[]
+  session  Session[]
 }
 
 model Note {
@@ -75,4 +79,44 @@ model Image {
   // foreign key
   @@index([noteId])
   @@index([userId])
+}
+
+model Password {
+  hash String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String @unique
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  expirationDate DateTime
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+}
+
+model Permission {
+  id          String @id @unique @default(cuid())
+  name        String @unique
+  description String @default("")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  roles Role[]
+}
+
+model Role {
+  id          String @id @unique @default(cuid())
+  name        String @unique
+  description String @default("")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users       User[]
+  permissions Permission[]
 }

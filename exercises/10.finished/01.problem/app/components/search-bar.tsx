@@ -1,9 +1,9 @@
 import { Form, useSearchParams, useSubmit } from '@remix-run/react'
+import { useDebounce, useIsSubmitting } from '~/utils/misc.tsx'
 import { Icon } from './ui/icon.tsx'
 import { Input } from './ui/input.tsx'
 import { Label } from './ui/label.tsx'
 import { StatusButton } from './ui/status-button.tsx'
-import { useDebounce, useIsSubmitting } from '~/utils/misc.ts'
 
 export function SearchBar({
 	status,
@@ -52,6 +52,18 @@ export function SearchBar({
 					status={isSubmitting ? 'pending' : status}
 					className="flex w-full items-center justify-center"
 					size="sm"
+					onClick={event => {
+						if (event.metaKey) {
+							event.preventDefault()
+							// open in a new tab like a link
+							window.open(
+								`/users?search=${
+									// @ts-expect-error - meh 🤷‍♂️
+									event.currentTarget.form?.elements.search?.value ?? ''
+								}`,
+							)
+						}
+					}}
 				>
 					<Icon name="magnifying-glass" size="sm" />
 					<span className="sr-only">Search</span>
