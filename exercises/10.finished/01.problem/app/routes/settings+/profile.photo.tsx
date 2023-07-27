@@ -7,12 +7,7 @@ import {
 	unstable_parseMultipartFormData,
 	type DataFunctionArgs,
 } from '@remix-run/node'
-import {
-	Form,
-	useActionData,
-	useFetcher,
-	useLoaderData,
-} from '@remix-run/react'
+import { Form, useActionData, useLoaderData } from '@remix-run/react'
 import { useState } from 'react'
 import { ServerOnly } from 'remix-utils'
 import { z } from 'zod'
@@ -20,7 +15,6 @@ import { ErrorList } from '~/components/forms.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import { Icon } from '~/components/ui/icon.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
-import * as deleteImageRoute from '~/routes/resources+/delete-image.tsx'
 import { authenticator, requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import {
@@ -66,6 +60,11 @@ export async function action({ request }: DataFunctionArgs) {
 		request,
 		unstable_createMemoryUploadHandler({ maxPartSize: MAX_SIZE }),
 	)
+	const intent = formData.get('intent')
+	if (intent === 'delete') {
+		await prisma.image.deleteMany({ where: { userId } })
+		return redirect('/settings/profile')
+	}
 
 	const submission = await parse(formData, {
 		schema: PhotoFormSchema.transform(async data => {
@@ -101,7 +100,6 @@ export default function PhotoRoute() {
 
 	const doubleCheckDeleteImage = useDoubleCheck()
 
-	const deleteImageFetcher = useFetcher<typeof deleteImageRoute.action>()
 	const actionData = useActionData<typeof action>()
 
 	const [form, fields] = useForm({
@@ -118,7 +116,6 @@ export default function PhotoRoute() {
 
 	const [newImageSrc, setNewImageSrc] = useState<string | null>(null)
 
-	const deleteProfilePhotoFormId = 'delete-profile-photo'
 	return (
 		<div>
 			<Form
@@ -188,7 +185,8 @@ export default function PhotoRoute() {
 								variant="destructive"
 								{...doubleCheckDeleteImage.getButtonProps({
 									type: 'submit',
-									form: deleteProfilePhotoFormId,
+									name: 'intent',
+									value: 'delete',
 								})}
 							>
 								<Icon name="trash">
@@ -202,24 +200,6 @@ export default function PhotoRoute() {
 				)}
 				<ErrorList errors={form.errors} />
 			</Form>
-			<deleteImageFetcher.Form
-				method="POST"
-				id={deleteProfilePhotoFormId}
-				action={deleteImageRoute.ROUTE_PATH}
-				onSubmit={() => setNewImageSrc(null)}
-			>
-				<ServerOnly>
-					{() => (
-						<input
-							name="redirectTo"
-							value="/settings/profile/photo"
-							type="hidden"
-						/>
-					)}
-				</ServerOnly>
-				<input name="intent" type="hidden" value="submit" />
-				<input name="imageId" type="hidden" value={data.user.image?.id ?? ''} />
-			</deleteImageFetcher.Form>
 		</div>
 	)
 }

@@ -7,28 +7,18 @@ import { ErrorList, Field } from '~/components/forms.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import { Icon } from '~/components/ui/icon.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
-import {
-	authenticator,
-	getPasswordHash,
-	requireUserId,
-	verifyUserPassword,
-} from '~/utils/auth.server.ts'
+import { authenticator, requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import { getUserImgSrc, useIsSubmitting } from '~/utils/misc.tsx'
 import {
 	emailSchema,
 	nameSchema,
-	passwordSchema,
 	usernameSchema,
 } from '~/utils/user-validation.ts'
 
 const ProfileFormSchema = z.object({
 	name: nameSchema.optional(),
 	username: usernameSchema,
-	currentPassword: z
-		.union([passwordSchema, z.string().min(0).max(0)])
-		.optional(),
-	newPassword: z.union([passwordSchema, z.string().min(0).max(0)]).optional(),
 	email: emailSchema,
 })
 
@@ -58,55 +48,32 @@ export async function action({ request }: DataFunctionArgs) {
 	const formData = await request.formData()
 	const submission = await parse(formData, {
 		async: true,
-		schema: ProfileFormSchema.superRefine(
-			async ({ email, username, currentPassword, newPassword }, ctx) => {
-				const existingUsername = await prisma.user.findUnique({
-					where: { username },
-					select: { id: true },
+		schema: ProfileFormSchema.superRefine(async ({ email, username }, ctx) => {
+			const existingUsername = await prisma.user.findUnique({
+				where: { username },
+				select: { id: true },
+			})
+			if (existingUsername && existingUsername.id !== userId) {
+				ctx.addIssue({
+					path: ['username'],
+					code: 'custom',
+					message: 'A user already exists with this username',
 				})
-				if (existingUsername && existingUsername.id !== userId) {
-					ctx.addIssue({
-						path: ['username'],
-						code: 'custom',
-						message: 'A user already exists with this username',
-					})
-				}
-				const existingEmail = await prisma.user.findUnique({
-					where: { email },
-					select: { id: true },
+			}
+			const existingEmail = await prisma.user.findUnique({
+				where: { email },
+				select: { id: true },
+			})
+			if (existingEmail && existingEmail.id !== userId) {
+				ctx.addIssue({
+					path: ['email'],
+					code: 'custom',
+					message: 'A user already exists with this email',
 				})
-				if (existingEmail && existingEmail.id !== userId) {
-					ctx.addIssue({
-						path: ['email'],
-						code: 'custom',
-						message: 'A user already exists with this email',
-					})
-				}
-				if (newPassword && !currentPassword) {
-					ctx.addIssue({
-						path: ['newPassword'],
-						code: 'custom',
-						message: 'Must provide current password to change password.',
-					})
-				}
-				if (currentPassword && newPassword) {
-					const user = await verifyUserPassword({ id: userId }, currentPassword)
-					if (!user) {
-						ctx.addIssue({
-							path: ['currentPassword'],
-							code: 'custom',
-							message: 'Incorrect password.',
-						})
-					}
-				}
-			},
-		),
+			}
+		}),
 	})
-	delete submission.payload.currentPassword
-	delete submission.payload.newPassword
 	if (submission.intent !== 'submit') {
-		delete submission.value?.currentPassword
-		delete submission.value?.newPassword
 		return json({ status: 'idle', submission } as const)
 	}
 	if (!submission.value) {
@@ -122,13 +89,6 @@ export async function action({ request }: DataFunctionArgs) {
 			name: data.name,
 			username: data.username,
 			email: data.email,
-			password: data.newPassword
-				? {
-						update: {
-							hash: await getPasswordHash(data.newPassword),
-						},
-				  }
-				: undefined,
 		},
 	})
 
@@ -203,39 +163,6 @@ export default function EditUserProfile() {
 						inputProps={conform.input(fields.email)}
 						errors={fields.email.errors}
 					/>
-
-					<div className="col-span-6 mb-12 mt-6 h-1 border-b-[1.5px]" />
-					<fieldset className="col-span-6">
-						<legend className="pb-6 text-lg">Change password</legend>
-						<div className="flex justify-between gap-10">
-							<Field
-								className="flex-1"
-								labelProps={{
-									htmlFor: fields.currentPassword.id,
-									children: 'Current Password',
-								}}
-								inputProps={{
-									...conform.input(fields.currentPassword, {
-										type: 'password',
-									}),
-									autoComplete: 'current-password',
-								}}
-								errors={fields.currentPassword.errors}
-							/>
-							<Field
-								className="flex-1"
-								labelProps={{
-									htmlFor: fields.newPassword.id,
-									children: 'New Password',
-								}}
-								inputProps={{
-									...conform.input(fields.newPassword, { type: 'password' }),
-									autoComplete: 'new-password',
-								}}
-								errors={fields.newPassword.errors}
-							/>
-						</div>
-					</fieldset>
 				</div>
 
 				<ErrorList errors={form.errors} id={form.errorId} />
@@ -250,6 +177,13 @@ export default function EditUserProfile() {
 					</StatusButton>
 				</div>
 			</Form>
+
+			<div className="col-span-6 mb-12 mt-6 h-1 border-b-[1.5px]" />
+			<div className="col-span-full my-3">
+				<Link to="password">
+					<Icon name="dots-horizontal">Change Password</Icon>
+				</Link>
+			</div>
 		</div>
 	)
 }

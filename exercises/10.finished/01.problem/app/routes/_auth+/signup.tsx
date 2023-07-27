@@ -9,9 +9,7 @@ import {
 import {
 	Form,
 	useActionData,
-	useFormAction,
 	useLoaderData,
-	useNavigation,
 	useSearchParams,
 } from '@remix-run/react'
 import { safeRedirect } from 'remix-utils'
@@ -21,6 +19,7 @@ import { Spacer } from '~/components/spacer.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
 import { authenticator, requireAnonymous, signup } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
+import { useIsSubmitting } from '~/utils/misc.tsx'
 import { commitSession, getSession } from '~/utils/session.server.ts'
 import {
 	emailSchema,
@@ -49,7 +48,7 @@ const SignupFormSchema = z
 			ctx.addIssue({
 				path: ['confirmPassword'],
 				code: 'custom',
-				message: 'The passwords did not match',
+				message: 'The passwords must match',
 			})
 		}
 	})
@@ -127,8 +126,7 @@ export default function SignupRoute() {
 	const [searchParams] = useSearchParams()
 	const data = useLoaderData<typeof loader>()
 	const actionData = useActionData<typeof action>()
-	const navigation = useNavigation()
-	const formAction = useFormAction()
+	const isSubmitting = useIsSubmitting()
 
 	const [form, fields] = useForm({
 		id: 'signup',
@@ -253,15 +251,9 @@ export default function SignupRoute() {
 					<div className="flex items-center justify-between gap-6">
 						<StatusButton
 							className="w-full"
-							status={
-								navigation.state === 'submitting' &&
-								navigation.formAction === formAction &&
-								navigation.formMethod === 'POST'
-									? 'pending'
-									: actionData?.status ?? 'idle'
-							}
+							status={isSubmitting ? 'pending' : actionData?.status ?? 'idle'}
 							type="submit"
-							disabled={navigation.state !== 'idle'}
+							disabled={isSubmitting}
 						>
 							Create an account
 						</StatusButton>

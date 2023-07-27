@@ -8,6 +8,7 @@ export type IconName =
 	| "check"
 	| "clock"
 	| "cross-1"
+	| "dots-horizontal"
 	| "envelope-closed"
 	| "exit"
 	| "file-text"
