@@ -62,25 +62,27 @@ export function Icon({
 	)
 }
 
-export type IconName =
-  | "arrow-left"
-  | "arrow-right"
-  | "avatar"
-  | "camera"
-  | "check"
-  | "clock"
-  | "cross-1"
-  | "exit"
-  | "file-text"
-  | "laptop"
-  | "lock-closed"
-  | "lock-open-1"
-  | "magnifying-glass"
-  | "moon"
-  | "pencil-1"
-  | "pencil-2"
-  | "plus"
-  | "reset"
-  | "sun"
-  | "trash"
-  | "update"
+export const iconNames = [
+  "arrow-left",
+  "arrow-right",
+  "avatar",
+  "camera",
+  "check",
+  "clock",
+  "cross-1",
+  "exit",
+  "file-text",
+  "laptop",
+  "lock-closed",
+  "lock-open-1",
+  "magnifying-glass",
+  "moon",
+  "pencil-1",
+  "pencil-2",
+  "plus",
+  "reset",
+  "sun",
+  "trash",
+  "update",
+] as const;
+export type IconName = typeof iconNames[number];
