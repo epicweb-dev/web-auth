@@ -35,18 +35,19 @@ test('Users can update their password', async ({ login, page }) => {
 	await login(user)
 	await page.goto('/settings/profile')
 
-	const fieldset = page.getByRole('group', { name: /change password/i })
+	await page.getByRole('link', { name: /change password/i }).click()
 
-	await fieldset
+	await page
 		.getByRole('textbox', { name: /^current password/i })
 		.fill(oldPassword)
-	await fieldset
-		.getByRole('textbox', { name: /^new password/i })
+	await page.getByRole('textbox', { name: /^new password/i }).fill(newPassword)
+	await page
+		.getByRole('textbox', { name: /^confirm new password/i })
 		.fill(newPassword)
 
-	await page.getByRole('button', { name: /^save/i }).click()
+	await page.getByRole('button', { name: /change password/i }).click()
 
-	await expect(page).toHaveURL(`/users/${user.username}`)
+	await expect(page).toHaveURL(`/settings/profile`)
 
 	const { username } = user
 	expect(
