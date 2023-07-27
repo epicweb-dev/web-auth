@@ -156,7 +156,7 @@ export default function SignupRoute() {
 					{...form.props}
 				>
 					<Field
-						labelProps={{ htmlFor: fields.email.id, children: 'email' }}
+						labelProps={{ htmlFor: fields.email.id, children: 'Email' }}
 						inputProps={{
 							...conform.input(fields.email),
 							autoComplete: 'email',
