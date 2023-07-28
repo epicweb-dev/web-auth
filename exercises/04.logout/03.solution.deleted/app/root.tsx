@@ -3,9 +3,9 @@ import { parse } from '@conform-to/zod'
 import { cssBundleHref } from '@remix-run/css-bundle'
 import {
 	json,
+	redirect,
 	type DataFunctionArgs,
 	type LinksFunction,
-	redirect,
 } from '@remix-run/node'
 import {
 	Link,
@@ -32,11 +32,12 @@ import { Icon, href as iconHref } from './components/ui/icon.tsx'
 import { KCDShop } from './kcdshop.tsx'
 import fontStylestylesheetUrl from './styles/font.css'
 import tailwindStylesheetUrl from './styles/tailwind.css'
+import { prisma } from './utils/db.server.ts'
 import { getEnv } from './utils/env.server.ts'
 import { getUserImgSrc, invariantResponse } from './utils/misc.tsx'
-import { getTheme, setTheme, type Theme } from './utils/theme.server.ts'
 import { commitSession, getSession } from './utils/session.server.ts'
-import { prisma } from './utils/db.server.ts'
+import { getTheme, setTheme, type Theme } from './utils/theme.server.ts'
+import { useOptionalUser } from './utils/user.ts'
 
 export const links: LinksFunction = () => {
 	return [
@@ -145,7 +146,7 @@ function Document({
 
 export default function App() {
 	const data = useLoaderData<typeof loader>()
-	const user = data.user
+	const user = useOptionalUser()
 	const matches = useMatches()
 	const isOnSearchPage = matches.find(m => m.id === 'routes/users+/index')
 	return (

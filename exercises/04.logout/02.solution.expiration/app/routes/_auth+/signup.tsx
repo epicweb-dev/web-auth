@@ -46,10 +46,6 @@ const SignupFormSchema = z
 		}
 	})
 
-export async function loader() {
-	return json({})
-}
-
 export async function action({ request }: DataFunctionArgs) {
 	const formData = await request.formData()
 	const submission = await parse(formData, {
@@ -72,6 +68,7 @@ export async function action({ request }: DataFunctionArgs) {
 			const hashedPassword = await bcrypt.hash(password, 10)
 
 			const user = await prisma.user.create({
+				select: { id: true },
 				data: {
 					email: email.toLowerCase(),
 					username: username.toLowerCase(),
@@ -82,7 +79,6 @@ export async function action({ request }: DataFunctionArgs) {
 						},
 					},
 				},
-				select: { id: true },
 			})
 
 			return { ...data, user }
@@ -212,9 +208,7 @@ export default function SignupRoute() {
 							htmlFor: fields.remember.id,
 							children: 'Remember me',
 						}}
-						buttonProps={conform.input(fields.remember, {
-							type: 'checkbox',
-						})}
+						buttonProps={conform.input(fields.remember, { type: 'checkbox' })}
 						errors={fields.remember.errors}
 					/>
 

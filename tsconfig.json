@@ -71,6 +71,18 @@
       "path": "exercises/04.logout/03.solution.deleted"
     },
     {
+      "path": "exercises/05.protecting-routes/01.problem.anonymous"
+    },
+    {
+      "path": "exercises/05.protecting-routes/01.solution.anonymous"
+    },
+    {
+      "path": "exercises/05.protecting-routes/02.problem.authenticated"
+    },
+    {
+      "path": "exercises/05.protecting-routes/02.solution.authenticated"
+    },
+    {
       "path": "exercises/10.finished/01.problem"
     }
   ]

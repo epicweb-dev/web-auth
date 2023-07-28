@@ -133,7 +133,7 @@ function Document({
 
 export default function App() {
 	const data = useLoaderData<typeof loader>()
-	const user = data.user
+	const user = useOptionalUser()
 	const matches = useMatches()
 	const isOnSearchPage = matches.find(m => m.id === 'routes/users+/index')
 	return (

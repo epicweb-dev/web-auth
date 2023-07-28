@@ -27,7 +27,7 @@ authenticator.use(
 			password: form.get('password'),
 		})
 
-		const user = await verifyUserPassword(username, password)
+		const user = await verifyUserPassword({ username }, password)
 		if (!user) {
 			throw new AuthorizationError('Invalid username or password')
 		}
@@ -77,39 +77,19 @@ export async function getUserId(request: Request) {
 	if (!sessionId) return null
 	const session = await prisma.session.findUnique({
 		where: { id: sessionId },
-		select: { userId: true },
+		select: { user: { select: { id: true } } },
 	})
 	if (!session) {
 		// Perhaps their session was deleted?
 		await authenticator.logout(request, { redirectTo: '/' })
 		return null
 	}
-	return session.userId
+	return session.user.id
 }
 
 export async function requireAnonymous(request: Request) {
 	await authenticator.isAuthenticated(request, {
 		successRedirect: '/',
-	})
-}
-
-export async function resetUserPassword({
-	username,
-	password,
-}: {
-	username: User['username']
-	password: string
-}) {
-	const hashedPassword = await bcrypt.hash(password, 10)
-	return prisma.user.update({
-		where: { username },
-		data: {
-			password: {
-				update: {
-					hash: hashedPassword,
-				},
-			},
-		},
 	})
 }
 
@@ -153,11 +133,11 @@ export async function getPasswordHash(password: string) {
 }
 
 export async function verifyUserPassword(
-	username: string,
+	where: Pick<User, 'username'> | Pick<User, 'id'>,
 	password: Password['hash'],
 ) {
 	const userWithPassword = await prisma.user.findUnique({
-		where: { username },
+		where,
 		select: { id: true, password: { select: { hash: true } } },
 	})
 

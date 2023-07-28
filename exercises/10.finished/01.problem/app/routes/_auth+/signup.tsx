@@ -39,7 +39,6 @@ const SignupFormSchema = z
 		agreeToTermsOfServiceAndPrivacyPolicy: checkboxSchema(
 			'You must agree to the terms of service and privacy policy',
 		),
-		agreeToMailingList: checkboxSchema().optional(),
 		remember: checkboxSchema(),
 		redirectTo: z.string().optional(),
 	})
@@ -65,7 +64,7 @@ export async function loader({ request }: DataFunctionArgs) {
 }
 
 export async function action({ request }: DataFunctionArgs) {
-	const cookieSession = await getSession(request.headers.get('cookie'))
+	await requireAnonymous(request)
 	const formData = await request.formData()
 	const submission = await parse(formData, {
 		schema: SignupFormSchema.superRefine(async (data, ctx) => {
@@ -81,14 +80,9 @@ export async function action({ request }: DataFunctionArgs) {
 				})
 				return
 			}
-		}).transform(async (data, ctx) => {
-			const { username, email, name, password } = data
-
-			const session = await signup({ email, username, password, name })
-			return {
-				...data,
-				session,
-			}
+		}).transform(async data => {
+			const session = await signup(data)
+			return { ...data, session }
 		}),
 		async: true,
 	})
@@ -108,13 +102,16 @@ export async function action({ request }: DataFunctionArgs) {
 		session,
 	} = submission.value
 
+	const cookieSession = await getSession(request.headers.get('cookie'))
 	cookieSession.set(authenticator.sessionKey, session.id)
 
-	const newCookie = await commitSession(cookieSession, {
-		expires: remember ? session.expirationDate : undefined,
-	})
 	return redirect(safeRedirect(redirectTo, '/'), {
-		headers: { 'Set-Cookie': newCookie },
+		headers: {
+			'Set-Cookie': await commitSession(cookieSession, {
+				// Cookies with no expiration are cleared when the tab/window closes
+				expires: remember ? session.expirationDate : undefined,
+			}),
+		},
 	})
 }
 
@@ -214,18 +211,6 @@ export default function SignupRoute() {
 							{ type: 'checkbox' },
 						)}
 						errors={fields.agreeToTermsOfServiceAndPrivacyPolicy.errors}
-					/>
-
-					<CheckboxField
-						labelProps={{
-							htmlFor: fields.agreeToMailingList.id,
-							children:
-								'Would you like to receive special discounts and offers?',
-						}}
-						buttonProps={conform.input(fields.agreeToMailingList, {
-							type: 'checkbox',
-						})}
-						errors={fields.agreeToMailingList.errors}
 					/>
 
 					<CheckboxField

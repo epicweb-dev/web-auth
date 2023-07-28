@@ -1,0 +1,16 @@
+node_modules
+
+/build
+/public/build
+/server-build
+.env
+tsconfig.tsbuildinfo
+*.ignored.*
+
+/test-results/
+/playwright-report/
+/playwright/.cache/
+/tests/fixtures/email/*.json
+/coverage
+
+package-lock.json

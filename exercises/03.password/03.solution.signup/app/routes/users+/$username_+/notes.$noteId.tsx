@@ -41,9 +41,12 @@ export async function loader({ params }: DataFunctionArgs) {
 			},
 		},
 	})
+
 	invariantResponse(note, 'Not found', { status: 404 })
+
 	const date = new Date(note.updatedAt)
 	const timeAgo = formatDistanceToNow(date)
+
 	return json({
 		note,
 		timeAgo,

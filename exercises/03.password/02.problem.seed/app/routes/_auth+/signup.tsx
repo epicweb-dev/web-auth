@@ -42,10 +42,6 @@ const SignupFormSchema = z
 		}
 	})
 
-export async function loader() {
-	return json({})
-}
-
 export async function action({ request }: DataFunctionArgs) {
 	const formData = await request.formData()
 	const submission = await parse(formData, {

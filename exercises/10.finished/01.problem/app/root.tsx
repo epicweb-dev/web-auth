@@ -21,10 +21,9 @@ import {
 } from '@remix-run/react'
 import os from 'node:os'
 import { z } from 'zod'
-import { ErrorList } from '~/components/forms.tsx'
-import { getTheme, setTheme, type Theme } from '~/utils/theme.server.ts'
 import faviconAssetUrl from './assets/favicon.svg'
 import { GeneralErrorBoundary } from './components/error-boundary.tsx'
+import { ErrorList } from './components/forms.tsx'
 import { SearchBar } from './components/search-bar.tsx'
 import { Spacer } from './components/spacer.tsx'
 import { Button } from './components/ui/button.tsx'
@@ -32,10 +31,11 @@ import { Icon, href as iconHref } from './components/ui/icon.tsx'
 import { KCDShop } from './kcdshop.tsx'
 import fontStylestylesheetUrl from './styles/font.css'
 import tailwindStylesheetUrl from './styles/tailwind.css'
-import { authenticator, getUserId } from './utils/auth.server.ts'
+import { getUserId } from './utils/auth.server.ts'
 import { prisma } from './utils/db.server.ts'
 import { getEnv } from './utils/env.server.ts'
 import { getUserImgSrc, invariantResponse } from './utils/misc.tsx'
+import { getTheme, setTheme, type Theme } from './utils/theme.server.ts'
 import { useOptionalUser, useUserIsAdmin } from './utils/user.ts'
 
 export const links: LinksFunction = () => {
@@ -53,7 +53,7 @@ export async function loader({ request }: DataFunctionArgs) {
 	const userId = await getUserId(request)
 
 	const user = userId
-		? await prisma.user.findUnique({
+		? await prisma.user.findUniqueOrThrow({
 				select: {
 					id: true,
 					name: true,
@@ -70,12 +70,6 @@ export async function loader({ request }: DataFunctionArgs) {
 				where: { id: userId },
 		  })
 		: null
-	if (userId && !user) {
-		console.info('something weird happened')
-		// something weird happened... The user is authenticated but we can't find
-		// them in the database. Maybe they were deleted? Let's log them out.
-		await authenticator.logout(request, { redirectTo: '/' })
-	}
 
 	return json({
 		username: os.userInfo().username,
