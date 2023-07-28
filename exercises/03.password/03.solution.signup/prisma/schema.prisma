@@ -20,8 +20,8 @@ model User {
   updatedAt DateTime @updatedAt
 
   image    UserImage?
-  notes    Note[]
   password Password?
+  notes    Note[]
 }
 
 model Note {
