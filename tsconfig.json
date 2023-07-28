@@ -47,40 +47,46 @@
       "path": "exercises/03.password/03.solution.signup"
     },
     {
-      "path": "exercises/03.password/04.problem.login"
+      "path": "exercises/04.login/01.problem.login"
     },
     {
-      "path": "exercises/03.password/04.solution.login"
+      "path": "exercises/04.login/01.solution.login"
     },
     {
-      "path": "exercises/04.logout/01.problem.logout"
+      "path": "exercises/04.login/02.problem.ui-utils"
     },
     {
-      "path": "exercises/04.logout/01.solution.logout"
+      "path": "exercises/04.login/02.solution.ui-utils"
     },
     {
-      "path": "exercises/04.logout/02.problem.expiration"
+      "path": "exercises/05.logout/01.problem.logout"
     },
     {
-      "path": "exercises/04.logout/02.solution.expiration"
+      "path": "exercises/05.logout/01.solution.logout"
     },
     {
-      "path": "exercises/04.logout/03.problem.deleted"
+      "path": "exercises/05.logout/02.problem.expiration"
     },
     {
-      "path": "exercises/04.logout/03.solution.deleted"
+      "path": "exercises/05.logout/02.solution.expiration"
     },
     {
-      "path": "exercises/05.protecting-routes/01.problem.anonymous"
+      "path": "exercises/05.logout/03.problem.deleted"
     },
     {
-      "path": "exercises/05.protecting-routes/01.solution.anonymous"
+      "path": "exercises/05.logout/03.solution.deleted"
     },
     {
-      "path": "exercises/05.protecting-routes/02.problem.authenticated"
+      "path": "exercises/06.protecting-routes/01.problem.anonymous"
     },
     {
-      "path": "exercises/05.protecting-routes/02.solution.authenticated"
+      "path": "exercises/06.protecting-routes/01.solution.anonymous"
+    },
+    {
+      "path": "exercises/06.protecting-routes/02.problem.authenticated"
+    },
+    {
+      "path": "exercises/06.protecting-routes/02.solution.authenticated"
     },
     {
       "path": "exercises/10.finished/01.problem"
