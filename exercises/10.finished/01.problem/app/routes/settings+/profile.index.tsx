@@ -44,9 +44,8 @@ export async function loader({ request }: DataFunctionArgs) {
 		},
 	})
 
-	if (!user) {
-		throw await authenticator.logout(request, { redirectTo: '/' })
-	}
+	invariantResponse(user, 'User not found', { status: 404 })
+
 	return json({ user })
 }
 

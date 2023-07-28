@@ -53,6 +53,24 @@
       "path": "exercises/03.password/04.solution.login"
     },
     {
+      "path": "exercises/04.logout/01.problem.logout"
+    },
+    {
+      "path": "exercises/04.logout/01.solution.logout"
+    },
+    {
+      "path": "exercises/04.logout/02.problem.expiration"
+    },
+    {
+      "path": "exercises/04.logout/02.solution.expiration"
+    },
+    {
+      "path": "exercises/04.logout/03.problem.deleted"
+    },
+    {
+      "path": "exercises/04.logout/03.solution.deleted"
+    },
+    {
       "path": "exercises/10.finished/01.problem"
     }
   ]

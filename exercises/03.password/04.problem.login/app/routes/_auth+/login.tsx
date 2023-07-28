@@ -58,8 +58,10 @@ export async function action({ request }: DataFunctionArgs) {
 		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 
+	const { user } = submission.value
+
 	const cookieSession = await getSession(request.headers.get('cookie'))
-	cookieSession.set('userId', submission.value.user.id)
+	cookieSession.set('userId', user.id)
 
 	return redirect('/', {
 		headers: {

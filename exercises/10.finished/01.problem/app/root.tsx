@@ -54,7 +54,6 @@ export async function loader({ request }: DataFunctionArgs) {
 
 	const user = userId
 		? await prisma.user.findUnique({
-				where: { id: userId },
 				select: {
 					id: true,
 					name: true,
@@ -68,6 +67,7 @@ export async function loader({ request }: DataFunctionArgs) {
 						},
 					},
 				},
+				where: { id: userId },
 		  })
 		: null
 	if (userId && !user) {

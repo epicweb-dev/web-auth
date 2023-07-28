@@ -15,10 +15,11 @@ import { ErrorList } from '~/components/forms.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import { Icon } from '~/components/ui/icon.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
-import { authenticator, requireUserId } from '~/utils/auth.server.ts'
+import { requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import {
 	getUserImgSrc,
+	invariantResponse,
 	useDoubleCheck,
 	useIsSubmitting,
 } from '~/utils/misc.tsx'
@@ -47,9 +48,7 @@ export async function loader({ request }: DataFunctionArgs) {
 			image: { select: { id: true } },
 		},
 	})
-	if (!user) {
-		throw await authenticator.logout(request, { redirectTo: '/' })
-	}
+	invariantResponse(user, 'User not found', { status: 404 })
 	return json({ user })
 }
 
