@@ -46,6 +46,14 @@
 - [Data Modeling workshop](https://github.com/epicweb-dev/data-modeling) (or
   similar experience)
 
+## Pre-workshop Resources
+
+Here are some resources you can read before taking the workshop to get you up to
+speed on some of the tools and concepts we'll be covering:
+
+- [Full Stack Components](https://www.epicweb.dev/full-stack-components)
+- [Full Stack Components (talk)](https://www.youtube.com/watch?v=30HAT5Quvgk&list=PLV5CVI1eNcJgNqzNwcs4UKrlJdhfDjshf&index=3)
+
 ## System Requirements
 
 - [git][git] v2.13 or greater

@@ -21,7 +21,7 @@ import faviconAssetUrl from './assets/favicon.svg'
 import { GeneralErrorBoundary } from './components/error-boundary.tsx'
 import { SearchBar } from './components/search-bar.tsx'
 import { Button } from './components/ui/button.tsx'
-import { href as iconHref } from './components/ui/icon.tsx'
+import { Icon, href as iconHref } from './components/ui/icon.tsx'
 import { KCDShop } from './kcdshop.tsx'
 import { ThemeSwitch, useTheme } from './routes/resources+/theme/index.tsx'
 import { getTheme } from './routes/resources+/theme/theme.server.ts'
@@ -31,7 +31,7 @@ import { authenticator, getUserId } from './utils/auth.server.ts'
 import { prisma } from './utils/db.server.ts'
 import { getEnv } from './utils/env.server.ts'
 import { getUserImgSrc } from './utils/misc.tsx'
-import { useOptionalUser } from './utils/user.ts'
+import { useOptionalUser, useUserIsAdmin } from './utils/user.ts'
 
 export const links: LinksFunction = () => {
 	return [
@@ -55,6 +55,13 @@ export async function loader({ request }: DataFunctionArgs) {
 					name: true,
 					username: true,
 					image: { select: { id: true } },
+					roles: {
+						select: {
+							permissions: {
+								select: { id: true, name: true },
+							},
+						},
+					},
 				},
 		  })
 		: null
@@ -111,6 +118,7 @@ export default function App() {
 	const user = useOptionalUser()
 	const theme = useTheme()
 	const matches = useMatches()
+	const userIsAdmin = useUserIsAdmin()
 	const isOnSearchPage = matches.find(m => m.id === 'routes/users+/index')
 	return (
 		<Document theme={theme} env={data.ENV}>
@@ -127,21 +135,30 @@ export default function App() {
 					)}
 					<div className="flex items-center gap-10">
 						{user ? (
-							<Button asChild variant="secondary">
-								<Link
-									to={`/users/${user.username}`}
-									className="flex items-center gap-2"
-								>
-									<img
-										className="h-8 w-8 rounded-full object-cover"
-										alt={user.name ?? user.username}
-										src={getUserImgSrc(user.image?.id)}
-									/>
-									<span className="text-body-sm font-bold">
-										{user.name ?? user.username}
-									</span>
-								</Link>
-							</Button>
+							<div className="flex items-center gap-2">
+								<Button asChild variant="secondary">
+									<Link
+										to={`/users/${user.username}`}
+										className="flex items-center gap-2"
+									>
+										<img
+											className="h-8 w-8 rounded-full object-cover"
+											alt={user.name ?? user.username}
+											src={getUserImgSrc(user.image?.id)}
+										/>
+										<span className="text-body-sm font-bold">
+											{user.name ?? user.username}
+										</span>
+									</Link>
+								</Button>
+								{userIsAdmin ? (
+									<Button asChild variant="secondary">
+										<Link to="/admin">
+											<Icon name="backpack">Admin</Icon>
+										</Link>
+									</Button>
+								) : null}
+							</div>
 						) : (
 							<Button asChild variant="default" size="sm">
 								<Link to="/login">Log In</Link>

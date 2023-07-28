@@ -15,14 +15,14 @@ export const authenticator = new Authenticator<string>(sessionStorage, {
 
 const SESSION_EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 30
 
-const signInForm = z.object({
+const SignInFormSchema = z.object({
 	username: z.string(),
 	password: z.string(),
 })
 
 authenticator.use(
 	new FormStrategy(async ({ form }) => {
-		const { username, password } = signInForm.parse({
+		const { username, password } = SignInFormSchema.parse({
 			username: form.get('username'),
 			password: form.get('password'),
 		})

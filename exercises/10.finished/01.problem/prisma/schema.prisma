@@ -23,7 +23,7 @@ model User {
   password Password?
   notes    Note[]
   roles    Role[]
-  session  Session[]
+  sessions Session[]
 }
 
 model Note {

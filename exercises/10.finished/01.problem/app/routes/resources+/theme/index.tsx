@@ -12,7 +12,7 @@ const ROUTE_PATH = '/resources/theme'
 
 const ThemeFormSchema = z.object({
 	redirectTo: z.string().optional(),
-	theme: z.enum(['system', 'light', 'dark']),
+	theme: z.enum(['light', 'dark']),
 })
 
 export async function action({ request }: DataFunctionArgs) {
@@ -29,7 +29,7 @@ export async function action({ request }: DataFunctionArgs) {
 	const { theme } = submission.value
 
 	const responseInit = {
-		headers: { 'Set-Cookie': setTheme(theme === 'system' ? undefined : theme) },
+		headers: { 'Set-Cookie': setTheme(theme) },
 	}
 	return json({ success: true }, responseInit)
 }

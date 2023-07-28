@@ -82,10 +82,10 @@ export async function action({ request }: DataFunctionArgs) {
 	})
 	// get the password off the payload that's sent back
 	delete submission.payload.password
-	// @ts-expect-error - conform should probably have support for doing this
-	delete submission.value?.password
 
 	if (submission.intent !== 'submit') {
+		// @ts-expect-error - conform should probably have support for doing this
+		delete submission.value?.password
 		return json({ status: 'idle', submission } as const)
 	}
 	if (!submission.value || !submission.value.session) {
@@ -95,16 +95,15 @@ export async function action({ request }: DataFunctionArgs) {
 	const { remember, redirectTo, session } = submission.value
 
 	cookieSession.set(authenticator.sessionKey, session.id)
-	const responseInit = {
+
+	return redirect(safeRedirect(redirectTo), {
 		headers: {
 			'Set-Cookie': await commitSession(cookieSession, {
 				// Cookies with no expiration are cleared when the tab/window closes
 				expires: remember ? session.expirationDate : undefined,
 			}),
 		},
-	}
-
-	return redirect(safeRedirect(redirectTo), responseInit)
+	})
 }
 
 export default function LoginPage() {

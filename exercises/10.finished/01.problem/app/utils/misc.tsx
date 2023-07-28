@@ -213,10 +213,18 @@ export function useDoubleCheck() {
 						setDoubleCheck(true)
 				  }
 
+		const onKeyUp: React.ButtonHTMLAttributes<HTMLButtonElement>['onKeyUp'] =
+			e => {
+				if (e.key === 'Escape') {
+					setDoubleCheck(false)
+				}
+			}
+
 		return {
 			...props,
 			onBlur: callAll(onBlur, props?.onBlur),
 			onClick: callAll(onClick, props?.onClick),
+			onKeyUp: callAll(onKeyUp, props?.onKeyUp),
 		}
 	}
 

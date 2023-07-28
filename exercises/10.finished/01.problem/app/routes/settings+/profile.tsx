@@ -16,9 +16,7 @@ export async function loader({ request }: DataFunctionArgs) {
 	const userId = await requireUserId(request)
 	const user = await prisma.user.findUnique({
 		where: { id: userId },
-		select: {
-			username: true,
-		},
+		select: { username: true },
 	})
 	if (!user) {
 		throw await authenticator.logout(request, { redirectTo: '/' })

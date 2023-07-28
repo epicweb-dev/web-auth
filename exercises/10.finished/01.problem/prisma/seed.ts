@@ -31,7 +31,8 @@ async function seed() {
 	console.timeEnd('🧹 Cleaned up the database...')
 
 	console.time(`👑 Created admin role/permission...`)
-	await prisma.role.create({
+	const adminRole = await prisma.role.create({
+		select: { id: true },
 		data: {
 			name: 'admin',
 			description: 'Administrator',
@@ -132,7 +133,7 @@ async function seed() {
 	}
 	console.timeEnd(`👤 Created ${totalUsers} users...`)
 
-	console.time(`🐨 Created user "kody"`)
+	console.time(`🐨 Created admin user "kody"`)
 
 	const kodyImages = await promiseHash({
 		kodyUser: img({ filepath: './tests/fixtures/images/user/kody.png' }),
@@ -175,6 +176,11 @@ async function seed() {
 			name: 'Kody',
 			image: { create: kodyImages.kodyUser },
 			password: { create: createPassword('kodylovesyou') },
+			roles: {
+				connect: {
+					id: adminRole.id,
+				},
+			},
 			notes: {
 				create: [
 					{
@@ -276,7 +282,7 @@ async function seed() {
 			},
 		},
 	})
-	console.timeEnd(`🐨 Created user "kody"`)
+	console.timeEnd(`🐨 Created admin user "kody"`)
 
 	console.timeEnd(`🌱 Database has been seeded`)
 }

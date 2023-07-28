@@ -52,7 +52,7 @@ const NoteEditorSchema = z.object({
 	id: z.string().optional(),
 	title: z.string().min(titleMinLength).max(titleMaxLength),
 	content: z.string().min(contentMinLength).max(contentMaxLength),
-	images: z.array(ImageFieldsetSchema).optional(),
+	images: z.array(ImageFieldsetSchema).max(5).optional(),
 })
 
 export async function action({ request }: DataFunctionArgs) {
@@ -124,31 +124,30 @@ export async function action({ request }: DataFunctionArgs) {
 			},
 		})
 
-		await Promise.all(
-			images.map(async image => {
-				const { blob } = image
-				if (blob) {
-					return await $prisma.noteImage.upsert({
-						select: { id: true },
-						where: { id: image.id ?? '__new_image__' },
-						create: { ...image, blob, noteId: note.id },
-						update: {
-							...image,
-							blob,
-							// update the id since it is used for caching
-							id: cuid(),
-							noteId: note.id,
-						},
-					})
-				} else if (image.id) {
-					return await $prisma.noteImage.update({
-						select: { id: true },
-						where: { id: image.id },
-						data: { altText: image.altText },
-					})
-				}
-			}),
-		)
+		for (const image of images) {
+			const { blob } = image
+			if (blob) {
+				await $prisma.noteImage.upsert({
+					select: { id: true },
+					where: { id: image.id ?? '__new_image__' },
+					create: { ...image, blob, noteId: note.id },
+					update: {
+						...image,
+						blob,
+						// update the id since it is used for caching
+						id: cuid(),
+						noteId: note.id,
+					},
+				})
+			} else if (image.id) {
+				await $prisma.noteImage.update({
+					select: { id: true },
+					where: { id: image.id },
+					data: { altText: image.altText },
+				})
+			}
+		}
+
 		return note
 	})
 
