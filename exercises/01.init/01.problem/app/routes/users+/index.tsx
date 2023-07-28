@@ -5,7 +5,7 @@ import { GeneralErrorBoundary } from '~/components/error-boundary.tsx'
 import { ErrorList } from '~/components/forms.tsx'
 import { SearchBar } from '~/components/search-bar.tsx'
 import { prisma } from '~/utils/db.server.ts'
-import { cn, getUserImgSrc, useDelayedIsSubmitting } from '~/utils/misc.ts'
+import { cn, getUserImgSrc, useDelayedIsSubmitting } from '~/utils/misc.tsx'
 
 const UserSearchResultSchema = z.object({
 	id: z.string(),
@@ -26,7 +26,7 @@ export async function loader({ request }: DataFunctionArgs) {
 	const rawUsers = await prisma.$queryRaw`
 		SELECT user.id, user.username, user.name, image.id AS imageId
 		FROM User AS user
-		LEFT JOIN Image AS image ON user.id = image.userId
+		LEFT JOIN UserImage AS image ON user.id = image.userId
 		WHERE user.username LIKE ${like}
 		OR user.name LIKE ${like}
 		ORDER BY (

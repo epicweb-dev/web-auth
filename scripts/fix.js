@@ -31,9 +31,9 @@ const examples = (await readDir(here('../examples'))).map(dir =>
 const exercises = await readDir(here('../exercises'))
 const apps = (
 	await Promise.all([
-		...(
-			await readDir(here('../examples'))
-		).map(dir => here(`../examples/${dir}`)),
+		...(await readDir(here('../examples'))).map(dir =>
+			here(`../examples/${dir}`),
+		),
 		...exercises.flatMap(async exercise => {
 			const exerciseDir = here(`../exercises/${exercise}`)
 			// if it is just a file instead of a directory, skip it
@@ -65,7 +65,10 @@ for (const file of appsWithPkgJson) {
 	const pkgjsonPath = path.join(file, 'package.json')
 	const pkg = JSON.parse(await fs.promises.readFile(pkgjsonPath, 'utf8'))
 	pkg.name = relativeToWorkshopRoot(file).replace(/\\|\//g, '__sep__')
-	await fs.promises.writeFile(pkgjsonPath, JSON.stringify(pkg, null, 2))
+	const written = await writeIfNeeded(pkgjsonPath, JSON.stringify(pkg, null, 2))
+	if (written) {
+		console.log(`updated ${path.relative(process.cwd(), pkgjsonPath)}`)
+	}
 }
 
 const tsconfig = {
@@ -75,10 +78,20 @@ const tsconfig = {
 		path: relativeToWorkshopRoot(a).replace(/\\/g, '/'),
 	})),
 }
-await fs.promises.writeFile(
+const written = await writeIfNeeded(
 	path.join(workshopRoot, 'tsconfig.json'),
 	JSON.stringify(tsconfig, null, 2),
 	{ parser: 'json' },
 )
 
-console.log('all fixed up')
+if (written) {
+	console.log('all fixed up')
+}
+
+async function writeIfNeeded(filepath, content) {
+	const oldContent = await fs.promises.readFile(filepath, 'utf8')
+	if (oldContent !== content) {
+		await fs.promises.writeFile(filepath, content)
+	}
+	return oldContent !== content
+}

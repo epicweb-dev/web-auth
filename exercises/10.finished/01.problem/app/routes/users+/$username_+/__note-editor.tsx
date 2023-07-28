@@ -32,7 +32,6 @@ import { requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import { cn, getNoteImgSrc } from '~/utils/misc.tsx'
 
-const ROUTE_URL = '/resources/note-editor'
 const titleMinLength = 1
 const titleMaxLength = 100
 const contentMinLength = 1
@@ -187,7 +186,6 @@ export function NoteEditor({
 		<div className="absolute inset-0">
 			<Form
 				method="post"
-				action={ROUTE_URL}
 				className="flex h-full flex-col gap-y-4 overflow-y-auto overflow-x-hidden px-10 pb-28 pt-12"
 				{...form.props}
 				encType="multipart/form-data"

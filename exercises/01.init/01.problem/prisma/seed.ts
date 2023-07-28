@@ -1,37 +1,10 @@
 import { faker } from '@faker-js/faker'
 import { PrismaClient } from '@prisma/client'
-import { UniqueEnforcer } from 'enforce-unique'
 import fs from 'node:fs'
 import { promiseHash } from 'remix-utils'
+import { createUser } from 'tests/db-utils.ts'
 
 const prisma = new PrismaClient()
-
-const uniqueUsernameEnforcer = new UniqueEnforcer()
-
-export function createUser() {
-	const firstName = faker.person.firstName()
-	const lastName = faker.person.lastName()
-
-	const username = uniqueUsernameEnforcer
-		.enforce(() => {
-			return (
-				faker.string.alphanumeric({ length: 2 }) +
-				'_' +
-				faker.internet.userName({
-					firstName: firstName.toLowerCase(),
-					lastName: lastName.toLowerCase(),
-				})
-			)
-		})
-		.slice(0, 20)
-		.toLowerCase()
-		.replace(/[^a-z0-9_]/g, '_')
-	return {
-		username,
-		name: `${firstName} ${lastName}`,
-		email: `${username}@example.com`,
-	}
-}
 
 async function img({
 	altText,
@@ -42,12 +15,8 @@ async function img({
 }) {
 	return {
 		altText,
-		file: {
-			create: {
-				contentType: filepath.endsWith('.png') ? 'image/png' : 'image/jpeg',
-				blob: await fs.promises.readFile(filepath),
-			},
-		},
+		contentType: filepath.endsWith('.png') ? 'image/png' : 'image/jpeg',
+		blob: await fs.promises.readFile(filepath),
 	}
 }
 
@@ -59,7 +28,7 @@ async function seed() {
 	await prisma.user.deleteMany()
 	console.timeEnd('🧹 Cleaned up the database...')
 
-	const totalUsers = 20
+	const totalUsers = 5
 	console.time(`👤 Created ${totalUsers} users...`)
 	const noteImages = await Promise.all([
 		img({
@@ -106,27 +75,28 @@ async function seed() {
 	])
 
 	const userImages = await Promise.all(
-		Array.from({ length: 9 }, (_, index) =>
+		Array.from({ length: 10 }, (_, index) =>
 			img({ filepath: `./tests/fixtures/images/user/${index}.jpg` }),
 		),
 	)
 
 	for (let index = 0; index < totalUsers; index++) {
+		const userData = createUser()
 		await prisma.user
 			.create({
 				select: { id: true },
 				data: {
-					...createUser(),
+					...userData,
 					image: { create: userImages[index % 10] },
 					notes: {
 						create: Array.from({
-							length: faker.number.int({ min: 0, max: 3 }),
+							length: faker.number.int({ min: 1, max: 3 }),
 						}).map(() => ({
 							title: faker.lorem.sentence(),
 							content: faker.lorem.paragraphs(),
 							images: {
 								create: Array.from({
-									length: faker.number.int({ min: 0, max: 5 }),
+									length: faker.number.int({ min: 1, max: 3 }),
 								}).map(() => {
 									const imgNumber = faker.number.int({ min: 0, max: 9 })
 									return noteImages[imgNumber]
@@ -143,7 +113,7 @@ async function seed() {
 	}
 	console.timeEnd(`👤 Created ${totalUsers} users...`)
 
-	console.time(`🐨 Created user "kody"`)
+	console.time(`🐨 Created admin user "kody"`)
 
 	const kodyImages = await promiseHash({
 		kodyUser: img({ filepath: './tests/fixtures/images/user/kody.png' }),
@@ -286,7 +256,7 @@ async function seed() {
 			},
 		},
 	})
-	console.timeEnd(`🐨 Created user "kody"`)
+	console.timeEnd(`🐨 Created admin user "kody"`)
 
 	console.timeEnd(`🌱 Database has been seeded`)
 }

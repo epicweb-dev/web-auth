@@ -1,12 +1,16 @@
 import { useFormAction, useNavigation } from '@remix-run/react'
 import { clsx, type ClassValue } from 'clsx'
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSpinDelay } from 'spin-delay'
 import { twMerge } from 'tailwind-merge'
 import userFallback from '~/assets/user.png'
 
 export function getUserImgSrc(imageId?: string | null) {
-	return imageId ? `/resources/images/${imageId}` : userFallback
+	return imageId ? `/resources/user-images/${imageId}` : userFallback
+}
+
+export function getNoteImgSrc(imageId: string) {
+	return `/resources/note-images/${imageId}`
 }
 
 export function getErrorMessage(error: unknown) {
@@ -25,6 +29,57 @@ export function getErrorMessage(error: unknown) {
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs))
+}
+
+export function getDomainUrl(request: Request) {
+	const host =
+		request.headers.get('X-Forwarded-Host') ?? request.headers.get('host')
+	if (!host) {
+		throw new Error('Could not determine domain URL.')
+	}
+	const protocol = host.includes('localhost') ? 'http' : 'https'
+	return `${protocol}://${host}`
+}
+
+export function getReferrerRoute(request: Request) {
+	// spelling errors and whatever makes this annoyingly inconsistent
+	// in my own testing, `referer` returned the right value, but 🤷‍♂️
+	const referrer =
+		request.headers.get('referer') ??
+		request.headers.get('referrer') ??
+		request.referrer
+	const domain = getDomainUrl(request)
+	if (referrer?.startsWith(domain)) {
+		return referrer.slice(domain.length)
+	} else {
+		return '/'
+	}
+}
+
+/**
+ * Merge multiple headers objects into one (uses set so headers are overridden)
+ */
+export function mergeHeaders(...headers: Array<ResponseInit['headers']>) {
+	const merged = new Headers()
+	for (const header of headers) {
+		for (const [key, value] of new Headers(header).entries()) {
+			merged.set(key, value)
+		}
+	}
+	return merged
+}
+
+/**
+ * Combine multiple header objects into one (uses append so headers are not overridden)
+ */
+export function combineHeaders(...headers: Array<ResponseInit['headers']>) {
+	const combined = new Headers()
+	for (const header of headers) {
+		for (const [key, value] of new Headers(header).entries()) {
+			combined.append(key, value)
+		}
+	}
+	return combined
 }
 
 /**
@@ -127,6 +182,53 @@ export function useDelayedIsSubmitting({
 		minDuration,
 	})
 	return delayedIsSubmitting
+}
+
+function callAll<Args extends Array<unknown>>(
+	...fns: Array<((...args: Args) => unknown) | undefined>
+) {
+	return (...args: Args) => fns.forEach(fn => fn?.(...args))
+}
+
+/**
+ * Use this hook with a button and it will make it so the first click sets a
+ * `doubleCheck` state to true, and the second click will actually trigger the
+ * `onClick` handler. This allows you to have a button that can be like a
+ * "are you sure?" experience for the user before doing destructive operations.
+ */
+export function useDoubleCheck() {
+	const [doubleCheck, setDoubleCheck] = useState(false)
+
+	function getButtonProps(
+		props?: React.ButtonHTMLAttributes<HTMLButtonElement>,
+	) {
+		const onBlur: React.ButtonHTMLAttributes<HTMLButtonElement>['onBlur'] =
+			() => setDoubleCheck(false)
+
+		const onClick: React.ButtonHTMLAttributes<HTMLButtonElement>['onClick'] =
+			doubleCheck
+				? undefined
+				: e => {
+						e.preventDefault()
+						setDoubleCheck(true)
+				  }
+
+		const onKeyUp: React.ButtonHTMLAttributes<HTMLButtonElement>['onKeyUp'] =
+			e => {
+				if (e.key === 'Escape') {
+					setDoubleCheck(false)
+				}
+			}
+
+		return {
+			...props,
+			onBlur: callAll(onBlur, props?.onBlur),
+			onClick: callAll(onClick, props?.onClick),
+			onKeyUp: callAll(onKeyUp, props?.onKeyUp),
+		}
+	}
+
+	return { doubleCheck, getButtonProps }
 }
 
 /**

@@ -47,3 +47,10 @@ function run() {
 }
 
 console.log(`watching ${watchPath}`)
+
+// doing this because the watcher doesn't seem to work and I don't have time
+// to figure out why 🙃
+console.log('Polling...')
+setInterval(() => {
+	run()
+}, 1000)

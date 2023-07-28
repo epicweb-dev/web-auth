@@ -1,12 +1,14 @@
 import { json, type DataFunctionArgs } from '@remix-run/node'
 import { Link, NavLink, Outlet, useLoaderData } from '@remix-run/react'
 import { GeneralErrorBoundary } from '~/components/error-boundary.tsx'
+import { Icon } from '~/components/ui/icon.tsx'
 import { prisma } from '~/utils/db.server.ts'
-import { cn, getUserImgSrc, invariantResponse } from '~/utils/misc.ts'
+import { cn, getUserImgSrc, invariantResponse } from '~/utils/misc.tsx'
 
 export async function loader({ params }: DataFunctionArgs) {
 	const owner = await prisma.user.findFirst({
 		select: {
+			id: true,
 			name: true,
 			username: true,
 			image: { select: { id: true } },
@@ -26,7 +28,7 @@ export default function NotesRoute() {
 	const navLinkDefaultClassName =
 		'line-clamp-2 block rounded-l-full py-2 pl-8 pr-6 text-base lg:text-xl'
 	return (
-		<div className="container flex h-full min-h-[400px] pb-12">
+		<main className="container flex h-full min-h-[400px] pb-12">
 			<div className="grid w-full grid-cols-4 bg-muted pl-2 md:container md:mx-2 md:rounded-3xl md:pr-0">
 				<div className="relative col-span-1">
 					<div className="absolute inset-0 flex flex-col">
@@ -44,6 +46,16 @@ export default function NotesRoute() {
 							</h1>
 						</Link>
 						<ul className="overflow-y-auto overflow-x-hidden pb-12">
+							<li className="p-1 pr-0">
+								<NavLink
+									to="new"
+									className={({ isActive }) =>
+										cn(navLinkDefaultClassName, isActive && 'bg-accent')
+									}
+								>
+									<Icon name="plus">New Note</Icon>
+								</NavLink>
+							</li>
 							{data.owner.notes.map(note => (
 								<li key={note.id}>
 									<NavLink
@@ -61,11 +73,11 @@ export default function NotesRoute() {
 						</ul>
 					</div>
 				</div>
-				<main className="relative col-span-3 bg-accent md:rounded-r-3xl">
+				<div className="relative col-span-3 bg-accent md:rounded-r-3xl">
 					<Outlet />
-				</main>
+				</div>
 			</div>
-		</div>
+		</main>
 	)
 }
 

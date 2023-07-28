@@ -20,30 +20,28 @@ CREATE TABLE "Note" (
 );
 
 -- CreateTable
-CREATE TABLE "File" (
+CREATE TABLE "NoteImage" (
     "id" TEXT NOT NULL PRIMARY KEY,
+    "altText" TEXT,
     "contentType" TEXT NOT NULL,
     "blob" BLOB NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
-    "imageId" TEXT NOT NULL,
-    CONSTRAINT "File_imageId_fkey" FOREIGN KEY ("imageId") REFERENCES "Image" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    "noteId" TEXT NOT NULL,
+    CONSTRAINT "NoteImage_noteId_fkey" FOREIGN KEY ("noteId") REFERENCES "Note" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
-CREATE TABLE "Image" (
-    "id" TEXT NOT NULL,
+CREATE TABLE "UserImage" (
+    "id" TEXT NOT NULL PRIMARY KEY,
     "altText" TEXT,
+    "contentType" TEXT NOT NULL,
+    "blob" BLOB NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
-    "noteId" TEXT,
-    "userId" TEXT,
-    CONSTRAINT "Image_noteId_fkey" FOREIGN KEY ("noteId") REFERENCES "Note" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "Image_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    "userId" TEXT NOT NULL,
+    CONSTRAINT "UserImage_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
-
--- CreateIndex
-CREATE UNIQUE INDEX "User_id_key" ON "User"("id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
@@ -52,16 +50,13 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Note_id_key" ON "Note"("id");
+CREATE INDEX "Note_ownerId_idx" ON "Note"("ownerId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "File_id_key" ON "File"("id");
+CREATE INDEX "Note_ownerId_updatedAt_idx" ON "Note"("ownerId", "updatedAt");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "File_imageId_key" ON "File"("imageId");
+CREATE INDEX "NoteImage_noteId_idx" ON "NoteImage"("noteId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Image_id_key" ON "Image"("id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Image_userId_key" ON "Image"("userId");
+CREATE UNIQUE INDEX "UserImage_userId_key" ON "UserImage"("userId");

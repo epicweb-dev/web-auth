@@ -4,11 +4,12 @@ import { GeneralErrorBoundary } from '~/components/error-boundary.tsx'
 import { Spacer } from '~/components/spacer.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import { prisma } from '~/utils/db.server.ts'
-import { getUserImgSrc, invariantResponse } from '~/utils/misc.ts'
+import { getUserImgSrc, invariantResponse } from '~/utils/misc.tsx'
 
 export async function loader({ params }: DataFunctionArgs) {
 	const user = await prisma.user.findFirst({
 		select: {
+			id: true,
 			name: true,
 			username: true,
 			createdAt: true,

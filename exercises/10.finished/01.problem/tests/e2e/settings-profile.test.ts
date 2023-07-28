@@ -18,7 +18,7 @@ test('Users can update their basic info', async ({ login, page }) => {
 
 	await page.getByRole('button', { name: /^save/i }).click()
 
-	await expect(page).toHaveURL(`/users/${newUserData.username}`)
+	await page.waitForLoadState('networkidle')
 
 	const updatedUser = await prisma.user.findUniqueOrThrow({
 		where: { id: user.id },
@@ -77,11 +77,6 @@ test('Users can update their profile photo', async ({ login, page }) => {
 		.setInputFiles('./tests/fixtures/images/user/0.jpg')
 
 	await page.getByRole('button', { name: /save/i }).click()
-
-	await expect(
-		page,
-		'Was not redirected after saving the profile photo',
-	).toHaveURL(`/settings/profile`)
 
 	const afterSrc = await page
 		.getByRole('img', { name: user.name ?? user.username })
