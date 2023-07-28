@@ -88,7 +88,7 @@ if (written) {
 	// delete node_modules/.cache
 	const cacheDir = path.join(workshopRoot, 'node_modules', '.cache')
 	if (exists(cacheDir)) {
-		await fs.promises.rmdir(cacheDir, { recursive: true })
+		await fs.promises.rm(cacheDir, { recursive: true })
 	}
 	console.log('all fixed up')
 }

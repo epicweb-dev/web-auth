@@ -28,10 +28,24 @@ export async function getUserId(request: Request) {
 	return user.id
 }
 
-export async function requireUserId(request: Request) {
+export async function requireUserId(
+	request: Request,
+	{ redirectTo }: { redirectTo?: string | null } = {},
+) {
 	const userId = await getUserId(request)
 	if (!userId) {
-		throw redirect('/login')
+		const requestUrl = new URL(request.url)
+		redirectTo =
+			redirectTo === null
+				? null
+				: redirectTo ?? `${requestUrl.pathname}${requestUrl.search}`
+		const loginParams = redirectTo
+			? new URLSearchParams([['redirectTo', redirectTo]])
+			: null
+		const loginRedirect = ['/login', loginParams?.toString()]
+			.filter(Boolean)
+			.join('?')
+		throw redirect(loginRedirect)
 	}
 	return userId
 }

@@ -6,7 +6,8 @@ import {
 	type DataFunctionArgs,
 	type V2_MetaFunction,
 } from '@remix-run/node'
-import { Form, Link, useActionData } from '@remix-run/react'
+import { Form, Link, useActionData, useSearchParams } from '@remix-run/react'
+import { safeRedirect } from 'remix-utils'
 import { z } from 'zod'
 import { GeneralErrorBoundary } from '~/components/error-boundary.tsx'
 import { CheckboxField, ErrorList, Field } from '~/components/forms.tsx'
@@ -26,6 +27,7 @@ import { checkboxSchema } from '~/utils/zod-extensions.ts'
 const LoginFormSchema = z.object({
 	username: usernameSchema,
 	password: passwordSchema,
+	redirectTo: z.string().optional(),
 	remember: checkboxSchema(),
 })
 
@@ -67,12 +69,12 @@ export async function action({ request }: DataFunctionArgs) {
 		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 
-	const { user, remember } = submission.value
+	const { user, remember, redirectTo } = submission.value
 
 	const cookieSession = await getSession(request.headers.get('cookie'))
 	cookieSession.set(userIdKey, user.id)
 
-	return redirect('/', {
+	return redirect(safeRedirect(redirectTo), {
 		headers: {
 			'Set-Cookie': await commitSession(cookieSession, {
 				// Cookies with no expiration are cleared when the tab/window closes
@@ -85,12 +87,14 @@ export async function action({ request }: DataFunctionArgs) {
 }
 
 export default function LoginPage() {
+	const [searchParams] = useSearchParams()
 	const actionData = useActionData<typeof action>()
 	const isSubmitting = useIsSubmitting()
 
 	const [form, fields] = useForm({
 		id: 'login-form',
 		constraint: getFieldsetConstraint(LoginFormSchema),
+		defaultValue: { redirectTo: searchParams.get('redirectTo') },
 		lastSubmission: actionData?.submission,
 		onValidate({ formData }) {
 			return parse(formData, { schema: LoginFormSchema })
@@ -152,6 +156,7 @@ export default function LoginPage() {
 								</div>
 							</div>
 
+							<input {...conform.input(fields.redirectTo)} type="hidden" />
 							<ErrorList errors={form.errors} id={form.errorId} />
 
 							<div className="flex items-center justify-between gap-6 pt-3">

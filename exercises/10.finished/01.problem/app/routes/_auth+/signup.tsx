@@ -105,7 +105,7 @@ export async function action({ request }: DataFunctionArgs) {
 	const cookieSession = await getSession(request.headers.get('cookie'))
 	cookieSession.set(authenticator.sessionKey, session.id)
 
-	return redirect(safeRedirect(redirectTo, '/'), {
+	return redirect(safeRedirect(redirectTo), {
 		headers: {
 			'Set-Cookie': await commitSession(cookieSession, {
 				// Cookies with no expiration are cleared when the tab/window closes
@@ -128,14 +128,13 @@ export default function SignupRoute() {
 	const [form, fields] = useForm({
 		id: 'signup',
 		constraint: getFieldsetConstraint(SignupFormSchema),
+		defaultValue: { redirectTo: searchParams.get('redirectTo') },
 		lastSubmission: actionData?.submission,
 		onValidate({ formData }) {
 			return parse(formData, { schema: SignupFormSchema })
 		},
 		shouldRevalidate: 'onBlur',
 	})
-
-	const redirectTo = searchParams.get('redirectTo') || '/'
 
 	return (
 		<div className="container flex min-h-full flex-col justify-center pb-32 pt-20">
@@ -222,12 +221,7 @@ export default function SignupRoute() {
 						errors={fields.remember.errors}
 					/>
 
-					<input
-						name={fields.redirectTo.name}
-						type="hidden"
-						value={redirectTo}
-					/>
-
+					<input {...conform.input(fields.redirectTo)} type="hidden" />
 					<ErrorList
 						errors={[...form.errors, data.formError]}
 						id={form.errorId}

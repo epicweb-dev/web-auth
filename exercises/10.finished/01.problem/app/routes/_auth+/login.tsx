@@ -6,7 +6,13 @@ import {
 	type DataFunctionArgs,
 	type V2_MetaFunction,
 } from '@remix-run/node'
-import { Form, Link, useActionData, useLoaderData } from '@remix-run/react'
+import {
+	Form,
+	Link,
+	useActionData,
+	useLoaderData,
+	useSearchParams,
+} from '@remix-run/react'
 import { FormStrategy } from 'remix-auth-form'
 import { safeRedirect } from 'remix-utils'
 import { z } from 'zod'
@@ -108,12 +114,14 @@ export async function action({ request }: DataFunctionArgs) {
 
 export default function LoginPage() {
 	const data = useLoaderData<typeof loader>()
+	const [searchParams] = useSearchParams()
 	const actionData = useActionData<typeof action>()
 	const isSubmitting = useIsSubmitting()
 
 	const [form, fields] = useForm({
 		id: 'login-form',
 		constraint: getFieldsetConstraint(LoginFormSchema),
+		defaultValue: { redirectTo: searchParams.get('redirectTo') },
 		lastSubmission: actionData?.submission,
 		onValidate({ formData }) {
 			return parse(formData, { schema: LoginFormSchema })

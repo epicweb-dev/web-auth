@@ -89,6 +89,12 @@
       "path": "exercises/06.protecting-routes/02.solution.authenticated"
     },
     {
+      "path": "exercises/06.protecting-routes/03.problem.redirect"
+    },
+    {
+      "path": "exercises/06.protecting-routes/03.solution.redirect"
+    },
+    {
       "path": "exercises/07.roles/01.problem.schema"
     },
     {
