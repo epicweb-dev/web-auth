@@ -61,14 +61,11 @@ export async function action({ request }: DataFunctionArgs) {
 					const sessionId = await authenticator.authenticate(
 						FormStrategy.name,
 						request,
-						{
-							throwOnError: true,
-							context: { formData },
-						},
+						{ throwOnError: true, context: { formData } },
 					)
 					const session = await prisma.session.findUniqueOrThrow({
+						select: { id: true, expirationDate: true },
 						where: { id: sessionId },
-						select: { userId: true, id: true, expirationDate: true },
 					})
 					return { ...data, session }
 				} catch (error) {

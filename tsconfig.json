@@ -119,6 +119,18 @@
       "path": "exercises/07.roles/04.solution.ui-utils"
     },
     {
+      "path": "exercises/08.managed-sessions/01.problem.schema"
+    },
+    {
+      "path": "exercises/08.managed-sessions/01.solution.schema"
+    },
+    {
+      "path": "exercises/08.managed-sessions/02.problem.session-key"
+    },
+    {
+      "path": "exercises/08.managed-sessions/02.solution.session-key"
+    },
+    {
       "path": "exercises/10.finished/01.problem"
     }
   ]
