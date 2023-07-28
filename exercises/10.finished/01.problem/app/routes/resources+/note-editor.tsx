@@ -8,7 +8,7 @@ import {
 } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
 import { createId as cuid } from '@paralleldrive/cuid2'
-import { type Image, type Note } from '@prisma/client'
+import { type Note, type NoteImage } from '@prisma/client'
 import {
 	unstable_createMemoryUploadHandler as createMemoryUploadHandler,
 	json,
@@ -30,7 +30,7 @@ import { StatusButton } from '~/components/ui/status-button.tsx'
 import { Textarea } from '~/components/ui/textarea.tsx'
 import { requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
-import { cn, transformFile } from '~/utils/misc.tsx'
+import { cn, getNoteImgSrc } from '~/utils/misc.tsx'
 
 const ROUTE_URL = '/resources/note-editor'
 const titleMinLength = 1
@@ -82,8 +82,13 @@ export async function action({ request }: DataFunctionArgs) {
 				...data,
 				images: await Promise.all(
 					images.map(async image => ({
-						...image,
-						file: await transformFile(image.file),
+						id: image.id,
+						altText: image.altText,
+						contentType: image.file.type,
+						blob:
+							image.file.size > 0
+								? Buffer.from(await image.file.arrayBuffer())
+								: null,
 					})),
 				),
 			}
@@ -102,36 +107,41 @@ export async function action({ request }: DataFunctionArgs) {
 	const { id: noteId, title, content, images = [] } = submission.value
 
 	const updatedNote = await prisma.$transaction(async $prisma => {
-		if (noteId) {
-			await $prisma.image.deleteMany({
-				where: {
-					noteId,
-					id: { notIn: images.map(i => i.id).filter(Boolean) },
+		const note = await $prisma.note.upsert({
+			select: { id: true, owner: { select: { username: true } } },
+			where: { id: noteId ?? '__new_note__' },
+			create: {
+				ownerId: userId,
+				title,
+				content,
+			},
+			update: {
+				title,
+				content,
+				images: {
+					deleteMany: { id: { notIn: images.map(i => i.id).filter(Boolean) } },
 				},
-			})
-		}
+			},
+		})
 
-		const updatedImages = await Promise.all(
+		await Promise.all(
 			images.map(async image => {
-				if (image.file) {
-					const id = image.id ?? cuid()
-					return await $prisma.image.upsert({
+				const { blob } = image
+				if (blob) {
+					return await $prisma.noteImage.upsert({
 						select: { id: true },
-						where: { id },
-						create: {
-							noteId,
-							altText: image.altText,
-							file: { create: image.file },
-						},
+						where: { id: image.id ?? '__new_image__' },
+						create: { ...image, blob, noteId: note.id },
 						update: {
+							...image,
+							blob,
 							// update the id since it is used for caching
 							id: cuid(),
-							altText: image.altText,
-							file: { update: image.file },
+							noteId: note.id,
 						},
 					})
 				} else if (image.id) {
-					return await $prisma.image.update({
+					return await $prisma.noteImage.update({
 						select: { id: true },
 						where: { id: image.id },
 						data: { altText: image.altText },
@@ -139,32 +149,7 @@ export async function action({ request }: DataFunctionArgs) {
 				}
 			}),
 		)
-
-		if (noteId) {
-			return await $prisma.note.update({
-				select: { id: true, owner: { select: { username: true } } },
-				where: { id: noteId },
-				data: {
-					title,
-					content,
-					images: {
-						set: updatedImages.filter(Boolean),
-					},
-				},
-			})
-		} else {
-			return await $prisma.note.create({
-				select: { id: true, owner: { select: { username: true } } },
-				data: {
-					ownerId: userId,
-					title,
-					content,
-					images: {
-						connect: updatedImages.filter(Boolean),
-					},
-				},
-			})
-		}
+		return note
 	})
 
 	return redirect(
@@ -177,7 +162,7 @@ export function NoteEditor({
 }: {
 	note?: SerializeFrom<
 		Pick<Note, 'id' | 'title' | 'content'> & {
-			images: Array<Pick<Image, 'id' | 'altText'>>
+			images: Array<Pick<NoteImage, 'id' | 'altText'>>
 		}
 	>
 }) {
@@ -291,7 +276,7 @@ function ImageChooser({
 	const fields = useFieldset(ref, config)
 	const existingImage = Boolean(fields.id.defaultValue)
 	const [previewImage, setPreviewImage] = useState<string | null>(
-		existingImage ? `/resources/images/${fields.id.defaultValue}` : null,
+		fields.id.defaultValue ? getNoteImgSrc(fields.id.defaultValue) : null,
 	)
 	const [altText, setAltText] = useState(fields.altText.defaultValue ?? '')
 

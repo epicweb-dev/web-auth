@@ -19,7 +19,6 @@ import { authenticator, requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import {
 	getUserImgSrc,
-	transformFile,
 	useDoubleCheck,
 	useIsSubmitting,
 } from '~/utils/misc.tsx'
@@ -62,15 +61,19 @@ export async function action({ request }: DataFunctionArgs) {
 	)
 	const intent = formData.get('intent')
 	if (intent === 'delete') {
-		await prisma.image.deleteMany({ where: { userId } })
+		await prisma.userImage.deleteMany({ where: { userId } })
 		return redirect('/settings/profile')
 	}
 
 	const submission = await parse(formData, {
 		schema: PhotoFormSchema.transform(async data => {
-			const file = await transformFile(data.photoFile)
-			if (!file) return z.NEVER
-			return { file }
+			if (data.photoFile.size <= 0) return z.NEVER
+			return {
+				image: {
+					contentType: data.photoFile.type,
+					blob: Buffer.from(await data.photoFile.arrayBuffer()),
+				},
+			}
 		}),
 		async: true,
 	})
@@ -82,13 +85,13 @@ export async function action({ request }: DataFunctionArgs) {
 		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 
-	const { file } = submission.value
+	const { image } = submission.value
 
 	await prisma.$transaction(async $prisma => {
-		await $prisma.image.deleteMany({ where: { userId } })
+		await $prisma.userImage.deleteMany({ where: { userId } })
 		await $prisma.user.update({
 			where: { id: userId },
-			data: { image: { create: { file: { create: file } } } },
+			data: { image: { create: image } },
 		})
 	})
 

@@ -26,7 +26,7 @@ export async function loader({ request }: DataFunctionArgs) {
 	const rawUsers = await prisma.$queryRaw`
 		SELECT user.id, user.username, user.name, image.id AS imageId
 		FROM User AS user
-		LEFT JOIN Image AS image ON user.id = image.userId
+		LEFT JOIN UserImage AS image ON user.id = image.userId
 		WHERE user.username LIKE ${like}
 		OR user.name LIKE ${like}
 		ORDER BY (
