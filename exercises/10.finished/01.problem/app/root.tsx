@@ -1,3 +1,5 @@
+import { useForm } from '@conform-to/react'
+import { parse } from '@conform-to/zod'
 import { cssBundleHref } from '@remix-run/css-bundle'
 import {
 	json,
@@ -12,25 +14,27 @@ import {
 	Outlet,
 	Scripts,
 	ScrollRestoration,
+	useFetcher,
 	useLoaderData,
 	useMatches,
 	type V2_MetaFunction,
 } from '@remix-run/react'
 import os from 'node:os'
+import { z } from 'zod'
+import { ErrorList } from '~/components/forms.tsx'
+import { getTheme, setTheme } from '~/utils/theme.server.ts'
 import faviconAssetUrl from './assets/favicon.svg'
 import { GeneralErrorBoundary } from './components/error-boundary.tsx'
 import { SearchBar } from './components/search-bar.tsx'
 import { Button } from './components/ui/button.tsx'
 import { Icon, href as iconHref } from './components/ui/icon.tsx'
 import { KCDShop } from './kcdshop.tsx'
-import { ThemeSwitch, useTheme } from './routes/resources+/theme/index.tsx'
-import { getTheme } from './routes/resources+/theme/theme.server.ts'
 import fontStylestylesheetUrl from './styles/font.css'
 import tailwindStylesheetUrl from './styles/tailwind.css'
 import { authenticator, getUserId } from './utils/auth.server.ts'
 import { prisma } from './utils/db.server.ts'
 import { getEnv } from './utils/env.server.ts'
-import { getUserImgSrc } from './utils/misc.tsx'
+import { getUserImgSrc, invariantResponse } from './utils/misc.tsx'
 import { useOptionalUser, useUserIsAdmin } from './utils/user.ts'
 
 export const links: LinksFunction = () => {
@@ -80,6 +84,34 @@ export async function loader({ request }: DataFunctionArgs) {
 	})
 }
 
+const ThemeFormSchema = z.object({
+	theme: z.enum(['light', 'dark']),
+})
+
+export async function action({ request }: DataFunctionArgs) {
+	const formData = await request.formData()
+	invariantResponse(
+		formData.get('intent') === 'update-theme',
+		'Invalid intent',
+		{ status: 400 },
+	)
+	const submission = parse(formData, {
+		schema: ThemeFormSchema,
+	})
+	if (!submission.value) {
+		return json({ status: 'error', submission } as const, { status: 400 })
+	}
+	if (submission.intent !== 'submit') {
+		return json({ status: 'success', submission } as const)
+	}
+	const { theme } = submission.value
+
+	const responseInit = {
+		headers: { 'Set-Cookie': setTheme(theme) },
+	}
+	return json({ success: true, submission }, responseInit)
+}
+
 function Document({
 	children,
 	theme,
@@ -116,12 +148,11 @@ function Document({
 export default function App() {
 	const data = useLoaderData<typeof loader>()
 	const user = useOptionalUser()
-	const theme = useTheme()
 	const matches = useMatches()
 	const userIsAdmin = useUserIsAdmin()
 	const isOnSearchPage = matches.find(m => m.id === 'routes/users+/index')
 	return (
-		<Document theme={theme} env={data.ENV}>
+		<Document theme={data.theme} env={data.ENV}>
 			<header className="container mx-auto py-6">
 				<nav className="flex items-center justify-between">
 					<Link to="/">
@@ -184,6 +215,53 @@ export default function App() {
 			</div>
 			<div className="h-5" />
 		</Document>
+	)
+}
+
+export function ThemeSwitch({
+	userPreference,
+}: {
+	userPreference?: 'light' | 'dark'
+}) {
+	const fetcher = useFetcher<typeof action>()
+
+	const [form] = useForm({
+		id: 'theme-switch',
+		lastSubmission: fetcher.data?.submission,
+		onValidate({ formData }) {
+			return parse(formData, { schema: ThemeFormSchema })
+		},
+	})
+
+	const mode = userPreference ?? 'light'
+	const nextMode = mode === 'light' ? 'dark' : 'light'
+	const modeLabel = {
+		light: (
+			<Icon name="sun">
+				<span className="sr-only">Light</span>
+			</Icon>
+		),
+		dark: (
+			<Icon name="moon">
+				<span className="sr-only">Dark</span>
+			</Icon>
+		),
+	}
+
+	return (
+		<fetcher.Form method="POST" {...form.props}>
+			<input type="hidden" name="theme" value={nextMode} />
+			<div className="flex gap-2">
+				<button
+					name="intent"
+					value="update-theme"
+					className="flex h-8 w-8 cursor-pointer items-center justify-center"
+				>
+					{modeLabel[mode]}
+				</button>
+			</div>
+			<ErrorList errors={form.errors} id={form.errorId} />
+		</fetcher.Form>
 	)
 }
 

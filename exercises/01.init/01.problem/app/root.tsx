@@ -23,8 +23,6 @@ import { SearchBar } from './components/search-bar.tsx'
 import { Button } from './components/ui/button.tsx'
 import { href as iconHref } from './components/ui/icon.tsx'
 import { KCDShop } from './kcdshop.tsx'
-import { ThemeSwitch, useTheme } from './routes/resources+/theme/index.tsx'
-import { getTheme } from './routes/resources+/theme/theme.server.ts'
 import fontStylestylesheetUrl from './styles/font.css'
 import tailwindStylesheetUrl from './styles/tailwind.css'
 import { getEnv } from './utils/env.server.ts'
@@ -43,22 +41,19 @@ export const links: LinksFunction = () => {
 export async function loader({ request }: DataFunctionArgs) {
 	return json({
 		username: os.userInfo().username,
-		theme: getTheme(request),
 		ENV: getEnv(),
 	})
 }
 
 function Document({
 	children,
-	theme,
 	env,
 }: {
 	children: React.ReactNode
-	theme?: 'dark' | 'light'
 	env?: Record<string, string>
 }) {
 	return (
-		<html lang="en" className={`${theme} h-full overflow-x-hidden`}>
+		<html lang="en" className="h-full overflow-x-hidden">
 			<head>
 				<Meta />
 				<meta charSet="utf-8" />
@@ -83,11 +78,10 @@ function Document({
 
 export default function App() {
 	const data = useLoaderData<typeof loader>()
-	const theme = useTheme()
 	const matches = useMatches()
 	const isOnSearchPage = matches.find(m => m.id === 'routes/users+/index')
 	return (
-		<Document theme={theme} env={data.ENV}>
+		<Document env={data.ENV}>
 			<header className="container mx-auto py-6">
 				<nav className="flex items-center justify-between">
 					<Link to="/">
@@ -118,7 +112,6 @@ export default function App() {
 				</Link>
 				<div className="flex gap-2 items-center">
 					<p>Built with ♥️ by {data.username}</p>
-					<ThemeSwitch userPreference={data.theme} />
 				</div>
 			</div>
 			<div className="h-5" />
