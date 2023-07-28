@@ -27,7 +27,7 @@ authenticator.use(
 			password: form.get('password'),
 		})
 
-		const user = await verifyUserPassword({ username }, password)
+		const user = await verifyUserPassword(username, password)
 		if (!user) {
 			throw new AuthorizationError('Invalid username or password')
 		}
@@ -153,11 +153,11 @@ export async function getPasswordHash(password: string) {
 }
 
 export async function verifyUserPassword(
-	where: Pick<User, 'username'> | Pick<User, 'id'>,
+	username: string,
 	password: Password['hash'],
 ) {
 	const userWithPassword = await prisma.user.findUnique({
-		where,
+		where: { username },
 		select: { id: true, password: { select: { hash: true } } },
 	})
 

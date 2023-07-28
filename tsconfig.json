@@ -5,7 +5,52 @@
   ],
   "references": [
     {
-      "path": "exercises/01.init/01.problem"
+      "path": "exercises/01.cookies/01.problem.theme"
+    },
+    {
+      "path": "exercises/01.cookies/01.solution.theme"
+    },
+    {
+      "path": "exercises/02.cookie-sessions/01.problem.session"
+    },
+    {
+      "path": "exercises/02.cookie-sessions/01.solution.session"
+    },
+    {
+      "path": "exercises/02.cookie-sessions/02.problem.login"
+    },
+    {
+      "path": "exercises/02.cookie-sessions/02.solution.login"
+    },
+    {
+      "path": "exercises/02.cookie-sessions/03.problem.root"
+    },
+    {
+      "path": "exercises/02.cookie-sessions/03.solution.root"
+    },
+    {
+      "path": "exercises/03.password/01.problem.schema"
+    },
+    {
+      "path": "exercises/03.password/01.solution.schema"
+    },
+    {
+      "path": "exercises/03.password/02.problem.seed"
+    },
+    {
+      "path": "exercises/03.password/02.solution.seed"
+    },
+    {
+      "path": "exercises/03.password/03.problem.signup"
+    },
+    {
+      "path": "exercises/03.password/03.solution.signup"
+    },
+    {
+      "path": "exercises/03.password/04.problem.login"
+    },
+    {
+      "path": "exercises/03.password/04.solution.login"
     },
     {
       "path": "exercises/10.finished/01.problem"

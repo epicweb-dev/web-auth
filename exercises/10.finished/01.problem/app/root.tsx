@@ -22,10 +22,11 @@ import {
 import os from 'node:os'
 import { z } from 'zod'
 import { ErrorList } from '~/components/forms.tsx'
-import { getTheme, setTheme } from '~/utils/theme.server.ts'
+import { getTheme, setTheme, type Theme } from '~/utils/theme.server.ts'
 import faviconAssetUrl from './assets/favicon.svg'
 import { GeneralErrorBoundary } from './components/error-boundary.tsx'
 import { SearchBar } from './components/search-bar.tsx'
+import { Spacer } from './components/spacer.tsx'
 import { Button } from './components/ui/button.tsx'
 import { Icon, href as iconHref } from './components/ui/icon.tsx'
 import { KCDShop } from './kcdshop.tsx'
@@ -118,7 +119,7 @@ function Document({
 	env,
 }: {
 	children: React.ReactNode
-	theme?: 'dark' | 'light'
+	theme?: Theme
 	env?: Record<string, string>
 }) {
 	return (
@@ -213,16 +214,12 @@ export default function App() {
 					<ThemeSwitch userPreference={data.theme} />
 				</div>
 			</div>
-			<div className="h-5" />
+			<Spacer size="3xs" />
 		</Document>
 	)
 }
 
-export function ThemeSwitch({
-	userPreference,
-}: {
-	userPreference?: 'light' | 'dark'
-}) {
+export function ThemeSwitch({ userPreference }: { userPreference?: Theme }) {
 	const fetcher = useFetcher<typeof action>()
 
 	const [form] = useForm({
