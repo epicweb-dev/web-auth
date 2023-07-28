@@ -22,6 +22,7 @@ import {
 	invariantResponse,
 	useIsSubmitting,
 } from '~/utils/misc.tsx'
+import { useOptionalUser } from '~/utils/user.ts'
 import { type loader as notesLoader } from './notes.tsx'
 
 export async function loader({ params }: DataFunctionArgs) {
@@ -83,11 +84,13 @@ export async function action({ request, params }: DataFunctionArgs) {
 
 export default function NoteRoute() {
 	const data = useLoaderData<typeof loader>()
+	const user = useOptionalUser()
+	const isOwner = user?.id === data.note.ownerId
 
 	return (
 		<div className="absolute inset-0 flex flex-col px-10">
 			<h2 className="mb-2 pt-12 text-h2 lg:mb-6">{data.note.title}</h2>
-			<div className="pb-24 overflow-y-auto">
+			<div className={`${isOwner ? 'pb-24' : 'pb-12'} overflow-y-auto`}>
 				<ul className="flex flex-wrap gap-5 py-5">
 					{data.note.images.map(image => (
 						<li key={image.id}>
@@ -105,26 +108,28 @@ export default function NoteRoute() {
 					{data.note.content}
 				</p>
 			</div>
-			<div className={floatingToolbarClassName}>
-				<span className="text-sm text-foreground/90 max-[524px]:hidden">
-					<Icon name="clock" className="scale-125">
-						{data.timeAgo} ago
-					</Icon>
-				</span>
-				<div className="grid flex-1 grid-cols-2 justify-end gap-2 min-[525px]:flex md:gap-4">
-					<DeleteNote id={data.note.id} />
-					<Button
-						asChild
-						className="min-[525px]:max-md:aspect-square min-[525px]:max-md:px-0"
-					>
-						<Link to="edit">
-							<Icon name="pencil-1" className="scale-125 max-md:scale-150">
-								<span className="max-md:hidden">Edit</span>
-							</Icon>
-						</Link>
-					</Button>
+			{isOwner ? (
+				<div className={floatingToolbarClassName}>
+					<span className="text-sm text-foreground/90 max-[524px]:hidden">
+						<Icon name="clock" className="scale-125">
+							{data.timeAgo} ago
+						</Icon>
+					</span>
+					<div className="grid flex-1 grid-cols-2 justify-end gap-2 min-[525px]:flex md:gap-4">
+						<DeleteNote id={data.note.id} />
+						<Button
+							asChild
+							className="min-[525px]:max-md:aspect-square min-[525px]:max-md:px-0"
+						>
+							<Link to="edit">
+								<Icon name="pencil-1" className="scale-125 max-md:scale-150">
+									<span className="max-md:hidden">Edit</span>
+								</Icon>
+							</Link>
+						</Button>
+					</div>
 				</div>
-			</div>
+			) : null}
 		</div>
 	)
 }
