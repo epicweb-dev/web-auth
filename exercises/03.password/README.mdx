@@ -75,5 +75,5 @@ generating bcrypt hashes is [bcryptjs](https://www.npmjs.com/package/bcryptjs).
 bcrypt hashes are slow and generate a random salt for you. This means that you
 don't need to worry about generating a salt and you can simply store the whole
 thing as is. Then when the user logs in, you provide the stored hash and the
-password they provide to bcrypt's `compare` function will verify the password is
+password they provide to bcryptjs's `compare` function will verify the password is
 correct.

@@ -1,1 +1,23 @@
 # UI Utils
+
+👨‍💼 The user's information is something we'll want to access throughout the app
+UI. So I want you to create a couple of handy utilities to help us do that.
+
+🐨 Start out by making the utilities in <InlineFile file="app/utils/user.ts" />,
+then go through the rest of the files (in the files menu below) to use the
+utilities you make.
+
+For this first bit, we don't have any authenticated-only pages yet, but we'll
+get there soon.
+
+As a reminder, you can get the root loader's data like so:
+
+```tsx
+const { user } = useRouteLoaderData<typeof rootLoader>('root')
+```
+
+To test out that this worked, sign in as a user (for example, username `kody`
+and password `kodylovesyou`) and check the affected routes. Then open (in
+another browser) those routes to check the unauthenticated experience.
+
+- [📜 `useRouteLoaderData`](https://remix.run/docs/en/main/hooks/use-route-loader-data)

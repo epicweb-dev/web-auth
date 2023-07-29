@@ -86,7 +86,10 @@ export async function action({ request, params }: DataFunctionArgs) {
 
 export default function NoteRoute() {
 	const data = useLoaderData<typeof loader>()
-	const isOwner = true // 🐨 fix this
+	// 🐨 get the logged in user via useOptionalUser, then determine whether the
+	// logged in user is the owner by comparing the owner's id to the logged in
+	// user's id.
+	const isOwner = true
 
 	return (
 		<div className="absolute inset-0 flex flex-col px-10">

@@ -24,6 +24,9 @@ export async function loader({ params }: DataFunctionArgs) {
 
 export default function NotesRoute() {
 	const data = useLoaderData<typeof loader>()
+	// 🐨 get the logged in user via useOptionalUser, then determine whether the
+	// logged in user is the owner by comparing the owner's id to the logged in
+	// user's id.
 	const isOwner = false // 🐨 fix this
 	const ownerDisplayName = data.owner.name ?? data.owner.username
 	const navLinkDefaultClassName =

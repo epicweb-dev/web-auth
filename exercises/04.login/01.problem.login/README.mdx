@@ -1,1 +1,29 @@
 # Login
+
+👨‍💼 Let's verify the password now!
+
+```ts
+import bcrypt from 'bcryptjs'
+
+const isValid = await bcrypt.compare(password, hash)
+```
+
+Please add some logic to the <InlineFile file="app/routes/_auth+/login.tsx" />
+file to verify the user's password. You'll need to get the user's hash, and take
+care to not return the hash to the browser.
+
+You can test this out by going to <LinkToApp to="/users" />, choosing a random
+user, and trying to log in with their password (which is equal to their
+username). Or you can login as Kody:
+
+- `username`: `kody`
+- `password`: `kodylovesyou`
+
+Make sure to test out the error case as well!
+
+<callout-warning>
+	Since we haven't implemented logout yet, you may need to clear your cookies
+	before you can test out the error case 😅
+</callout-warning>
+
+- [📜 `bcryptjs`](https://www.npmjs.com/package/bcryptjs)

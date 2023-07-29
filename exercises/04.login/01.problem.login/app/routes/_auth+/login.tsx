@@ -30,6 +30,7 @@ export async function action({ request }: DataFunctionArgs) {
 				if (intent !== 'submit') return { ...data, user: null }
 
 				const user = await prisma.user.findUnique({
+					// 🐨 include the password hash in this select
 					select: { id: true },
 					where: { username: data.username },
 				})
@@ -40,7 +41,12 @@ export async function action({ request }: DataFunctionArgs) {
 					})
 					return z.NEVER
 				}
-				// TODO: verify the password
+
+				// 🐨 use bcrypt.compare to compare the provided password with the hash
+
+				// 🐨 if it's not valid, then create the same error as above and return z.NEVER
+
+				// 🐨 don't return the password hash here, just make a user which is an object with an id
 				return { ...data, user }
 			}),
 		async: true,

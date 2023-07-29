@@ -135,6 +135,8 @@ function Document({
 export default function App() {
 	const data = useLoaderData<typeof loader>()
 	const theme = useTheme()
+	// 🐨 you can leave this as-is, but if you want some consistency, change this
+	// to use the useOptionalUser hook instead.
 	const user = data.user
 	const matches = useMatches()
 	const isOnSearchPage = matches.find(m => m.id === 'routes/users+/index')

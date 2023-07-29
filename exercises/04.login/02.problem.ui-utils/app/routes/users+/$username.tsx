@@ -35,7 +35,10 @@ export default function ProfileRoute() {
 	const data = useLoaderData<typeof loader>()
 	const user = data.user
 	const userDisplayName = user.name ?? user.username
-	const isLoggedInUser = false // 🐨 fix this
+	// 🐨 get the logged in user and compare the user.id and the logged in user's
+	// id to determine whether this is the logged in user's profile or not.
+	// 💰 you'll want useOptionalUser for this one.
+	const isLoggedInUser = false
 
 	return (
 		<div className="container mb-48 mt-36 flex flex-col items-center justify-center">

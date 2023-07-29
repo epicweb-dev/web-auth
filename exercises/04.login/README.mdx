@@ -1,1 +1,76 @@
 # Login
+
+We've already discussed verifying the user's password in the previous exercise,
+so there's not much to add at a fundamental level to the background of this
+exercise.
+
+We also already implemented loading the user's data once they have the proper
+session cookie.
+
+So this exercise is really just a matter of verifying the user's password before
+setting the session cookie and then creating some utilities to make accessing
+the user information in the UI easier.
+
+## Verifying the password
+
+Because we're generating the hash and salt using `bcrypt`, we simply take the
+`hash` we stored and pass it to `bcrypt` along with the provided password to
+verify that the password is correct.
+
+```ts
+import bcrypt from 'bcryptjs'
+
+const isValid = await bcrypt.compare(password, hash)
+```
+
+`bcrypt` will take care of splitting the hash into it's salt and hash parts and
+then hashing the provided password with the salt to see if it matches.
+
+## Remix Route Data
+
+One important thing to understand about the way Remix nested routes is that
+all the UI for child routes have access to the data returned by their parent
+routes as well. This means that the UI of the child routes should not need to
+get any user information from the server that's made available by the root
+route.
+
+You can access the data from parent routes using
+[the `useRouteLoaderData` hook](https://remix.run/docs/en/main/hooks/use-route-loader-data).
+For example:
+
+```tsx
+const { user } = useRouteLoaderData('root')
+```
+
+To make this type-safe, you can get the loader and pass it to the hook as a
+generic:
+
+```tsx
+const { user } = useRouteLoaderData<typeof rootLoader>('root')
+```
+
+## Optional Users
+
+Many applications have parts of the UI that are shown to only anonymous users
+(login, signup, etc), parts of the UI that are shown only to authenticated
+(settings, etc), and parts of the UI that are shown to both (home page, etc).
+
+So normally your `user` data can be the `User` object or `undefined`. But this
+can be annoying on pages where you know the user is logged in, because you have
+to check if the user is `undefined` before you can access the user's data.
+
+So, to combat this, you can create two hooks:
+
+- `useOptionalUser` - returns the user if they're logged in, or `undefined` if
+  they're not (used for pages that are shown to both authenticated and
+  unauthenticated users).
+- `useUser` - returns the user if they're logged in, or throws an error if
+  they're not (used for pages that are shown only to authenticated users).
+
+This way if the user data is unavailable, you can get a nice error message
+instead of "Cannot read property 'name' of undefined". And on top of that
+TypeScript will know that the user is not `undefined` when you use the
+`useUser` hook, so you don't have to do any extra checks.
+
+- [📜 `useRouteLoaderData`](https://remix.run/docs/en/main/hooks/use-route-loader-data)
+- [📜 `bcryptjs`](https://www.npmjs.com/package/bcryptjs)
