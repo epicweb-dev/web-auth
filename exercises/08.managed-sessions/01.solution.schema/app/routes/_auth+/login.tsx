@@ -40,18 +40,21 @@ export async function action({ request }: DataFunctionArgs) {
 	await requireAnonymous(request)
 	const formData = await request.formData()
 	const submission = await parse(formData, {
-		schema: LoginFormSchema.transform(async (data, ctx) => {
-			const user = await login(data)
-			if (!user) {
-				ctx.addIssue({
-					code: 'custom',
-					message: 'Invalid username or password',
-				})
-				return z.NEVER
-			}
+		schema: intent =>
+			LoginFormSchema.transform(async (data, ctx) => {
+				if (intent !== 'submit') return { ...data, user: null }
 
-			return { ...data, user }
-		}),
+				const user = await login(data)
+				if (!user) {
+					ctx.addIssue({
+						code: 'custom',
+						message: 'Invalid username or password',
+					})
+					return z.NEVER
+				}
+
+				return { ...data, user }
+			}),
 		async: true,
 	})
 	// get the password off the payload that's sent back
@@ -62,7 +65,7 @@ export async function action({ request }: DataFunctionArgs) {
 		delete submission.value?.password
 		return json({ status: 'idle', submission } as const)
 	}
-	if (!submission.value) {
+	if (!submission.value?.user) {
 		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 

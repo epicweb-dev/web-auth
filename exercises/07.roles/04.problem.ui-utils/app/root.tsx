@@ -84,11 +84,11 @@ export async function action({ request }: DataFunctionArgs) {
 	const submission = parse(formData, {
 		schema: ThemeFormSchema,
 	})
-	if (!submission.value) {
-		return json({ status: 'error', submission } as const, { status: 400 })
-	}
 	if (submission.intent !== 'submit') {
 		return json({ status: 'success', submission } as const)
+	}
+	if (!submission.value) {
+		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 	const { theme } = submission.value
 
@@ -135,6 +135,7 @@ export default function App() {
 	const data = useLoaderData<typeof loader>()
 	const user = useOptionalUser()
 	const matches = useMatches()
+	const userIsAdmin = false // 🐨 fix this
 	const isOnSearchPage = matches.find(m => m.id === 'routes/users+/index')
 	return (
 		<Document theme={data.theme} env={data.ENV}>
@@ -167,6 +168,13 @@ export default function App() {
 										</span>
 									</Link>
 								</Button>
+								{userIsAdmin ? (
+									<Button asChild variant="secondary">
+										<Link to="/admin">
+											<Icon name="backpack">Admin</Icon>
+										</Link>
+									</Button>
+								) : null}
 							</div>
 						) : (
 							<Button asChild variant="default" size="sm">

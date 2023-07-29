@@ -84,11 +84,11 @@ export async function action({ request }: DataFunctionArgs) {
 	const submission = parse(formData, {
 		schema: ThemeFormSchema,
 	})
-	if (!submission.value) {
-		return json({ status: 'error', submission } as const, { status: 400 })
-	}
 	if (submission.intent !== 'submit') {
 		return json({ status: 'success', submission } as const)
+	}
+	if (!submission.value) {
+		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 	const { theme } = submission.value
 

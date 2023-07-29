@@ -67,7 +67,10 @@ export async function action({ request }: DataFunctionArgs) {
 		schema: DeleteFormSchema,
 		acceptMultipleErrors: () => true,
 	})
-	if (!submission.value || submission.intent !== 'submit') {
+	if (submission.intent !== 'submit') {
+		return json({ status: 'idle', submission } as const)
+	}
+	if (!submission.value) {
 		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 

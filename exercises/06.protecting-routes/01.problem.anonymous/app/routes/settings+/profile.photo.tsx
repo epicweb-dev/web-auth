@@ -36,7 +36,7 @@ const PhotoFormSchema = z.object({
 		.refine(file => file.size <= MAX_SIZE, 'Image size must be less than 3MB'),
 })
 
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader() {
 	const userId = 'TODO: get this from the request'
 	const user = await prisma.user.findUnique({
 		where: { id: userId },

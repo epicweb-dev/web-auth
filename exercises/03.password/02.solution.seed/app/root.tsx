@@ -31,11 +31,11 @@ import { Icon, href as iconHref } from './components/ui/icon.tsx'
 import { KCDShop } from './kcdshop.tsx'
 import fontStylestylesheetUrl from './styles/font.css'
 import tailwindStylesheetUrl from './styles/tailwind.css'
+import { prisma } from './utils/db.server.ts'
 import { getEnv } from './utils/env.server.ts'
 import { getUserImgSrc, invariantResponse } from './utils/misc.tsx'
-import { getTheme, setTheme, type Theme } from './utils/theme.server.ts'
 import { getSession } from './utils/session.server.ts'
-import { prisma } from './utils/db.server.ts'
+import { getTheme, setTheme, type Theme } from './utils/theme.server.ts'
 
 export const links: LinksFunction = () => {
 	return [
@@ -84,11 +84,11 @@ export async function action({ request }: DataFunctionArgs) {
 	const submission = parse(formData, {
 		schema: ThemeFormSchema,
 	})
-	if (!submission.value) {
-		return json({ status: 'error', submission } as const, { status: 400 })
-	}
 	if (submission.intent !== 'submit') {
 		return json({ status: 'success', submission } as const)
+	}
+	if (!submission.value) {
+		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 	const { theme } = submission.value
 

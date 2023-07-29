@@ -131,7 +131,10 @@
       "path": "exercises/08.managed-sessions/02.solution.session-key"
     },
     {
-      "path": "exercises/10.finished/01.problem"
+      "path": "exercises/08.managed-sessions/03.problem.delete-sessions"
+    },
+    {
+      "path": "exercises/08.managed-sessions/03.solution.delete-sessions"
     }
   ]
 }

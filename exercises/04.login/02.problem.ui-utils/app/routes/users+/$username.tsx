@@ -1,8 +1,14 @@
 import { json, type DataFunctionArgs } from '@remix-run/node'
-import { Link, useLoaderData, type V2_MetaFunction } from '@remix-run/react'
+import {
+	Form,
+	Link,
+	useLoaderData,
+	type V2_MetaFunction,
+} from '@remix-run/react'
 import { GeneralErrorBoundary } from '~/components/error-boundary.tsx'
 import { Spacer } from '~/components/spacer.tsx'
 import { Button } from '~/components/ui/button.tsx'
+import { Icon } from '~/components/ui/icon.tsx'
 import { prisma } from '~/utils/db.server.ts'
 import { getUserImgSrc, invariantResponse } from '~/utils/misc.tsx'
 
@@ -29,6 +35,7 @@ export default function ProfileRoute() {
 	const data = useLoaderData<typeof loader>()
 	const user = data.user
 	const userDisplayName = user.name ?? user.username
+	const isLoggedInUser = false // 🐨 fix this
 
 	return (
 		<div className="container mb-48 mt-36 flex flex-col items-center justify-center">
@@ -56,6 +63,15 @@ export default function ProfileRoute() {
 					<p className="mt-2 text-center text-muted-foreground">
 						Joined {data.userJoinedDisplay}
 					</p>
+					{isLoggedInUser ? (
+						<Form action="/logout" method="POST" className="mt-3">
+							<Button type="submit" variant="link" size="pill">
+								<Icon name="exit" className="scale-125 max-md:scale-150">
+									Logout
+								</Icon>
+							</Button>
+						</Form>
+					) : null}
 					<div className="mt-10 flex gap-4">
 						<Button asChild>
 							<Link to="notes" prefetch="intent">

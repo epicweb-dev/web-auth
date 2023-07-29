@@ -32,7 +32,7 @@ import { KCDShop } from './kcdshop.tsx'
 import fontStylestylesheetUrl from './styles/font.css'
 import tailwindStylesheetUrl from './styles/tailwind.css'
 import { getEnv } from './utils/env.server.ts'
-import { getUserImgSrc, invariantResponse } from './utils/misc.tsx'
+import { invariantResponse } from './utils/misc.tsx'
 import { getTheme, setTheme, type Theme } from './utils/theme.server.ts'
 
 export const links: LinksFunction = () => {
@@ -68,11 +68,11 @@ export async function action({ request }: DataFunctionArgs) {
 	const submission = parse(formData, {
 		schema: ThemeFormSchema,
 	})
-	if (!submission.value) {
-		return json({ status: 'error', submission } as const, { status: 400 })
-	}
 	if (submission.intent !== 'submit') {
 		return json({ status: 'success', submission } as const)
+	}
+	if (!submission.value) {
+		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 	const { theme } = submission.value
 
@@ -117,7 +117,6 @@ function Document({
 
 export default function App() {
 	const data = useLoaderData<typeof loader>()
-	const user = null as any // 🐨 change "null as any" to data.user
 	const matches = useMatches()
 	const isOnSearchPage = matches.find(m => m.id === 'routes/users+/index')
 	return (
@@ -134,29 +133,9 @@ export default function App() {
 						</div>
 					)}
 					<div className="flex items-center gap-10">
-						{user ? (
-							<div className="flex items-center gap-2">
-								<Button asChild variant="secondary">
-									<Link
-										to={`/users/${user.username}`}
-										className="flex items-center gap-2"
-									>
-										<img
-											className="h-8 w-8 rounded-full object-cover"
-											alt={user.name ?? user.username}
-											src={getUserImgSrc(user.image?.id)}
-										/>
-										<span className="text-body-sm font-bold">
-											{user.name ?? user.username}
-										</span>
-									</Link>
-								</Button>
-							</div>
-						) : (
-							<Button asChild variant="default" size="sm">
-								<Link to="/login">Log In</Link>
-							</Button>
-						)}
+						<Button asChild variant="default" size="sm">
+							<Link to="/login">Log In</Link>
+						</Button>
 					</div>
 				</nav>
 			</header>

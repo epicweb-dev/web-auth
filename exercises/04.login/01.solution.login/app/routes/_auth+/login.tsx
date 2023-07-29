@@ -26,34 +26,37 @@ const LoginFormSchema = z.object({
 export async function action({ request }: DataFunctionArgs) {
 	const formData = await request.formData()
 	const submission = await parse(formData, {
-		schema: LoginFormSchema.transform(async (data, ctx) => {
-			const userWithPassword = await prisma.user.findUnique({
-				select: { id: true, password: { select: { hash: true } } },
-				where: { username: data.username },
-			})
-			if (!userWithPassword || !userWithPassword.password) {
-				ctx.addIssue({
-					code: 'custom',
-					message: 'Invalid username or password',
+		schema: intent =>
+			LoginFormSchema.transform(async (data, ctx) => {
+				if (intent !== 'submit') return { ...data, user: null }
+
+				const userWithPassword = await prisma.user.findUnique({
+					select: { id: true, password: { select: { hash: true } } },
+					where: { username: data.username },
 				})
-				return z.NEVER
-			}
+				if (!userWithPassword || !userWithPassword.password) {
+					ctx.addIssue({
+						code: 'custom',
+						message: 'Invalid username or password',
+					})
+					return z.NEVER
+				}
 
-			const isValid = await bcrypt.compare(
-				data.password,
-				userWithPassword.password.hash,
-			)
+				const isValid = await bcrypt.compare(
+					data.password,
+					userWithPassword.password.hash,
+				)
 
-			if (!isValid) {
-				ctx.addIssue({
-					code: 'custom',
-					message: 'Invalid username or password',
-				})
-				return z.NEVER
-			}
+				if (!isValid) {
+					ctx.addIssue({
+						code: 'custom',
+						message: 'Invalid username or password',
+					})
+					return z.NEVER
+				}
 
-			return { ...data, user: { id: userWithPassword.id } }
-		}),
+				return { ...data, user: { id: userWithPassword.id } }
+			}),
 		async: true,
 	})
 	// get the password off the payload that's sent back
@@ -64,7 +67,7 @@ export async function action({ request }: DataFunctionArgs) {
 		delete submission.value?.password
 		return json({ status: 'idle', submission } as const)
 	}
-	if (!submission.value) {
+	if (!submission.value?.user) {
 		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 

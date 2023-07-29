@@ -25,21 +25,24 @@ const LoginFormSchema = z.object({
 export async function action({ request }: DataFunctionArgs) {
 	const formData = await request.formData()
 	const submission = await parse(formData, {
-		schema: LoginFormSchema.transform(async (data, ctx) => {
-			const user = await prisma.user.findUnique({
-				select: { id: true },
-				where: { username: data.username },
-			})
-			if (!user) {
-				ctx.addIssue({
-					code: 'custom',
-					message: 'Invalid username or password',
+		schema: intent =>
+			LoginFormSchema.transform(async (data, ctx) => {
+				if (intent !== 'submit') return { ...data, user: null }
+
+				const user = await prisma.user.findUnique({
+					select: { id: true },
+					where: { username: data.username },
 				})
-				return z.NEVER
-			}
-			// TODO: verify the password
-			return { ...data, user }
-		}),
+				if (!user) {
+					ctx.addIssue({
+						code: 'custom',
+						message: 'Invalid username or password',
+					})
+					return z.NEVER
+				}
+				// TODO: verify the password
+				return { ...data, user }
+			}),
 		async: true,
 	})
 	// get the password off the payload that's sent back
@@ -50,7 +53,7 @@ export async function action({ request }: DataFunctionArgs) {
 		delete submission.value?.password
 		return json({ status: 'idle', submission } as const)
 	}
-	if (!submission.value) {
+	if (!submission.value?.user) {
 		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 
