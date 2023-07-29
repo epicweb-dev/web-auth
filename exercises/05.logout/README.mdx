@@ -1,1 +1,81 @@
 # Logout and Expiration
+
+There are lots of different use cases for the user's session time. In some apps,
+the user wants to remain logged in basically forever, like a social media site.
+In other apps, the user wants to log out after a certain amount of time, and in
+some cases they may want to be logged out after a certain amount of inactivity
+(like a banking app).
+
+In this exercise, we're going to look at what it takes to implement a logout
+button and a session expiration.
+
+## Logout
+
+Logging out of a cookie-managed session is pretty easy. You simply need to
+remove the part of the cookie that identifies the user. You could delete the
+cookie altogether, or you could simply "unset" the user ID portion of the
+cookie:
+
+```tsx
+session.unset('userId')
+```
+
+Then you commit the session in the response and you're golden.
+
+<callout-warning>
+	It's important to note that you should almost never perform mutations within a
+	`GET` request, so rather than having a link to a `/logout` page which is too
+	common, you should have a button that performs a `POST` request to `/logout`.
+	This reduces the risk of [CSRF](https://owasp.org/www-community/attacks/csrf)
+	attacks.
+</callout-warning>
+
+## Expiration
+
+When a cookie expires, the browser will automatically delete it. So it won't
+show up in future requests. Almost like it was never created in the first place.
+
+By default, a cookie will expire when the session is over, which is when the
+browser is closed. However, you can set an expiration date on the cookie so that
+it will expire at a certain time. This is useful for things like "remember me"
+functionality, where you want the user to remain logged in for a long time.
+
+Many people misunderstand this feature because they check "remember me" and
+then they find they're logged out anyway after a certain amount of time. This
+is probably happening because even though the cookie is set to expire after a
+certain amount of time, they may not check the site again until after the
+expiration time anyway. All "remember me" is supposed to do is prevent the
+cookie from being automatically deleted when the browser is closed. Each app
+will have its own rules about how long a user can remain logged in after that
+point.
+
+The expiration time can be configured one of two ways:
+
+- `expires` - A `Date` object representing the time the cookie should expire.
+- `maxAge` - A number representing the number of seconds the cookie should
+  remain valid.
+
+Neither is better than the other. Use the one that feels more natural to you.
+
+## Bad Auth State
+
+Another time to log the user out automatically is when the user's session is
+invalid. The primary reason for this is that the user's account may have been
+deleted. In this case, you'll want to send them to the login page so they can
+login with a different account or create a new one.
+
+## Automatic Logout
+
+Automatic logout is a little more complicated. If you wish to do this without
+client-side JavaScript, it involves setting a cookie with every single request
+and checking that cookie on subsequent requests. If the cookie is not present,
+then you can log the user out. It's a jarring experience and in the modern age,
+not likely necessary.
+
+With client-side JavaScript, you simply create a timer and so long as the user
+is actively using the site, you reset the timer. If the timer expires, you log
+the user out. You can even provide them with a modal to notify them of the
+impending logout and give them the option to stay logged in.
+
+Depending on the application, this may not be necessary or desired, but for
+highly sensitive applications, it's a good idea.

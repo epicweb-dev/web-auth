@@ -64,6 +64,8 @@ export async function loader({ request }: DataFunctionArgs) {
 				where: { id: userId },
 		  })
 		: null
+	// 🐨 if there's a userId but no user then something's wrong. Let's delete the
+	// userId cookie and redirect to the home page.
 	return json({
 		username: os.userInfo().username,
 		user,

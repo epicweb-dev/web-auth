@@ -1,1 +1,30 @@
 # Expiration
+
+👨‍💼 For this app, we want the session to last 30 days, but only if the user
+checks "remember me." Otherwise, we want the session to last only until the
+user closes the browser.
+
+Because of this, we can't configure our session storage object to have an
+expiration (you can configure the
+[`createCookieSessionStorage`](https://remix.run/docs/en/main/utils/sessions#createcookiesessionstorage)
+session storage object to have an expiration). Instead, we need to set the
+expiration when we commit the session in the login and signup routes.
+
+🐨 To promote reusability, let's create a variable in a new
+file <InlineFile file="app/utils/auth.server.ts" /> called
+`SESSION_EXPIRATION_TIME` that's set to 30 days in milliseconds which is
+`1000 * 60 * 60 * 24 * 30`.
+
+Then we can use that in our login and signup routes to set the expiration time
+if the user has checked "remember me."
+
+```ts
+await commitSession(cookieSession, {
+	// Cookies with no expiration are cleared when the tab/window closes
+	expires: remember
+		? new Date(Date.now() + SESSION_EXPIRATION_TIME)
+		: undefined,
+})
+```
+
+Go ahead and make those updates please.

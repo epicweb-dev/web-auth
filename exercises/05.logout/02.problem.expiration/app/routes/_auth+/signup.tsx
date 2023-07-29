@@ -97,6 +97,9 @@ export async function action({ request }: DataFunctionArgs) {
 
 	return redirect('/', {
 		headers: {
+			// 🐨 add an expires option to this commitSession call and set it to
+			// a date 30 days in the future if they checked the remember checkbox
+			// or undefined if they did not.
 			'set-cookie': await commitSession(cookieSession),
 		},
 	})

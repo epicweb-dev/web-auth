@@ -51,8 +51,10 @@
 Here are some resources you can read before taking the workshop to get you up to
 speed on some of the tools and concepts we'll be covering:
 
-- [Full Stack Components](https://www.epicweb.dev/full-stack-components)
-- [Full Stack Components (talk)](https://www.youtube.com/watch?v=30HAT5Quvgk&list=PLV5CVI1eNcJgNqzNwcs4UKrlJdhfDjshf&index=3)
+- [HTTP Cookies](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies)
+- [Remix cookies](https://remix.run/docs/en/main/utils/cookies)
+- [Remix sessions](https://remix.run/docs/en/main/utils/sessions)
+- [`bcryptjs`](https://www.npmjs.com/package/bcryptjs)
 
 ## System Requirements
 
