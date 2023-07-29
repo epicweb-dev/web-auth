@@ -99,7 +99,7 @@ export async function action({ request }: DataFunctionArgs) {
 
 	return redirect('/', {
 		headers: {
-			'Set-Cookie': await commitSession(cookieSession),
+			'set-cookie': await commitSession(cookieSession),
 		},
 	})
 }

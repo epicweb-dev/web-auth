@@ -1,1 +1,72 @@
 # Cookie Sessions
+
+Storing user preferences is cookies is simple enough. If you check the developer
+tools for those, you'll often find the value as-is and can modify it using the
+developer tools (and sometimes even with JavaScript). For user preferences
+that's fine, but when it comes to authentication, we need to be more careful.
+Specifically, we need two things:
+
+1. We need to make it so client-side JavaScript can't access (or steal) the
+   cookie value.
+2. We need to make it so the cookie value can't be modified by the user.
+
+For the first point, we can configure the cookie to make it inaccessible to
+client-side JavaScript. For the second point, we can't prevent user's from
+changing their cookies, but we can make it so we don't recognize the cookie if
+they do. We can use a cryptographic hash function to sign the cookie value. This
+way, if the user modifies the cookie value, the signature will no longer match
+and we'll know the cookie has been tampered with.
+
+Let's talk more about what you can do to configure cookies. Each cookie has a
+name, value, and a set of attributes. The attributes are optional and can be
+used to configure the cookie's behavior. The most common attributes are:
+
+- `path`: The path on the server for which the cookie is valid. Defaults to the
+  current path. This means if the path is set to `/my-page`, the cookie will
+  only be sent to the server when the user is on the `/my-page` path.
+- `domain`: The domain for which the cookie is valid. Defaults to the current
+  domain. This means if the domain is set to `example.com`, the cookie will be
+  sent to the server for all subdomains of `example.com`.
+- `expires`: The date and time when the cookie expires. If not set, the cookie
+  will expire when the browser is closed.
+- `max-age`: The number of seconds until the cookie expires. If not set, the
+  cookie will expire when the browser is closed.
+- `secure`: If set, the cookie will only be sent to the server over HTTPS.
+- `httpOnly`: If set, the cookie will not be accessible to JavaScript. This is
+  useful for preventing cross-site scripting attacks.
+- `sameSite`: If set, the cookie will only be sent to the server if the request
+  originated from the same site. This is useful for preventing cross-site
+  request forgery attacks.
+
+Several of these are great to enable for security purposes. However, there is
+nothing built-into the specification to prevent cookie tampering.
+
+This is why we using the [cookie](https://www.npmjs.com/package/cookie) package
+which provides a `sign` function that will sign the cookie value using a
+cryptographic hash function. It also provides a `verify` function that will
+verify the signature. This way, if the user modifies the cookie value, the
+signature will no longer match and we'll know the cookie has been tampered with.
+
+## In Remix
+
+Remix has built-in support for cookie configuration including securely signing
+and verifying cookies. For a low-level API, you can use
+[the `createCookie` utility](https://remix.run/docs/en/main/utils/cookies#createcookie)
+which includes several handy methods for working with cookies. For a
+higher-level session storage API, you can use one of
+[Remix's session storage utilities](https://remix.run/docs/en/main/utils/sessions).
+
+Each uses cookies to track the user's session, but they offer different ways to
+store "session" data. There are built-in utilities for storing the data in the
+cookie itself, in memory (not recommended for production), on the file system,
+or in a database. You can also create your own implementation if you want to
+store the data somewhere else.
+
+In practice, it's generally best to avoid storing too much data in the cookie
+itself as it will be sent to the server with every request. This can slow down
+the user's experience and can also cause problems if the cookie is too large.
+
+In my experience, most of the time the only persistent data stored in a session
+cookie is an ID that can be used to look up the rest of the data in a database.
+Sometimes temporary data is also stored in the cookie using a pattern called
+a ["Cookie Flash"](https://remix.run/docs/en/main/utils/sessions#sessionflashkey-value).

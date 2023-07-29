@@ -66,7 +66,7 @@ export async function logout(request: Request) {
 	const cookieSession = await getSession(request.headers.get('cookie'))
 	cookieSession.unset(userIdKey)
 	throw redirect('/', {
-		headers: { 'Set-Cookie': await commitSession(cookieSession) },
+		headers: { 'set-cookie': await commitSession(cookieSession) },
 	})
 }
 

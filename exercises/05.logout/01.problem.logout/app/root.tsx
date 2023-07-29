@@ -95,7 +95,7 @@ export async function action({ request }: DataFunctionArgs) {
 	const { theme } = submission.value
 
 	const responseInit = {
-		headers: { 'Set-Cookie': setTheme(theme) },
+		headers: { 'set-cookie': setTheme(theme) },
 	}
 	return json({ success: true, submission }, responseInit)
 }

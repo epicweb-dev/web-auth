@@ -1,1 +1,41 @@
-# Set the User
+# Set the userId
+
+👨‍💼 When the user logs in, we'll set their `userId` in the session. This will
+allow us to identify the user later on.
+
+🧝‍♂️ I already put together the login, signup, and forgot password routes. They
+aren't really functional yet, but we want you to focus your time on getting
+the session set up.
+
+👨‍💼 We also don't have passwords for our users quite yet, so we're going to hold
+off on actually verifying the password is correct as well. So, you'll just find
+the user in the database by their username, assume the password is correct, and
+set the `userId` in the session. We'll handle the password in the next exercise.
+
+🦉 We'll be using a feature in Zod called `transform` which will allow us to
+transform the form submission into a user object. This gives us a nice way to
+manage the lookup of the user as part of the validation process.
+
+Here are a couple snippets to help you with the session API:
+
+```ts
+// get the session from the request
+const session = await getSession(request.headers.get('cookie'))
+
+// set a value in the session
+session.set('someName', someValue)
+
+// get the 'set-cookie' header:
+const setCookieHeaderValue = await commitSession(session)
+```
+
+You'll know you have it working when you check the network response in the
+browser developer tools and it has a `set-cookie` header. You can also check the
+"Application" tab in the developer tools which will display the cookies for the
+app as well. You'll notice it looks kinda funny, but that's because it's signed.
+
+We'll use this cookie value in the next step.
+
+- [📜 zod's `transform` API](https://zod.dev/?id=transform)
+- [📜 zod: validating during transform](https://zod.dev/?id=validating-during-transform)
+- [📜 Remix Sessions](https://remix.run/docs/en/main/utils/sessions)

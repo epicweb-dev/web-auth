@@ -2,11 +2,9 @@ import { z } from 'zod'
 
 const schema = z.object({
 	NODE_ENV: z.enum(['production', 'development', 'test'] as const),
-	DATABASE_PATH: z.string(),
 	DATABASE_URL: z.string(),
-	SESSION_SECRET: z.string(),
-	// If you plan to use Resend, uncomment this line
-	// RESEND_API_KEY: z.string(),
+	// 🐨 add a SESSION_SECRET environment variable to the schema here
+	// it should be a string.
 })
 
 declare global {

@@ -23,7 +23,18 @@ const LoginFormSchema = z.object({
 export async function action({ request }: DataFunctionArgs) {
 	const formData = await request.formData()
 	const submission = await parse(formData, {
-		schema: LoginFormSchema,
+		schema: intent =>
+			LoginFormSchema.transform(async (data, ctx) => {
+				if (intent !== 'submit') return { ...data, user: null }
+				// 🐨 find the user in the database by their username
+				// 🐨 if there's no user by that username then add an issue to the context
+				// and return z.NEVER
+				// 📜 https://zod.dev/?id=validating-during-transform
+
+				// TODO: verify the password (we'll do this later)
+				// 💰 return {...data, user}
+				return data
+			}),
 		async: true,
 	})
 	// get the password off the payload that's sent back
@@ -34,10 +45,18 @@ export async function action({ request }: DataFunctionArgs) {
 		delete submission.value?.password
 		return json({ status: 'idle', submission } as const)
 	}
+	// 🐨 you can change this check to !submission.value?.user
 	if (!submission.value) {
 		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 
+	// 🐨 get the user from the submission.value
+	// 🐨 use the getSession utility to get the session value from the
+	// request's cookie header 💰 request.headers.get('cookie')
+	// 🐨 set the 'userId' in the session to the user.id
+
+	// 🐨 update this redirect to add a 'set-cookie' header to the result of
+	// commitSession with the session value you're working with
 	return redirect('/')
 }
 

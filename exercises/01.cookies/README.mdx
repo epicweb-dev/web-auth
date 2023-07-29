@@ -1,3 +1,87 @@
 # Cookies
 
-Why can't `localStorage` work?
+## A bit of history
+
+HTTP Cookies have been around since the very beginning of the web. They were
+invented to solve the problem of state management in web applications. Cookies
+allow websites to store small pieces of data on a user's device which is then
+sent along with every request to the server. This enables the server to maintain
+session information and remember user preferences across different interactions.
+
+Cookies have become a fundamental part of web browsing and online user
+experiences, facilitating various functions such as session management, tracking
+user behavior, and personalization. However, due to privacy concerns, the use of
+cookies has evolved, and modern browsers provide users with more control over
+cookie settings, including options to block or delete cookies. Despite this, the
+most secure solution for managing user sessions is still to use cookies.
+
+## GDPR
+
+A common misconception among developers is that if your site uses
+cookies at all, it needs to display a [GDPR](https://gdpr.eu/what-is-gdpr/)
+banner. This is inaccurate. The topic of GDPR is complex and beyond the scope of
+this workshop (feel free to talk to a lawyer if you're concerned), but in
+general if you avoid the use of cookies for tracking and advertising purposes,
+you should be fine without a consent banner.
+
+## Cookies vs. Local Storage
+
+Some applications store user information (like the user's ID or preferences) in
+`localStorage`. This is not a secure solution, as `localStorage` can be accessed
+by any script running on the page.
+
+Additionally, `localStorage` is not sent with every request to the server, so
+the server cannot use it as part of the initial rendering of the page. This
+means that the page will not be able to display user-specific information until
+the client-side code has loaded and made a request to the server to retrieve the
+user's information.
+
+Bad UX. Bad Security. Don't use it for this purpose.
+
+## How it works
+
+First, the cookie needs to be set in the browser. This can happen on the client
+or on the server:
+
+```ts
+// Client-side
+document.cookie = 'name=John Doe'
+```
+
+`document.cookie` is a string that contains all the cookies for the current
+domain. [It's a funky API](https://developer.mozilla.org/en-US/docs/web/api/document/cookie).
+You can definitely use it directly, but if you plan to work with cookies in the
+browser a lot, you may consider using a library like
+[js-cookie](https://www.npmjs.com/package/js-cookie).
+
+<callout-info>
+	Most of the time, you'll want to set the cookie on the server. This is because
+	the server is the only place where you can securely set the cookie and you
+	often want to set the cookie as part of the response to a request anyway.
+</callout-info>
+
+```ts
+// Server-side
+const response = new Response(body, {
+	headers: {
+		'set-cookie': 'name=John Doe',
+	},
+})
+```
+
+The API is a little less funky, but the string format is the same (and that is
+funky too), so a library to help parse and serialize cookie values can be
+helpful. A popular library for this is
+[cookie](https://www.npmjs.com/package/cookie).
+
+When the browser receives the response, it will parse the `set-cookie` header
+and store the cookie in its "cookie jar". The browser will then send the cookie
+along with every request to the server.
+
+Browsers can have multiple cookies each with its own name and configuration.
+We'll discuss this configuration more in the next exercise, but one important
+bit of configuration for this exercise is the `path` property. This determines
+which requests the cookie will be sent with. For example, if the cookie is set
+with a path of `/admin`, it will only be sent with requests to `/admin` and its
+subpaths (`/admin/users`, `/admin/settings`, etc.) but not for requests to `/`
+or `/login`.

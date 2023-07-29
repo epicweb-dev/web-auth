@@ -1,1 +1,51 @@
 # Optimistic Theme
+
+👨‍💼 Users on a slow network are complaining the theme won't actually change until
+the network request to change it finishes. Go ahead and throttle your network
+speed using the browser developer tools and you'll observe that. This is a
+pretty poor user experience.
+
+So let's improve this by apply optimistic UI to the theme selection. What we'll
+do is make a `useTheme` hook that returns the value of the root loader's
+`data.theme`, but then we'll also search for the `fetcher` that's responsible
+for changing the cookie and if it's in the process of updating the theme value,
+we'll return that from our `useTheme` instead of the `data.theme` value.
+
+That way the theme in the UI will always be what the user selected most recently
+even if the network request isn't finished yet.
+
+Here's a quick example of finding the right fetcher using `useFetchers`:
+
+```tsx
+import { useFetcher, useFetchers } from '@remix-run/react'
+
+function MyComponent() {
+	const fetcher = useFetcher()
+
+	return (
+		<fetcher.Form>
+			<input type="hidden" name="candy" value="twix" />
+			<button name="intent" value="dispense-candy">
+				Dispense
+			</button>
+		</fetcher.Form>
+	)
+}
+
+function useCurrentlySubmittingCandy() {
+	const fetchers = useFetchers()
+	const candyFetcher = fetchers.find(
+		fetcher => fetcher.formData?.get('intent') === 'dispense-candy',
+	)
+	return candyFetcher?.formData.get('candy')
+}
+```
+
+It should be noted that the all fetchers on the page which have been submitted
+at least once, will be returned by the `useFetchers` hook, whether they're
+currently submitting or not. However, only those which are currently submitting
+will have a `formData` property. And in this example since we only care about
+the candy fetcher while it's submitting, we can use the `formData` property to
+get the value of the candy that's being dispensed.
+
+- [📜 `useFetchers`](https://remix.run/docs/en/main/hooks/use-fetchers)

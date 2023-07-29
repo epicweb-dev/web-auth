@@ -21,7 +21,7 @@ export async function getUserId(request: Request) {
 		cookieSession.unset(sessionKey)
 		throw redirect('/', {
 			headers: {
-				'Set-Cookie': await commitSession(cookieSession),
+				'set-cookie': await commitSession(cookieSession),
 			},
 		})
 	}
@@ -113,7 +113,7 @@ export async function logout(request: Request) {
 	const cookieSession = await getSession(request.headers.get('cookie'))
 	cookieSession.unset(sessionKey)
 	throw redirect('/', {
-		headers: { 'Set-Cookie': await commitSession(cookieSession) },
+		headers: { 'set-cookie': await commitSession(cookieSession) },
 	})
 }
 

@@ -33,7 +33,7 @@ import fontStylestylesheetUrl from './styles/font.css'
 import tailwindStylesheetUrl from './styles/tailwind.css'
 import { getEnv } from './utils/env.server.ts'
 import { invariantResponse } from './utils/misc.tsx'
-import { getTheme, setTheme, type Theme } from './utils/theme.server.ts'
+import { type Theme } from './utils/theme.server.ts'
 
 export const links: LinksFunction = () => {
 	return [
@@ -49,7 +49,7 @@ export const links: LinksFunction = () => {
 export async function loader({ request }: DataFunctionArgs) {
 	return json({
 		username: os.userInfo().username,
-		theme: getTheme(request),
+		// 🐨 get the theme from the request's cookie header using the getTheme utility:
 		ENV: getEnv(),
 	})
 }
@@ -74,10 +74,14 @@ export async function action({ request }: DataFunctionArgs) {
 	if (!submission.value) {
 		return json({ status: 'error', submission } as const, { status: 400 })
 	}
-	const { theme } = submission.value
+	// 🐨 get the theme from the submission.value
+	// 🐨 get the value of the cookie header by calling setTheme with the theme
 
 	const responseInit = {
-		headers: { 'Set-Cookie': setTheme(theme) },
+		headers: {
+			// 🐨 add a 'set-cookie' header to this response and set it to the
+			// serialized cookie:
+		},
 	}
 	return json({ success: true, submission }, responseInit)
 }
@@ -117,7 +121,7 @@ function Document({
 
 export default function App() {
 	const data = useLoaderData<typeof loader>()
-	const theme = data.theme
+	const theme = 'light' // 🐨 change this to the value you get from the loader
 	const matches = useMatches()
 	const isOnSearchPage = matches.find(m => m.id === 'routes/users+/index')
 	return (

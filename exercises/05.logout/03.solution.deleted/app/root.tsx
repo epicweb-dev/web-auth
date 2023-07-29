@@ -71,7 +71,7 @@ export async function loader({ request }: DataFunctionArgs) {
 		// them in the database. Maybe they were deleted? Let's log them out.
 		throw redirect('/', {
 			headers: {
-				'Set-Cookie': await commitSession(cookieSession),
+				'set-cookie': await commitSession(cookieSession),
 			},
 		})
 	}
@@ -106,7 +106,7 @@ export async function action({ request }: DataFunctionArgs) {
 	const { theme } = submission.value
 
 	const responseInit = {
-		headers: { 'Set-Cookie': setTheme(theme) },
+		headers: { 'set-cookie': setTheme(theme) },
 	}
 	return json({ success: true, submission }, responseInit)
 }

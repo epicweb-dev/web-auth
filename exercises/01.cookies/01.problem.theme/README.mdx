@@ -8,10 +8,13 @@ application is already set up to handle this via a class name on the `<html>`
 element (put `light` or `dark` in the class name and the UI will update through
 the magic of CSS Custom Properties + Tailwind).
 
-🧝‍♂️ I've already wired up everything, (check the action, `ThemeSwitch` and
+🧝‍♂️ I've already wired up most things, (check the action, `ThemeSwitch` and
 `Document` in <InlineFile file="app/root.tsx" line="95" />). So all you need to
-do is finish the implementation of <InlineFile file="app/utils/theme.server.ts" />.
+do is finish the implementation of <InlineFile file="app/utils/theme.server.ts" />
+and then finish wiring things up in <InlineFile file="app/root.tsx" />.
 
 👨‍💼 When you've finished, you should be able to click the icon in the bottom
 right to update the theme. You'll notice a network request each time you click
-it so the server can update the cookie.
+it so the server can update the cookie. You should see the `set-cookie` header
+
+- [📜 cookie](https://www.npmjs.com/package/cookie)

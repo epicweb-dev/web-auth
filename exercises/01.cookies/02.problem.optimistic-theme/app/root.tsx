@@ -77,7 +77,7 @@ export async function action({ request }: DataFunctionArgs) {
 	const { theme } = submission.value
 
 	const responseInit = {
-		headers: { 'Set-Cookie': setTheme(theme) },
+		headers: { 'set-cookie': setTheme(theme) },
 	}
 	return json({ success: true, submission }, responseInit)
 }
@@ -117,6 +117,7 @@ function Document({
 
 export default function App() {
 	const data = useLoaderData<typeof loader>()
+	// 🐨 switch this from data.theme to `useTheme()`
 	const theme = data.theme
 	const matches = useMatches()
 	const isOnSearchPage = matches.find(m => m.id === 'routes/users+/index')
@@ -159,6 +160,15 @@ export default function App() {
 		</Document>
 	)
 }
+
+// 🐨 create a useTheme hook here that reads the current theme from useLoaderData
+// and returns it unless there's an ongoing fetcher setting the theme.
+// 🦉 The ThemeSwitch is using useFetcher to make the switch. You can find the
+// fetcher in your useTheme hook using the useFetchers hook which returns an
+// array of all active fetchers on the page.
+// 💰 Add a `.find` on the fetchers array to find the fetcher which has formData
+// with an intent of 'update-theme'. If that fetcher is found, then return the
+// 'theme' from the fetcher's formData.
 
 function ThemeSwitch({ userPreference }: { userPreference?: Theme }) {
 	const fetcher = useFetcher<typeof action>()

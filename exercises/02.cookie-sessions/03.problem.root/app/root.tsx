@@ -48,8 +48,15 @@ export const links: LinksFunction = () => {
 }
 
 export async function loader({ request }: DataFunctionArgs) {
+	// 🐨 get the cookie session from the request
+	// 🐨 get the userId from the cookie session
+	// 🐨 if there's a userId, then get the user from the database
+	// 💰 you will want to specify a select. You'll need the id, username, name,
+	// and image's id
 	return json({
 		username: os.userInfo().username,
+		// 🐨 add the user here (if there was no userId then the user can be null)
+		// 💰 don't forget to update the component below to access the user from the data.
 		theme: getTheme(request),
 		ENV: getEnv(),
 	})
@@ -78,7 +85,7 @@ export async function action({ request }: DataFunctionArgs) {
 	const { theme } = submission.value
 
 	const responseInit = {
-		headers: { 'Set-Cookie': setTheme(theme) },
+		headers: { 'set-cookie': setTheme(theme) },
 	}
 	return json({ success: true, submission }, responseInit)
 }

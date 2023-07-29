@@ -11,6 +11,12 @@
       "path": "exercises/01.cookies/01.solution.theme"
     },
     {
+      "path": "exercises/01.cookies/02.problem.optimistic-theme"
+    },
+    {
+      "path": "exercises/01.cookies/02.solution.optimistic-theme"
+    },
+    {
       "path": "exercises/02.cookie-sessions/01.problem.session"
     },
     {
