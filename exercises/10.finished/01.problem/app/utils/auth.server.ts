@@ -3,9 +3,9 @@ import { redirect } from '@remix-run/node'
 import bcrypt from 'bcryptjs'
 import { Authenticator, AuthorizationError } from 'remix-auth'
 import { FormStrategy } from 'remix-auth-form'
+import { z } from 'zod'
 import { prisma } from '~/utils/db.server.ts'
 import { sessionStorage } from './session.server.ts'
-import { z } from 'zod'
 
 export type { User }
 
@@ -22,27 +22,35 @@ const SignInFormSchema = z.object({
 
 authenticator.use(
 	new FormStrategy(async ({ form }) => {
-		const { username, password } = SignInFormSchema.parse({
+		const data = SignInFormSchema.parse({
 			username: form.get('username'),
 			password: form.get('password'),
 		})
 
-		const user = await verifyUserPassword({ username }, password)
-		if (!user) {
+		const session = await login(data)
+		if (!session) {
 			throw new AuthorizationError('Invalid username or password')
 		}
-		const session = await prisma.session.create({
-			data: {
-				expirationDate: new Date(Date.now() + SESSION_EXPIRATION_TIME),
-				userId: user.id,
-			},
-			select: { id: true },
-		})
 
 		return session.id
 	}),
 	FormStrategy.name,
 )
+
+export async function getUserId(request: Request) {
+	const sessionId = await authenticator.isAuthenticated(request)
+	if (!sessionId) return null
+	const session = await prisma.session.findUnique({
+		select: { user: { select: { id: true } } },
+		where: { id: sessionId },
+	})
+	if (!session?.user) {
+		// Perhaps their session was deleted?
+		await authenticator.logout(request, { redirectTo: '/' })
+		return null
+	}
+	return session.user.id
+}
 
 export async function requireUserId(
 	request: Request,
@@ -72,25 +80,29 @@ export async function requireUserId(
 	return session.userId
 }
 
-export async function getUserId(request: Request) {
-	const sessionId = await authenticator.isAuthenticated(request)
-	if (!sessionId) return null
-	const session = await prisma.session.findUnique({
-		where: { id: sessionId },
-		select: { user: { select: { id: true } } },
-	})
-	if (!session) {
-		// Perhaps their session was deleted?
-		await authenticator.logout(request, { redirectTo: '/' })
-		return null
-	}
-	return session.user.id
-}
-
 export async function requireAnonymous(request: Request) {
 	await authenticator.isAuthenticated(request, {
 		successRedirect: '/',
 	})
+}
+
+export async function login({
+	username,
+	password,
+}: {
+	username: User['username']
+	password: string
+}) {
+	const user = await verifyUserPassword({ username }, password)
+	if (!user) return null
+	const session = await prisma.session.create({
+		select: { id: true, expirationDate: true },
+		data: {
+			expirationDate: new Date(Date.now() + SESSION_EXPIRATION_TIME),
+			userId: user.id,
+		},
+	})
+	return session
 }
 
 export async function signup({
@@ -125,6 +137,10 @@ export async function signup({
 		select: { id: true, expirationDate: true },
 	})
 	return session
+}
+
+export async function logout(request: Request) {
+	throw await authenticator.logout(request, { redirectTo: '/' })
 }
 
 export async function getPasswordHash(password: string) {

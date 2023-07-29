@@ -15,9 +15,9 @@ import { Spacer } from '~/components/spacer.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
 import {
 	SESSION_EXPIRATION_TIME,
+	login,
 	requireAnonymous,
 	userIdKey,
-	verifyUserPassword,
 } from '~/utils/auth.server.ts'
 import { useIsSubmitting } from '~/utils/misc.tsx'
 import { commitSession, getSession } from '~/utils/session.server.ts'
@@ -41,10 +41,7 @@ export async function action({ request }: DataFunctionArgs) {
 	const formData = await request.formData()
 	const submission = await parse(formData, {
 		schema: LoginFormSchema.transform(async (data, ctx) => {
-			const user = await verifyUserPassword(
-				{ username: data.username },
-				data.password,
-			)
+			const user = await login(data)
 			if (!user) {
 				ctx.addIssue({
 					code: 'custom',

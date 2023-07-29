@@ -15,7 +15,6 @@ import { ErrorList } from '~/components/forms.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import { Icon } from '~/components/ui/icon.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
-import { requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import {
 	getUserImgSrc,
@@ -37,8 +36,8 @@ const PhotoFormSchema = z.object({
 		.refine(file => file.size <= MAX_SIZE, 'Image size must be less than 3MB'),
 })
 
-export async function loader({ request }: DataFunctionArgs) {
-	const userId = await requireUserId(request)
+export async function loader() {
+	const userId = 'TODO: get this from the request'
 	const user = await prisma.user.findUnique({
 		where: { id: userId },
 		select: {
@@ -53,7 +52,7 @@ export async function loader({ request }: DataFunctionArgs) {
 }
 
 export async function action({ request }: DataFunctionArgs) {
-	const userId = await requireUserId(request)
+	const userId = 'TODO: get this from the request'
 	const formData = await unstable_parseMultipartFormData(
 		request,
 		unstable_createMemoryUploadHandler({ maxPartSize: MAX_SIZE }),

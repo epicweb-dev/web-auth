@@ -17,13 +17,7 @@ export async function getUserId(request: Request) {
 		where: { id: userId },
 	})
 	if (!user) {
-		// Perhaps user was deleted?
-		cookieSession.unset(userIdKey)
-		throw redirect('/', {
-			headers: {
-				'Set-Cookie': await commitSession(cookieSession),
-			},
-		})
+		return logout(request)
 	}
 	return user.id
 }
@@ -57,6 +51,16 @@ export async function requireAnonymous(request: Request) {
 	}
 }
 
+export async function login({
+	username,
+	password,
+}: {
+	username: User['username']
+	password: string
+}) {
+	return verifyUserPassword({ username }, password)
+}
+
 export async function signup({
 	email,
 	username,
@@ -85,6 +89,14 @@ export async function signup({
 	})
 
 	return user
+}
+
+export async function logout(request: Request) {
+	const cookieSession = await getSession(request.headers.get('cookie'))
+	cookieSession.unset(userIdKey)
+	throw redirect('/', {
+		headers: { 'Set-Cookie': await commitSession(cookieSession) },
+	})
 }
 
 export async function getPasswordHash(password: string) {

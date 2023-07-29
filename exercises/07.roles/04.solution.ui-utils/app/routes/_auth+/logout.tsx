@@ -1,13 +1,8 @@
 import { redirect, type DataFunctionArgs } from '@remix-run/node'
-import { userIdKey } from '~/utils/auth.server.ts'
-import { commitSession, getSession } from '~/utils/session.server.ts'
+import { logout } from '~/utils/auth.server.ts'
 
 export async function action({ request }: DataFunctionArgs) {
-	const cookieSession = await getSession(request.headers.get('cookie'))
-	cookieSession.unset(userIdKey)
-	return redirect('/', {
-		headers: { 'Set-Cookie': await commitSession(cookieSession) },
-	})
+	return logout(request)
 }
 
 export async function loader() {

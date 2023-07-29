@@ -31,11 +31,12 @@ import { Icon, href as iconHref } from './components/ui/icon.tsx'
 import { KCDShop } from './kcdshop.tsx'
 import fontStylestylesheetUrl from './styles/font.css'
 import tailwindStylesheetUrl from './styles/tailwind.css'
+import { prisma } from './utils/db.server.ts'
 import { getEnv } from './utils/env.server.ts'
 import { getUserImgSrc, invariantResponse } from './utils/misc.tsx'
-import { getTheme, setTheme, type Theme } from './utils/theme.server.ts'
 import { getSession } from './utils/session.server.ts'
-import { prisma } from './utils/db.server.ts'
+import { getTheme, setTheme, type Theme } from './utils/theme.server.ts'
+import { useOptionalUser } from './utils/user.ts'
 
 export const links: LinksFunction = () => {
 	return [

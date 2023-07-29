@@ -13,7 +13,7 @@ export async function getUserId(request: Request) {
 	const sessionId = cookieSession.get(sessionKey)
 	if (!sessionId) return null
 	const session = await prisma.session.findUnique({
-		select: { id: true, user: { select: { id: true } } },
+		select: { user: { select: { id: true } } },
 		where: { id: sessionId },
 	})
 	if (!session?.user) {
@@ -109,6 +109,14 @@ export async function signup({
 	})
 
 	return session
+}
+
+export async function logout(request: Request) {
+	const cookieSession = await getSession(request.headers.get('cookie'))
+	cookieSession.unset(sessionKey)
+	throw redirect('/', {
+		headers: { 'Set-Cookie': await commitSession(cookieSession) },
+	})
 }
 
 export async function getPasswordHash(password: string) {
