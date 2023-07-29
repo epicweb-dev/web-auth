@@ -10,10 +10,6 @@ export function getTheme(request: Request): Theme {
 	return 'light'
 }
 
-export function setTheme(theme?: Theme) {
-	if (theme) {
-		return cookie.serialize(cookieName, theme, { path: '/' })
-	} else {
-		return cookie.serialize(cookieName, '', { path: '/', maxAge: 0 })
-	}
+export function setTheme(theme: Theme) {
+	return cookie.serialize(cookieName, theme, { path: '/' })
 }

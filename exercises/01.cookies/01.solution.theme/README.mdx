@@ -1,1 +1,19 @@
 # Theme Cookie
+
+👨‍💼 Great job! That's pretty low-level cookie management, but it's perfect
+
+🦉 One optimization we could possibly make is to change the cookie on the client
+and trigger a manual state update. But the benefit of the way we have it here is
+we can completely change the data that comes back based on the value of the
+cookie and if we applied that optimization we'd need to revalidate the data
+anyway.
+
+So we won't be making that optimization for two reasons:
+
+1. It limits our capabilities
+2. Users don't change their theme very often anyway, so it's really unnecessary.
+
+That said, the theme won't actually change until the network request to change
+it finishes. So applying optimistic UI to this change would be really useful.
+That's outside the scope of this workshop on authentication though so we'll
+leave that to you if you'd like to implement that.

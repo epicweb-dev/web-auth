@@ -117,10 +117,11 @@ function Document({
 
 export default function App() {
 	const data = useLoaderData<typeof loader>()
+	const theme = data.theme
 	const matches = useMatches()
 	const isOnSearchPage = matches.find(m => m.id === 'routes/users+/index')
 	return (
-		<Document theme={data.theme} env={data.ENV}>
+		<Document theme={theme} env={data.ENV}>
 			<header className="container mx-auto py-6">
 				<nav className="flex items-center justify-between">
 					<Link to="/">
@@ -151,7 +152,7 @@ export default function App() {
 				</Link>
 				<div className="flex gap-2 items-center">
 					<p>Built with ♥️ by {data.username}</p>
-					<ThemeSwitch userPreference={data.theme} />
+					<ThemeSwitch userPreference={theme} />
 				</div>
 			</div>
 			<Spacer size="3xs" />
@@ -159,7 +160,7 @@ export default function App() {
 	)
 }
 
-export function ThemeSwitch({ userPreference }: { userPreference?: Theme }) {
+function ThemeSwitch({ userPreference }: { userPreference?: Theme }) {
 	const fetcher = useFetcher<typeof action>()
 
 	const [form] = useForm({
