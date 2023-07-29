@@ -1,13 +1,43 @@
 # Seeding Password Hashes
 
-Update seed.ts script with new util
+👨‍💼 We're going to start with the seed script. Sadly, because the database can't
+enforce that every user has a password, Prisma won't let us know if we ever
+create a user without one either. It's possible we could create a
+[Prisma client extension](https://www.prisma.io/docs/concepts/components/prisma-client/client-extensions)
+to help with this, but for now we'll just deal with the fact that we're not
+getting type errors in our seed script even though we're not adding passwords
+to the users we're generating.
 
-```sh
+To generate a hash, we'll use the `bcrypt` library. For our seed/test utils,
+we're ok just using the synchronous version (we'll use the async version in the
+app):
+
+```ts
+import bcrypt from 'bcryptjs'
+
+bcrypt.hashSync(password, 10)
+```
+
+The `10` there is the number of rounds of hashing to do. The higher the number,
+the longer it takes to generate the hash, but the harder it is to crack. 10 is
+a reasonable number for our use case.
+
+So follow the emoji's instructions in <InlineFile file="tests/db-utils.ts" />
+to make a utility for creating a password field, then
+update the <InlineFile file="prisma/seed.ts" /> script to use that utility.
+
+🐨 once you're done with this, you can run the seed to get the passwords in
+there:
+
+```sh nonumber
 npx prisma db seed
 ```
 
-Check hashes in prisma studio:
+If you'd like, you can check hashes in prisma studio:
 
-```sh
+```sh nonumber
 npx prisma studio
 ```
+
+The first 30 characters of the hash are the auto-generated salt, and the rest is
+the actual hash of the password.

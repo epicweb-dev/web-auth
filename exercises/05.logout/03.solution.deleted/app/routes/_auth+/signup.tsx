@@ -65,8 +65,6 @@ export async function action({ request }: DataFunctionArgs) {
 		}).transform(async data => {
 			const { username, email, name, password } = data
 
-			const hashedPassword = await bcrypt.hash(password, 10)
-
 			const user = await prisma.user.create({
 				select: { id: true },
 				data: {
@@ -75,7 +73,7 @@ export async function action({ request }: DataFunctionArgs) {
 					name,
 					password: {
 						create: {
-							hash: hashedPassword,
+							hash: await bcrypt.hash(password, 10),
 						},
 					},
 				},

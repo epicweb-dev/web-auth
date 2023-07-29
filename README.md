@@ -87,7 +87,7 @@ network connection before running the setup and grab a snack.
 
 Follow these steps to get this set up:
 
-```sh
+```sh nonumber
 git clone --depth 1 https://github.com/epicweb-dev/web-auth.git
 cd web-auth
 npm run setup

@@ -13,6 +13,7 @@ import { Spacer } from '~/components/spacer.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
 import { prisma } from '~/utils/db.server.ts'
 import { useIsSubmitting } from '~/utils/misc.tsx'
+import { commitSession, getSession } from '~/utils/session.server.ts'
 import {
 	emailSchema,
 	nameSchema,
@@ -58,6 +59,21 @@ export async function action({ request }: DataFunctionArgs) {
 				})
 				return
 			}
+		}).transform(async data => {
+			// 🐨 retrieve the password they entered from data here as well
+			const { username, email, name } = data
+
+			const user = await prisma.user.create({
+				select: { id: true },
+				data: {
+					email: email.toLowerCase(),
+					username: username.toLowerCase(),
+					name,
+					// 🐨 create a password here using bcrypt.hash (the async version)
+				},
+			})
+
+			return { ...data, user }
 		}),
 		async: true,
 	})
@@ -69,7 +85,16 @@ export async function action({ request }: DataFunctionArgs) {
 		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 
-	return redirect('/')
+	const { user } = submission.value
+
+	const cookieSession = await getSession(request.headers.get('cookie'))
+	cookieSession.set('userId', user.id)
+
+	return redirect('/', {
+		headers: {
+			'set-cookie': await commitSession(cookieSession),
+		},
+	})
 }
 
 export const meta: V2_MetaFunction = () => {

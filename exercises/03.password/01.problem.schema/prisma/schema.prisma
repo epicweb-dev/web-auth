@@ -20,6 +20,7 @@ model User {
   updatedAt DateTime @updatedAt
 
   image UserImage?
+  // 🐨 once you've created the password model, add a password field here
   notes Note[]
 }
 
@@ -70,3 +71,7 @@ model UserImage {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String @unique
 }
+
+// 🐨 add a Password model here. It should only have the hash which is a string
+// and a userId field which is a string and is unique. It should also have a
+// user field to establish the relationship.

@@ -87,6 +87,9 @@ async function seed() {
 				select: { id: true },
 				data: {
 					...userData,
+					// 🐨 add a password here
+					// 💰 to make it easy to login as users, you can set the password to
+					// the username. Obviously this isn't secure, but this is test data 🤷‍♂️
 					image: { create: userImages[index % 10] },
 					notes: {
 						create: Array.from({
@@ -155,6 +158,7 @@ async function seed() {
 			username: 'kody',
 			name: 'Kody',
 			image: { create: kodyImages.kodyUser },
+			// 🐨 add a password "kodylovesyou" here
 			notes: {
 				create: [
 					{

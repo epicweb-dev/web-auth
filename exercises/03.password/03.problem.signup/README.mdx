@@ -1,1 +1,13 @@
 # Sign Up
+
+👨‍💼 Let's create a password record when we create a new user so that can be used
+when the user logs in. Jump into <InlineFile file="app/routes/_auth+/signup.tsx" />
+and follow the emoji.
+
+Once you've done that, head to <LinkToApp to="/signup" /> and try signing up a
+new account. It should allow you to sign in and then you can check the database
+for the password if you'd like to make sure it worked:
+
+```sh nonumber
+npx prisma studio
+```

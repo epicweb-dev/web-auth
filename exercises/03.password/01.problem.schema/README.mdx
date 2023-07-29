@@ -1,7 +1,28 @@
 # Data Model for Passwords
 
-Add the model
+🦉 Modeling Passwords requires special consideration. A password hash is a
+single field, so it may make sense to simply include the `hash` on the `User`
+model. However, recall that the default behavior for a select statement
+(particularly in Prisma where you can leave off the `select`) is to return all
+fields. So if we were to include the `hash` on the `User` model, then every time
+we queried for a `User` we would get the `hash` back. An unfortunate oversight
+on the part of a developer could lead to leaking all password hashes in the UI.
+😱
 
-```sh
-npx prisma migrate dev
+Instead, we will create a separate `Password` model that has a one-to-one
+relationship to the `User` model. This way, the default of query the `User`
+will not include the password hash (at worst, it will include the `id` of the
+password which is not a concern).
+
+Unfortunately, it's not possible to enforce that a password is required on the
+`User` model at the database level. However, it's worth the tradeoff to avoid
+the risk of leaking passwords.
+
+🐨 Add the model in <InlineFile file="prisma/schema.prisma" />, then run:
+
+```sh nonumber
+npx prisma migrate dev --name password
 ```
+
+That should get you set up with a migration for adding the password to the
+database and ready for the next step.

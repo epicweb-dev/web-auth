@@ -1,1 +1,79 @@
 # Password Management
+
+There are a variety of ways to authenticate a user is who they say they are.
+The most common way is to use a password. Passwords are a secret string of
+characters that only the user (or
+[their password manager](https://1password.com/)) knows. When a user logs in,
+they provide their username and password. The server then checks the password to
+verify it's correct and from there can trust the user is who they are logging in
+as.
+
+A naive way to implement this would be to store the user's password as is.
+However, this opens you up to a variety of attacks. If an attacker gets access
+to your database, they can see all the passwords in plain text. If a user
+reuses their password on multiple sites, the attacker can now log in as the user
+on those sites as well.
+
+Another way to implement this would be to encrypt the password. This would
+prevent an attacker from seeing the password in plain text, but it would still
+be vulnerable to a
+[dictionary attack](https://en.wikipedia.org/wiki/Dictionary_attack) in the
+event an attacker got access to your database.
+
+Now, to be clear, let's try to make it impossible for an adversary to gain
+access to your database, but we can reduce the attractiveness of this by making
+it impossible for the attacker to use the passwords even if they do get access
+to the database.
+
+## Password Hashing
+
+Instead of storing the password or an encrypted version of the password, we can
+store a hash of the password. A hash is a one-way function that takes in a
+string and returns a fixed-length string. The same input will always return the
+same output, but it's impossible to go from the output to the input. This means
+that if an attacker gets access to your database, they can't use the hashes to
+log in as the user.
+
+So, to verify the password is correct, you simply hash the password the user
+provides and compare it to the hash stored in the database. If they match, the
+password is correct.
+
+## Protecting against Brute Force Attacks
+
+A brute force attack is when an attacker tries every possible combination of
+characters until they find the correct password. This is not very efficient,
+but if an attacker is after a specific user's account, it doesn't have to be.
+Eventually they will find the correct password.
+
+To protect against this, password hashing algorithms have been designed to be
+slow. This means that it takes a relatively long time to hash a password. This
+is fine for a user logging in, but it makes it very difficult for an attacker to
+brute force a password.
+
+## Protecting against Rainbow Table Attacks
+
+A Rainbow Table is a precomputed table of hashes and their inputs. This allows
+an attacker to simply look up the hash in the table to find the input. This
+means that if an attacker gets access to your database, they can simply look up
+the hashes to find the passwords.
+
+To protect against this, password hashing algorithms use a salt. A salt is a
+random string that is added to the password before hashing. This means that even
+if two users have the same password, their hashes will be different. This makes
+it impossible for an attacker to use a rainbow table to find the passwords.
+
+What's cool about this is you don't even need to securely store the salt. In
+fact a common practice is to simply append the salt to the hash. This will make
+it so that the salt is always available when you need to verify the password.
+
+## Putting it all together
+
+A good algorithm that checks these boxes is
+[bcrypt](https://en.wikipedia.org/wiki/Bcrypt) and a great library for
+generating bcrypt hashes is [bcryptjs](https://www.npmjs.com/package/bcryptjs).
+
+bcrypt hashes are slow and generate a random salt for you. This means that you
+don't need to worry about generating a salt and you can simply store the whole
+thing as is. Then when the user logs in, you provide the stored hash and the
+password they provide to bcrypt's `compare` function will verify the password is
+correct.
