@@ -36,8 +36,12 @@ async function generateIconFiles() {
 
 	const iconNames = files.map(file => iconName(file))
 
-	const spriteUpToDate = iconNames.every(name => currentSprite.includes(name))
-	const typesUpToDate = iconNames.every(name => currentTypes.includes(name))
+	const spriteUpToDate = iconNames.every(name =>
+		currentSprite.includes(`id=${name}`),
+	)
+	const typesUpToDate = iconNames.every(name =>
+		currentTypes.includes(`"${name}"`),
+	)
 
 	if (spriteUpToDate && typesUpToDate) {
 		console.log(`Icons are up to date`)
@@ -115,7 +119,7 @@ async function generateSvgSprite({
 			svg.removeAttribute('width')
 			svg.removeAttribute('height')
 
-			return root.toString().trim()
+			return svg.toString().trim()
 		}),
 	)
 
@@ -127,6 +131,7 @@ async function generateSvgSprite({
 		...symbols,
 		`</defs>`,
 		`</svg>`,
+		'', // trailing newline
 	].join('\n')
 
 	return writeIfChanged(outputPath, output)
