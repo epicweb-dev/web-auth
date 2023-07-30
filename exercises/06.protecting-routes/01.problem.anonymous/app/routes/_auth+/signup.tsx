@@ -49,7 +49,11 @@ const SignupFormSchema = z
 		}
 	})
 
+// 🐨 create a loader here that uses the requireAnonymous utility and returns
+// an empty object of json.
+
 export async function action({ request }: DataFunctionArgs) {
+	// 🐨 add the requireAnonymous utility here
 	const formData = await request.formData()
 	const submission = await parse(formData, {
 		schema: SignupFormSchema.superRefine(async (data, ctx) => {
@@ -105,7 +109,7 @@ export default function SignupRoute() {
 	const isSubmitting = useIsSubmitting()
 
 	const [form, fields] = useForm({
-		id: 'signup',
+		id: 'signup-form',
 		constraint: getFieldsetConstraint(SignupFormSchema),
 		lastSubmission: actionData?.submission,
 		onValidate({ formData }) {

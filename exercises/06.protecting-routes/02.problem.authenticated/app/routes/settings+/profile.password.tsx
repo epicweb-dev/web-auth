@@ -33,7 +33,7 @@ const ChangePasswordForm = z
 	})
 
 export async function action({ request }: DataFunctionArgs) {
-	const userId = 'TODO: get this from the session'
+	const userId = 'some_user_id' // 🐨 get the user with your requireUserId util
 	const formData = await request.formData()
 	const submission = await parse(formData, {
 		async: true,
@@ -85,7 +85,7 @@ export default function ChangePasswordRoute() {
 	const isSubmitting = useIsSubmitting()
 
 	const [form, fields] = useForm({
-		id: 'signup',
+		id: 'signup-form',
 		constraint: getFieldsetConstraint(ChangePasswordForm),
 		lastSubmission: actionData?.submission,
 		onValidate({ formData }) {

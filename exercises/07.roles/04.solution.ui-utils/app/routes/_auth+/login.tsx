@@ -87,14 +87,15 @@ export async function action({ request }: DataFunctionArgs) {
 }
 
 export default function LoginPage() {
-	const [searchParams] = useSearchParams()
 	const actionData = useActionData<typeof action>()
 	const isSubmitting = useIsSubmitting()
+	const [searchParams] = useSearchParams()
+	const redirectTo = searchParams.get('redirectTo')
 
 	const [form, fields] = useForm({
 		id: 'login-form',
 		constraint: getFieldsetConstraint(LoginFormSchema),
-		defaultValue: { redirectTo: searchParams.get('redirectTo') },
+		defaultValue: { redirectTo },
 		lastSubmission: actionData?.submission,
 		onValidate({ formData }) {
 			return parse(formData, { schema: LoginFormSchema })
@@ -174,7 +175,15 @@ export default function LoginPage() {
 						</Form>
 						<div className="flex items-center justify-center gap-2 pt-6">
 							<span className="text-muted-foreground">New here?</span>
-							<Link to="/signup">Create an account</Link>
+							<Link
+								to={
+									redirectTo
+										? `/signup?${encodeURIComponent(redirectTo)}`
+										: '/signup'
+								}
+							>
+								Create an account
+							</Link>
 						</div>
 					</div>
 				</div>

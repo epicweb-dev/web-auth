@@ -26,6 +26,7 @@ import { checkboxSchema } from '~/utils/zod-extensions.ts'
 const LoginFormSchema = z.object({
 	username: usernameSchema,
 	password: passwordSchema,
+	// 🐨 add config for a redirectTo (optional string)
 	remember: checkboxSchema(),
 })
 
@@ -67,11 +68,14 @@ export async function action({ request }: DataFunctionArgs) {
 		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 
+	// 🐨 get the redirectTo from the submission
 	const { user, remember } = submission.value
 
 	const cookieSession = await getSession(request.headers.get('cookie'))
 	cookieSession.set(userIdKey, user.id)
 
+	// 🐨 redirect to the redirectTo
+	// 🦉 Make sure to use the safeRedirect utility from remix-utils
 	return redirect('/', {
 		headers: {
 			'set-cookie': await commitSession(cookieSession, {
@@ -87,10 +91,13 @@ export async function action({ request }: DataFunctionArgs) {
 export default function LoginPage() {
 	const actionData = useActionData<typeof action>()
 	const isSubmitting = useIsSubmitting()
+	// 🐨 get the search params via useSearchParams from @remix-run/react
+	// 🐨 get the redirectTo from the search params
 
 	const [form, fields] = useForm({
 		id: 'login-form',
 		constraint: getFieldsetConstraint(LoginFormSchema),
+		// 🐨 add a defaultValues object with the redirectTo
 		lastSubmission: actionData?.submission,
 		onValidate({ formData }) {
 			return parse(formData, { schema: LoginFormSchema })
@@ -152,6 +159,8 @@ export default function LoginPage() {
 								</div>
 							</div>
 
+							{/* 🐨 add a hidden input here for the redirectTo */}
+
 							<ErrorList errors={form.errors} id={form.errorId} />
 
 							<div className="flex items-center justify-between gap-6 pt-3">
@@ -169,6 +178,7 @@ export default function LoginPage() {
 						</Form>
 						<div className="flex items-center justify-center gap-2 pt-6">
 							<span className="text-muted-foreground">New here?</span>
+							{/* 🐨 update this to attribute to include the redirectTo if it exists */}
 							<Link to="/signup">Create an account</Link>
 						</div>
 					</div>

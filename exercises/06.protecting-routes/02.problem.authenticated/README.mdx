@@ -1,1 +1,16 @@
 # Require Authenticated
+
+👨‍💼 This will be really similar to the `requireAnonymous` utility you just made,
+except this one will do the opposite. It will be `requireUserId` and it should
+return the `userId` because we actually normally need that value.
+
+Then you'll need to apply it to the `loader` and `action` of all the routes that
+require a user to be logged in.
+
+In the case of `action`s, you'll likely need to get the `userId` and use that to
+perform the updates to the database. You'll find a few places we were using
+`params.username` to create/update/delete things. You'll need to change those to
+use the `userId` instead.
+
+🐨 So start in <InlineFile file="app/utils/auth.server.ts" /> and then move on
+to the other files in the files dropdown below.

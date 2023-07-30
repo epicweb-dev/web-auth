@@ -1,1 +1,31 @@
 # Require Anonymous
+
+👨‍💼 We don't want authenticated users to get confused if they ever land on the
+`/login` or `/signup` pages. So let's prevent that.
+
+I want you to make a reusable utility
+in <InlineFile file="app/utils/auth.server.ts" /> that automatically redirects
+the user to the home page if they're already logged in.
+
+🧝‍♂️ earlier you had written code in the `root.tsx` to get the user's ID from the
+session. I created a handy utility in the `auth.server.ts` that does that for
+you, so you can use that with your utility.
+
+👨‍💼 Thanks Kellie. Once you've made the utility, then I need you to create
+`loader`s in both <InlineFile file="app/routes/_auth+/login.tsx" />
+and <InlineFile file="app/routes/_auth+/signup.tsx" /> which use your utility
+to redirect the user to the home page if they're already logged in. You'll also
+want to include this in the `action`s for good measure.
+
+🦉 One note, we don't need any data for those routes. In that case, you do still
+need to return a `json` response, so you can do this:
+
+```tsx
+export async function loader({ request }: DataFunctionArgs) {
+	// use your utility here...
+	return json({}) // <-- just return an empty object
+}
+```
+
+🐨 So start in <InlineFile file="app/utils/auth.server.ts" /> and then move on
+to the other files in the files dropdown below.

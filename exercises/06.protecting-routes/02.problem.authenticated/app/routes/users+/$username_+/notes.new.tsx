@@ -1,7 +1,7 @@
 import { NoteEditor, action } from './__note-editor.tsx'
 
-export { action }
+// 🐨 add a loader here that uses your requireUserId util to make sure the user
+// is logged in so they can get to this route.
 
-export default function NewNoteRoute() {
-	return <NoteEditor />
-}
+export { action }
+export default NoteEditor

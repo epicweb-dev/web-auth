@@ -31,7 +31,7 @@ export async function action({ request }: DataFunctionArgs) {
 				// and return z.NEVER
 				// 📜 https://zod.dev/?id=validating-during-transform
 
-				// TODO: verify the password (we'll do this later)
+				// verify the password (we'll do this later)
 				// 💰 return {...data, user}
 				return data
 			}),

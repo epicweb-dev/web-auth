@@ -110,14 +110,15 @@ export const meta: V2_MetaFunction = () => {
 }
 
 export default function SignupRoute() {
-	const [searchParams] = useSearchParams()
 	const actionData = useActionData<typeof action>()
 	const isSubmitting = useIsSubmitting()
+	const [searchParams] = useSearchParams()
+	const redirectTo = searchParams.get('redirectTo')
 
 	const [form, fields] = useForm({
-		id: 'signup',
+		id: 'signup-form',
 		constraint: getFieldsetConstraint(SignupFormSchema),
-		defaultValue: { redirectTo: searchParams.get('redirectTo') },
+		defaultValue: { redirectTo },
 		lastSubmission: actionData?.submission,
 		onValidate({ formData }) {
 			return parse(formData, { schema: SignupFormSchema })

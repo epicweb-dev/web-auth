@@ -6,7 +6,8 @@ import { NoteEditor, action } from './__note-editor.tsx'
 
 export { action }
 
-export async function loader({ params, request }: DataFunctionArgs) {
+export async function loader({ params }: DataFunctionArgs) {
+	// 🐨 get the user with your requireUserId util
 	const note = await prisma.note.findFirst({
 		select: {
 			id: true,
@@ -21,6 +22,7 @@ export async function loader({ params, request }: DataFunctionArgs) {
 		},
 		where: {
 			id: params.noteId,
+			// 🐨 change this to ownerId
 			owner: { username: params.username },
 		},
 	})

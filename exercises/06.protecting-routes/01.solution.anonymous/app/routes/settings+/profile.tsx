@@ -11,7 +11,7 @@ export const handle = {
 }
 
 export async function loader({ request }: DataFunctionArgs) {
-	const userId = 'TODO: get this from the session'
+	const userId = 'some_user_id' // we'll take care of this next
 	const user = await prisma.user.findUnique({
 		where: { id: userId },
 		select: { username: true },

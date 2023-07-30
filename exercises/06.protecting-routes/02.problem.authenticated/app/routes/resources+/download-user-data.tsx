@@ -3,7 +3,7 @@ import { prisma } from '~/utils/db.server.ts'
 import { getDomainUrl } from '~/utils/misc.tsx'
 
 export async function loader({ request }: DataFunctionArgs) {
-	const userId = 'TODO: get the user id from the session'
+	const userId = 'some_user_id' // 🐨 get the user with your requireUserId util
 	const user = await prisma.user.findUniqueOrThrow({
 		where: { id: userId },
 		// this is one of the *few* instances where you can use "include" because

@@ -1,1 +1,33 @@
 # Protecting Routes
+
+Most web applications all have routes that you have to be authenticated to get
+to. And it confuses authenticated users if they can get to the login/signup
+routes. It's one thing to prevent this in the UI, but the real thing you're
+trying to protect users from is the data that powers those pages. So while it's
+nice for the user experience to prevent the user from naturally landing in a
+place where they shouldn't be, it's even more important that you prevent them
+from getting to the data through the data endpoints that you use to power those
+pages.
+
+The concept of protecting a route is pretty simple: Check the request, and if
+it's coming from a user who doesn't have a valid session, then redirect them to
+the login page.
+
+In Remix, every route `loader` and `action` is an endpoint that can be called
+directly, and so every private `loader` and `action` needs to have this
+protection.
+
+Often, a framework will allow you to protect an entire subset of routes in one
+place. However, Remix does not yet have a feature for this
+([it will eventually](https://github.com/remix-run/react-router/discussions/9564)),
+so it can feel a little tedious to protect every route individually. That said,
+most of the time in a protected route you do need to get the user's session
+anyway, and Remix has a nice way to build that into your routes thanks to its
+ability to `throw` a `redirect` response. Which we'll take advantage of in this
+exercise.
+
+Personally, I like the explicitness (or maybe it's just Stockholm syndrome 😅),
+but if you want to protect a bunch of routes at once, you can do that by
+adding it into your express server. Additionally, you can load the user in your
+[app context](https://remix.run/docs/en/main/route/loader#context) so you
+don't have to talk to the database manually in each request you need it.

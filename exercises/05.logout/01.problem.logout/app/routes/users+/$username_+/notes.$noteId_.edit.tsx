@@ -6,7 +6,7 @@ import { NoteEditor, action } from './__note-editor.tsx'
 
 export { action }
 
-export async function loader({ params, request }: DataFunctionArgs) {
+export async function loader({ params }: DataFunctionArgs) {
 	const note = await prisma.note.findFirst({
 		select: {
 			id: true,

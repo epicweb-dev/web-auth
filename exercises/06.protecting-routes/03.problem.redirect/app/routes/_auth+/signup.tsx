@@ -38,6 +38,7 @@ const SignupFormSchema = z
 		agreeToTermsOfServiceAndPrivacyPolicy: checkboxSchema(
 			'You must agree to the terms of service and privacy policy',
 		),
+		// 🐨 add config for a redirectTo (optional string)
 		remember: checkboxSchema(),
 	})
 	.superRefine(({ confirmPassword, password }, ctx) => {
@@ -86,11 +87,14 @@ export async function action({ request }: DataFunctionArgs) {
 		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 
+	// 🐨 get the redirectTo from the submission
 	const { user, remember } = submission.value
 
 	const cookieSession = await getSession(request.headers.get('cookie'))
 	cookieSession.set(userIdKey, user.id)
 
+	// 🐨 redirect to the redirectTo
+	// 🦉 Make sure to use the safeRedirect utility from remix-utils
 	return redirect('/', {
 		headers: {
 			'set-cookie': await commitSession(cookieSession, {
@@ -110,10 +114,13 @@ export const meta: V2_MetaFunction = () => {
 export default function SignupRoute() {
 	const actionData = useActionData<typeof action>()
 	const isSubmitting = useIsSubmitting()
+	// 🐨 get the search params via useSearchParams from @remix-run/react
+	// 🐨 get the redirectTo from the search params
 
 	const [form, fields] = useForm({
-		id: 'signup',
+		id: 'signup-form',
 		constraint: getFieldsetConstraint(SignupFormSchema),
+		// 🐨 add a defaultValues object with the redirectTo
 		lastSubmission: actionData?.submission,
 		onValidate({ formData }) {
 			return parse(formData, { schema: SignupFormSchema })
@@ -204,6 +211,8 @@ export default function SignupRoute() {
 						buttonProps={conform.input(fields.remember, { type: 'checkbox' })}
 						errors={fields.remember.errors}
 					/>
+
+					{/* 🐨 add a hidden input here for the redirectTo */}
 
 					<ErrorList errors={form.errors} id={form.errorId} />
 

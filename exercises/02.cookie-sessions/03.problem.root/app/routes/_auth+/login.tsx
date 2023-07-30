@@ -40,7 +40,7 @@ export async function action({ request }: DataFunctionArgs) {
 					})
 					return z.NEVER
 				}
-				// TODO: verify the password
+				// verify the password (we'll do this later)
 				return { ...data, user }
 			}),
 		async: true,

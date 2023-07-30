@@ -28,7 +28,11 @@ const LoginFormSchema = z.object({
 	remember: checkboxSchema(),
 })
 
+// 🐨 create a loader here that uses the requireAnonymous utility and returns
+// an empty object of json.
+
 export async function action({ request }: DataFunctionArgs) {
+	// 🐨 add the requireAnonymous utility here
 	const formData = await request.formData()
 	const submission = await parse(formData, {
 		schema: intent =>

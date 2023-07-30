@@ -106,7 +106,7 @@ export default function SignupRoute() {
 	const isSubmitting = useIsSubmitting()
 
 	const [form, fields] = useForm({
-		id: 'signup',
+		id: 'signup-form',
 		constraint: getFieldsetConstraint(SignupFormSchema),
 		lastSubmission: actionData?.submission,
 		onValidate({ formData }) {

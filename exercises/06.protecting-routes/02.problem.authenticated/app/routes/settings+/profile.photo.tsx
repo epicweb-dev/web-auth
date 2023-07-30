@@ -37,7 +37,7 @@ const PhotoFormSchema = z.object({
 })
 
 export async function loader() {
-	const userId = 'TODO: get this from the request'
+	const userId = 'some_user_id' // 🐨 get the user with your requireUserId util
 	const user = await prisma.user.findUnique({
 		where: { id: userId },
 		select: {
@@ -52,7 +52,7 @@ export async function loader() {
 }
 
 export async function action({ request }: DataFunctionArgs) {
-	const userId = 'TODO: get this from the request'
+	const userId = 'some_user_id' // 🐨 get the user with your requireUserId util
 	const formData = await unstable_parseMultipartFormData(
 		request,
 		unstable_createMemoryUploadHandler({ maxPartSize: MAX_SIZE }),

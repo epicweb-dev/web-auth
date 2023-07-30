@@ -26,7 +26,7 @@ const ProfileFormSchema = z.object({
 })
 
 export async function loader({ request }: DataFunctionArgs) {
-	const userId = 'TODO: get this from the session'
+	const userId = 'some_user_id' // 🐨 get the user with your requireUserId util
 	const user = await prisma.user.findUnique({
 		where: { id: userId },
 		select: {
@@ -54,7 +54,7 @@ const profileUpdateActionIntent = 'update-profile'
 const deleteDataActionIntent = 'delete-data'
 
 export async function action({ request }: DataFunctionArgs) {
-	const userId = 'TODO: get this from the session'
+	const userId = 'some_user_id' // 🐨 get the user with your requireUserId util
 	const formData = await request.formData()
 	const intent = formData.get('intent')
 	switch (intent) {

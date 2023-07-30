@@ -54,6 +54,7 @@ const NoteEditorSchema = z.object({
 })
 
 export async function action({ request, params }: DataFunctionArgs) {
+	// 🐨 get the user with your requireUserId util
 	const formData = await parseMultipartFormData(
 		request,
 		createMemoryUploadHandler({ maxPartSize: MAX_UPLOAD_SIZE }),
@@ -65,6 +66,8 @@ export async function action({ request, params }: DataFunctionArgs) {
 
 			const note = await prisma.note.findUnique({
 				select: { id: true },
+				// 🐨 change this to user the ownerId instead of the username
+				// 💰 don't miss the other one below!
 				where: { id: data.id, owner: { username: params.username } },
 			})
 			if (!note) {
@@ -107,6 +110,7 @@ export async function action({ request, params }: DataFunctionArgs) {
 			select: { id: true, owner: { select: { username: true } } },
 			where: { id: noteId ?? '__new_note__' },
 			create: {
+				// 🐨 change this to user the ownerId instead of the username
 				owner: { connect: { username: params.username } },
 				title,
 				content,

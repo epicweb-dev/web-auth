@@ -1,1 +1,48 @@
 # Redirect from Login
+
+👨‍💼 Imagine this scenario... You're a user and you receive an email from us
+inviting you to add your name in your profile settings. You click the link and
+are redirected to the login page. After logging in, you're redirected to the
+home page. You have now forgotten why you came here in the first place and move
+on with your day.
+
+Boo! That's not a great user experience. Let's fix it.
+
+There are a few ways to do this, but the most common is to use a query string
+parameter. We'll add `redirectTo` support to both our login and signup forms.
+That way, our `requireUserId` utility can take the `request.url` and create an
+appropriate `redirectTo` query param automatically when it redirects to the
+login page.
+
+We'll also want to update the link from our `/login` page to the `/signup` page
+so if the user needs to create an account instead, the `redirectTo` will carry
+over to that page too.
+
+🦉 Don't miss this point! `redirectTo` query params can be abused by attackers.
+A baddy could use a `redirectTo` query param to redirect a user to a malicious
+site after logging in. So you should always validate the `redirectTo` query
+param to make sure it's a valid URL on your site. It's sufficient to just make
+sure the URL doesn't start with `http` or `https` and that it starts with `/`.
+
+Luckily for us, there's a utility in
+[`remix-utils`: `safeRedirect`](https://github.com/sergiodxa/remix-utils#safe-redirects).
+Here's the example from their docs:
+
+```tsx
+export async function loader({ request }: LoaderArgs) {
+	let { searchParams } = new URL(request.url)
+	let redirectTo = searchParams.get('redirectTo')
+	return redirect(safeRedirect(redirectTo, '/home'))
+}
+```
+
+In our case, we don't need the `/home` fallback (it defaults to `/`).
+
+🧝‍♂️ There's not too much to the forms for this one, so I'm going to make you do
+this one on your own.
+
+I do recommend you add the `redirectTo` support to the `requireUserId` util
+in <InlineFile file="app/utils/auth.server.ts" /> first.
+
+- [📜 `useSearchParams`](https://remix.run/docs/en/main/hooks/use-search-params)
+- [📜 `safeRedirect`](https://github.com/sergiodxa/remix-utils#safe-redirects)

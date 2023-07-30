@@ -89,7 +89,7 @@ export default function ChangePasswordRoute() {
 	const isSubmitting = useIsSubmitting()
 
 	const [form, fields] = useForm({
-		id: 'signup',
+		id: 'signup-form',
 		constraint: getFieldsetConstraint(ChangePasswordForm),
 		lastSubmission: actionData?.submission,
 		onValidate({ formData }) {
