@@ -83,6 +83,12 @@
       "path": "exercises/05.logout/03.solution.deleted"
     },
     {
+      "path": "exercises/05.logout/04.problem.auto-logout"
+    },
+    {
+      "path": "exercises/05.logout/04.solution.auto-logout"
+    },
+    {
       "path": "exercises/06.protecting-routes/01.problem.anonymous"
     },
     {

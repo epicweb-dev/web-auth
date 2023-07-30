@@ -1,0 +1,70 @@
+# Automatic Logout
+
+<callout-info>
+	🦉 Our app is not really the kind of app users would want to be automatically
+	logged out of, but we'll implement it anyway for the exercises.
+</callout-info>
+
+👨‍💼 When the user has been inactive for a while on the site, we want to log them
+out automatically so they don't leave their account open on a publicly
+accessible computer.
+
+Kellie 🧝‍♂️ built us a `LogoutTimer` component which sets up a timers and displays
+a modal when the user has been inactive for a while. We just need to find a good
+way to determine the user's activity. When they're active, we'll reset the
+timer.
+
+There are various ways you can determine activity. Depending on the type of app
+you have, you could track network requests, mouse movements, or keyboard
+activity. For our app, we'll track navigations.
+
+Whenever the user navigates with our router, the router creates a unique "key"
+which is accessible on the `location` object. We'll use this key to track
+activity:
+
+```tsx
+const location = useLocation()
+
+useEffect(() => {
+	console.log('location changed:', location.key)
+}, [location.key])
+```
+
+If the `key` changes, we can reset the timers.
+
+Another thing we'll want to consider is whether there is a user logged in at
+all. We wouldn't want the timers to start if there is no user logged in. So
+you'll need to address that situation as well.
+
+When the modal shows up, we'll let the user remain on the site by clicking a
+button which will close the modal and reset the timers. We'll also display a
+logout button which they user can click if they just want to logout immediately.
+
+But the user might not be at their computer when the modal shows up. So we'll
+have to log them out programmatically. This is called an imperative mutation.
+To make this kind of a mutation, you can use the `useSubmit` hook:
+
+```tsx
+const submit = useSubmit()
+```
+
+With this, you can submit a form programmatically:
+
+```tsx
+// submit a form:
+submit(someFormElement)
+
+// submit without a form:
+submit({ some: 'data' }, { method: 'POST', action: '/some/path' })
+
+// submit with no data:
+submit(null, { method: 'POST', action: '/some/path' })
+```
+
+That should be enough to get you going on this exercise.
+
+🦉 I've hard coded some very short times for the timers so you don't have to
+wait for two hours to see the modal 😅
+
+- [📜 `useLocation`](https://remix.run/docs/en/main/hooks/use-location)
+- [📜 `useSubmit`](https://remix.run/docs/en/main/hooks/use-submit)
