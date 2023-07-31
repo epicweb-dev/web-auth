@@ -54,3 +54,6 @@ console.log('Polling...')
 setInterval(() => {
 	run()
 }, 1000)
+
+console.log('running fix to start...')
+run()

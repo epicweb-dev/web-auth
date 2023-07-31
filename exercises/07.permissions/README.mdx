@@ -1,0 +1,27 @@
+# Role-Based Access
+
+Most apps have different kinds of users with different kinds of privileges. A
+regular user may be able to read and write their own data, but not other users'
+data. An admin user may be able to read and write all users' data. A guest user
+may be able to read some data, but not write any data.
+
+There are various ways to manage this kind of access control, but my personal
+favorite is known as "Role-Based Access Control." In this system, each user has
+a set of roles, and each role has a set of permissions. Then when the user is
+trying to perform an action, the app checks whether the user's roles have the
+necessary permissions.
+
+A common question about this is whether it would be easier to just have
+permissions and do away with the roles. The primary benefit of assigning roles
+instead of permissions to users is it makes it easier to manage permissions
+across a large number of users. For example, if you have 100 users and you want
+to give them all the same permissions, it's easier to create a role with those
+permissions and assign the role to all 100 users than it is to assign the
+permissions to each user individually. Especially when you decide you want to
+change or add new permissions to those users.
+
+It's just easier for us to think about our users as having "personas" than it is
+to think about them each having a list of permissions.
+
+You can read more about this concept in
+[What is Role-Based Access Control (RBAC)?](https://auth0.com/intro-to-iam/what-is-role-based-access-control-rbac).

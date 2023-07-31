@@ -1,0 +1,28 @@
+# Roles Schema
+
+👨‍💼 Let's role-up our users.
+
+...
+
+Was that a bad dad joke?
+
+Anyway...
+
+Users have roles, roles have permissions, and permissions can be assigned to
+roles. So we are going to have the following relationships:
+
+- one-to-many: User has many roles
+- many-to-many: Role has many permissions and permissions can be assigned to
+  many roles
+
+As a reminder, Prisma manages the many-to-many relational table for you, so you
+just create the models with the relationships and Prisma will take care of the
+rest.
+
+🐨 Update the schema in <InlineFile file="prisma/schema.prisma" />
+
+Then run the migration to create a migration file and apply it to the database:
+
+```sh nonumber
+npx prisma migrate dev --name roles
+```

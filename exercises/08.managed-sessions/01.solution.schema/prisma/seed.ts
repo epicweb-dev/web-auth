@@ -26,26 +26,45 @@ async function seed() {
 
 	console.time('🧹 Cleaned up the database...')
 	await prisma.user.deleteMany()
-	await prisma.permission.deleteMany()
-	await prisma.role.deleteMany()
 	console.timeEnd('🧹 Cleaned up the database...')
 
-	console.time(`👑 Created admin role/permission...`)
-	const adminRole = await prisma.role.create({
-		select: { id: true },
+	console.time('🔑 Created permissions...')
+	const entities = ['user', 'note']
+	const actions = ['create', 'read', 'update', 'delete']
+	const ownOnlys = [true, false]
+	for (const entity of entities) {
+		for (const action of actions) {
+			for (const ownOnly of ownOnlys) {
+				await prisma.permission.create({ data: { entity, action, ownOnly } })
+			}
+		}
+	}
+	console.timeEnd('🔑 Created permissions...')
+
+	console.time('👑 Created roles...')
+	await prisma.role.create({
 		data: {
 			name: 'admin',
-			description: 'Administrator',
 			permissions: {
-				create: {
-					name: 'admin',
-					description:
-						'The admin permission allows users to do anything they want',
-				},
+				connect: await prisma.permission.findMany({
+					select: { id: true },
+					where: { ownOnly: false },
+				}),
 			},
 		},
 	})
-	console.timeEnd(`👑 Created admin role/permission...`)
+	await prisma.role.create({
+		data: {
+			name: 'user',
+			permissions: {
+				connect: await prisma.permission.findMany({
+					select: { id: true },
+					where: { ownOnly: true },
+				}),
+			},
+		},
+	})
+	console.timeEnd('👑 Created roles...')
 
 	const totalUsers = 5
 	console.time(`👤 Created ${totalUsers} users...`)
@@ -108,6 +127,7 @@ async function seed() {
 					...userData,
 					password: { create: createPassword(userData.username) },
 					image: { create: userImages[index % 10] },
+					roles: { connect: { name: 'user' } },
 					notes: {
 						create: Array.from({
 							length: faker.number.int({ min: 1, max: 3 }),
@@ -176,7 +196,7 @@ async function seed() {
 			name: 'Kody',
 			image: { create: kodyImages.kodyUser },
 			password: { create: createPassword('kodylovesyou') },
-			roles: { connect: { id: adminRole.id } },
+			roles: { connect: { name: 'admin' } },
 			notes: {
 				create: [
 					{

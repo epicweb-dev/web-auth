@@ -34,8 +34,6 @@ export async function loader({ request }: DataFunctionArgs) {
 				},
 			},
 			password: false, // <-- intentionally omit password
-			roles: { include: { permissions: true } },
-			sessions: true,
 		},
 	})
 

@@ -14,7 +14,7 @@ type StatusHandler = (info: {
 export function GeneralErrorBoundary({
 	defaultStatusHandler = ({ error }) => (
 		<p>
-			{error.status} {error.data}
+			{error.status} {getErrorMessage(error.data)}
 		</p>
 	),
 	statusHandlers,

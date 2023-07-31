@@ -37,7 +37,8 @@ import { prisma } from './utils/db.server.ts'
 import { getEnv } from './utils/env.server.ts'
 import { getUserImgSrc, invariantResponse } from './utils/misc.tsx'
 import { getTheme, setTheme, type Theme } from './utils/theme.server.ts'
-import { useOptionalUser, useUserIsAdmin } from './utils/user.ts'
+import { useOptionalUser } from './utils/user.ts'
+import { userHasRole } from './utils/permissions.ts'
 
 export const links: LinksFunction = () => {
 	return [
@@ -61,8 +62,9 @@ export async function loader({ request }: DataFunctionArgs) {
 					image: { select: { id: true } },
 					roles: {
 						select: {
+							name: true,
 							permissions: {
-								select: { id: true, name: true },
+								select: { entity: true, action: true, ownOnly: true },
 							},
 						},
 					},
@@ -144,7 +146,7 @@ export default function App() {
 	const theme = useTheme()
 	const user = useOptionalUser()
 	const matches = useMatches()
-	const userIsAdmin = useUserIsAdmin()
+	const userIsAdmin = userHasRole(user, 'admin')
 	const isOnSearchPage = matches.find(m => m.id === 'routes/users+/index')
 	return (
 		<Document theme={theme} env={data.ENV}>

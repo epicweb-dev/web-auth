@@ -15,15 +15,3 @@ export function useUser() {
 	}
 	return maybeUser
 }
-
-export function useUserHasPermission(name: string) {
-	const user = useOptionalUser()
-	if (!user) return false
-	return user.roles.some(role =>
-		role.permissions.some(permission => permission.name === name),
-	)
-}
-
-export function useUserIsAdmin() {
-	return useUserHasPermission('admin')
-}

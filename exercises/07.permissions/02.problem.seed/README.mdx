@@ -1,0 +1,17 @@
+# Roles Seed
+
+👨‍💼 Perhaps in the future we'll want pretty fine-grained roles and permissions,
+but for now we really only have two roles:
+
+1. `admin` - which can do anything to everything
+2. `user` - which can do anything to their own data
+
+Our <InlineFile file="prisma/seed.ts" /> script should create these roles and
+permissions, and assign the "user" roles to the generated users and the "admin"
+role to the `Kody` user.
+
+Once you've finished updating the seed script, run it with:
+
+```sh nonumber
+npx prisma db seed
+```

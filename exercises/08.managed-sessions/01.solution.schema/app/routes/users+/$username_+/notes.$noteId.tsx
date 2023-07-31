@@ -16,15 +16,19 @@ import { ErrorList } from '~/components/forms.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import { Icon } from '~/components/ui/icon.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
-import { requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import {
 	getNoteImgSrc,
 	invariantResponse,
 	useIsSubmitting,
 } from '~/utils/misc.tsx'
+import {
+	requireUserWithPermission,
+	userHasPermission,
+} from '~/utils/permissions.ts'
 import { useOptionalUser } from '~/utils/user.ts'
 import { type loader as notesLoader } from './notes.tsx'
+import { requireUserId } from '~/utils/auth.server.ts'
 
 export async function loader({ params }: DataFunctionArgs) {
 	const note = await prisma.note.findUnique({
@@ -77,10 +81,16 @@ export async function action({ request }: DataFunctionArgs) {
 	const { noteId } = submission.value
 
 	const note = await prisma.note.findFirst({
-		select: { id: true, owner: { select: { username: true } } },
-		where: { id: noteId, ownerId: userId },
+		select: { id: true, owner: { select: { id: true, username: true } } },
+		where: { id: noteId },
 	})
 	invariantResponse(note, 'Not found', { status: 404 })
+
+	const isOwner = note.owner.id === userId
+	await requireUserWithPermission(
+		request,
+		`delete:note:${isOwner ? 'either' : 'any'}`,
+	)
 
 	await prisma.note.delete({ where: { id: note.id } })
 
@@ -91,11 +101,16 @@ export default function NoteRoute() {
 	const data = useLoaderData<typeof loader>()
 	const user = useOptionalUser()
 	const isOwner = user?.id === data.note.ownerId
+	const canDelete = userHasPermission(
+		user,
+		`delete:note:${isOwner ? 'either' : 'any'}`,
+	)
+	const displayBar = canDelete || isOwner
 
 	return (
 		<div className="absolute inset-0 flex flex-col px-10">
 			<h2 className="mb-2 pt-12 text-h2 lg:mb-6">{data.note.title}</h2>
-			<div className={`${isOwner ? 'pb-24' : 'pb-12'} overflow-y-auto`}>
+			<div className={`${displayBar ? 'pb-24' : 'pb-12'} overflow-y-auto`}>
 				<ul className="flex flex-wrap gap-5 py-5">
 					{data.note.images.map(image => (
 						<li key={image.id}>
@@ -113,7 +128,7 @@ export default function NoteRoute() {
 					{data.note.content}
 				</p>
 			</div>
-			{isOwner ? (
+			{displayBar ? (
 				<div className={floatingToolbarClassName}>
 					<span className="text-sm text-foreground/90 max-[524px]:hidden">
 						<Icon name="clock" className="scale-125">
@@ -121,7 +136,7 @@ export default function NoteRoute() {
 						</Icon>
 					</span>
 					<div className="grid flex-1 grid-cols-2 justify-end gap-2 min-[525px]:flex md:gap-4">
-						<DeleteNote id={data.note.id} />
+						{canDelete ? <DeleteNote id={data.note.id} /> : null}
 						<Button
 							asChild
 							className="min-[525px]:max-md:aspect-square min-[525px]:max-md:px-0"
@@ -198,6 +213,7 @@ export function ErrorBoundary() {
 	return (
 		<GeneralErrorBoundary
 			statusHandlers={{
+				403: () => <p>You are not allowed to do that</p>,
 				404: ({ params }) => (
 					<p>No note with the id "{params.noteId}" exists</p>
 				),
