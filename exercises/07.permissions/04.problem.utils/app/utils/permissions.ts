@@ -50,51 +50,46 @@ export async function requireUserWithRole(request: Request, name: string) {
 
 type Action = 'create' | 'read' | 'update' | 'delete'
 type Entity = 'user' | 'note'
-type OwnOnly = 'own' | 'any' | 'either'
-type PermissionString = `${Action}:${Entity}:${OwnOnly}`
+type Access = 'own' | 'any'
+type PermissionString = `${Action}:${Entity}` | `${Action}:${Entity}:${Access}`
 function parsePermissionString(permissionString: PermissionString): {
 	action: Action
 	entity: Entity
-	ownOnly?: boolean
+	access?: Access
 } {
-	const [action, entity, ownOnly] = permissionString.split(':') as [
+	const [action, entity, access] = permissionString.split(':') as [
 		Action,
 		Entity,
-		OwnOnly,
+		Access | undefined,
 	]
-	const ownMap = { own: true, any: false, either: undefined }
-	return {
-		action,
-		entity,
-		ownOnly: ownMap[ownOnly],
-	}
+	return { action, entity, access }
 }
 
 export function userHasPermission(
-	// @ts-expect-error 💣 remove this comment
+	// @ts-ignore 💣 remove this comment
 	user: Pick<ReturnType<typeof useUser>, 'roles'> | null,
-	permission: `${Action}:${Entity}:${OwnOnly}`,
+	permission: PermissionString,
 ) {
 	if (!user) return false
-	const { action, entity, ownOnly } = parsePermissionString(permission)
-	// @ts-expect-error 💣 remove this comment
+	const { action, entity, access } = parsePermissionString(permission)
+	// @ts-ignore 💣 remove this comment
 	return user.roles.some(role =>
 		role.permissions.some(
-			// @ts-expect-error 💣 remove this comment
+			// @ts-ignore 💣 remove this comment
 			permission =>
 				permission.entity === entity &&
 				permission.action === action &&
-				((permission.ownOnly && ownOnly) || !permission.ownOnly),
+				(!access || permission.access === access),
 		),
 	)
 }
 
 export function userHasRole(
-	// @ts-expect-error 💣 remove this comment
+	// @ts-ignore 💣 remove this comment
 	user: Pick<ReturnType<typeof useUser>, 'roles'> | null,
 	role: string,
 ) {
 	if (!user) return false
-	// @ts-expect-error 💣 remove this comment
+	// @ts-ignore 💣 remove this comment
 	return user.roles.some(r => r.name === role)
 }

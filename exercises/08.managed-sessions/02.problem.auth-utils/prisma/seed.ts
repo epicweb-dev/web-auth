@@ -31,11 +31,11 @@ async function seed() {
 	console.time('🔑 Created permissions...')
 	const entities = ['user', 'note']
 	const actions = ['create', 'read', 'update', 'delete']
-	const ownOnlys = [true, false]
+	const accesses = ['own', 'any']
 	for (const entity of entities) {
 		for (const action of actions) {
-			for (const ownOnly of ownOnlys) {
-				await prisma.permission.create({ data: { entity, action, ownOnly } })
+			for (const access of accesses) {
+				await prisma.permission.create({ data: { entity, action, access } })
 			}
 		}
 	}
@@ -48,7 +48,7 @@ async function seed() {
 			permissions: {
 				connect: await prisma.permission.findMany({
 					select: { id: true },
-					where: { ownOnly: false },
+					where: { access: 'any' },
 				}),
 			},
 		},
@@ -59,7 +59,7 @@ async function seed() {
 			permissions: {
 				connect: await prisma.permission.findMany({
 					select: { id: true },
-					where: { ownOnly: true },
+					where: { access: 'own' },
 				}),
 			},
 		},

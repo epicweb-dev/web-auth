@@ -81,18 +81,18 @@ model Password {
 }
 
 model Permission {
-  id          String  @id @default(cuid())
+  id          String @id @default(cuid())
   action      String // e.g. create, read, update, delete
   entity      String // e.g. note, user, etc.
-  ownOnly     Boolean @default(true) // e.g. can only be applied when the user is the owner of the entity
-  description String  @default("")
+  access      String // e.g. own or any
+  description String @default("")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   roles Role[]
 
-  @@unique([action, entity, ownOnly])
+  @@unique([action, entity, access])
 }
 
 model Role {

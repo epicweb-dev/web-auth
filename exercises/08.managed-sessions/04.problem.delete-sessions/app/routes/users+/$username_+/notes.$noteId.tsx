@@ -89,7 +89,7 @@ export async function action({ request }: DataFunctionArgs) {
 	const isOwner = note.owner.id === userId
 	await requireUserWithPermission(
 		request,
-		`delete:note:${isOwner ? 'either' : 'any'}`,
+		isOwner ? `delete:note` : `delete:note:any`,
 	)
 
 	await prisma.note.delete({ where: { id: note.id } })
@@ -103,7 +103,7 @@ export default function NoteRoute() {
 	const isOwner = user?.id === data.note.ownerId
 	const canDelete = userHasPermission(
 		user,
-		`delete:note:${isOwner ? 'either' : 'any'}`,
+		isOwner ? `delete:note` : `delete:note:any`,
 	)
 	const displayBar = canDelete || isOwner
 

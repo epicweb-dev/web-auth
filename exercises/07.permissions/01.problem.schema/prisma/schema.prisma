@@ -80,11 +80,21 @@ model Password {
   userId String @unique
 }
 
-// 🐨 add a Permission model that has an id, action, entity, ownOnly, and description (which can default to "")
-// along with the createdAt and updatedAt timestamps
-// finally, it should have a "roles" property that's an array of Roles
+// 🐨 add a Permission model that has the following properties:
+// - id (as usual)
+// - action - a required string (will be one of create, read, update, delete)
+// - entity - a required string (will be one of user or note)
+// - access - a required string (will be one of own or any)
+// - description - a required string (which can default to "")
+// - createdAt (as usual)
+// - updatedAt (as usual)
+// - roles - an array of Roles
 
-// 🐨 add a Role model that has an id, name, and description (which can default to "")
-// along with the createdAt and updatedAt timestamps
-// finally, it should have a "permissions" property that's an array of Permissions
-// and a "users" property that's an array of Users
+// 🐨 add a Role model that has an
+// - id (as usual)
+// - name - a required string
+// - description - a required string (which can default to "")
+// - createdAt (as usual)
+// - updatedAt (as usual)
+// - permissions - an array of Permissions
+// - users - an array of Users

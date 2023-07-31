@@ -64,7 +64,7 @@ export async function loader({ request }: DataFunctionArgs) {
 						select: {
 							name: true,
 							permissions: {
-								select: { entity: true, action: true, ownOnly: true },
+								select: { entity: true, action: true, access: true },
 							},
 						},
 					},

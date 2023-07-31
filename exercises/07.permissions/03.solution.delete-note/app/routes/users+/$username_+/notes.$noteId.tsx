@@ -57,7 +57,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 					roles: { some: { users: { some: { id: userId } } } },
 					entity: 'note',
 					action: 'delete',
-					ownOnly: note.ownerId === userId ? undefined : false,
+					access: note.ownerId === userId ? undefined : 'any',
 				},
 		  })
 		: null
@@ -97,12 +97,12 @@ export async function action({ request }: DataFunctionArgs) {
 	invariantResponse(note, 'Not found', { status: 404 })
 
 	const permission = await prisma.permission.findFirst({
-		select: { ownOnly: true },
+		select: { id: true },
 		where: {
 			roles: { some: { users: { some: { id: userId } } } },
 			entity: 'note',
 			action: 'delete',
-			ownOnly: note.owner.id === userId ? undefined : false,
+			access: note.ownerId === userId ? undefined : 'any',
 		},
 	})
 
