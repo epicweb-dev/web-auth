@@ -27,6 +27,8 @@ import { useOptionalUser } from '~/utils/user.ts'
 import { type loader as notesLoader } from './notes.tsx'
 
 export async function loader({ params }: DataFunctionArgs) {
+	// 🐨 get the user id from the request (remember, unauthenticated users should
+	// be able to see these notes too, so use getUserId instead of requireUserId).
 	const note = await prisma.note.findUnique({
 		where: { id: params.noteId },
 		select: {
@@ -49,9 +51,18 @@ export async function loader({ params }: DataFunctionArgs) {
 	const date = new Date(note.updatedAt)
 	const timeAgo = formatDistanceToNow(date)
 
+	// 🐨 get the permission here. If the userId does not exist, don't bother,
+	// as the permission should just be null. If it does though, get the
+	// permission where "some" of the permission's roles have "some" users with the userId
+	// 📜 https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#some
+	// 💰 you have the note.ownerId, so you can use that to decide whether you
+	// should be looking for "access: { in: ['own', 'any'] }" or "access: 'any'".
+	// 📜 https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#in
+
 	return json({
 		note,
 		timeAgo,
+		// 🐨 set canDelete to whether there is a matching permission
 	})
 }
 
@@ -77,10 +88,17 @@ export async function action({ request }: DataFunctionArgs) {
 	const { noteId } = submission.value
 
 	const note = await prisma.note.findFirst({
+		// 🐨 now we need the ownerId as well so we can determine whether the current user is the owner
 		select: { id: true, owner: { select: { username: true } } },
+		// 💣 since admins can delete notes, we can't filter by userId anymore, remove that
 		where: { id: noteId, ownerId: userId },
 	})
 	invariantResponse(note, 'Not found', { status: 404 })
+
+	// 🐨 do an identical permission query to the one above.
+
+	// 🐨 if there is no permission, then throw a response with a 403 status code
+	// which you can handle in the error boundary below
 
 	await prisma.note.delete({ where: { id: note.id } })
 
@@ -91,11 +109,14 @@ export default function NoteRoute() {
 	const data = useLoaderData<typeof loader>()
 	const user = useOptionalUser()
 	const isOwner = user?.id === data.note.ownerId
+	// 🐨 get this value from the loader data
+	const canDelete = true
+	const displayBar = canDelete || isOwner
 
 	return (
 		<div className="absolute inset-0 flex flex-col px-10">
 			<h2 className="mb-2 pt-12 text-h2 lg:mb-6">{data.note.title}</h2>
-			<div className={`${isOwner ? 'pb-24' : 'pb-12'} overflow-y-auto`}>
+			<div className={`${displayBar ? 'pb-24' : 'pb-12'} overflow-y-auto`}>
 				<ul className="flex flex-wrap gap-5 py-5">
 					{data.note.images.map(image => (
 						<li key={image.id}>
@@ -113,7 +134,7 @@ export default function NoteRoute() {
 					{data.note.content}
 				</p>
 			</div>
-			{isOwner ? (
+			{displayBar ? (
 				<div className={floatingToolbarClassName}>
 					<span className="text-sm text-foreground/90 max-[524px]:hidden">
 						<Icon name="clock" className="scale-125">
@@ -121,7 +142,7 @@ export default function NoteRoute() {
 						</Icon>
 					</span>
 					<div className="grid flex-1 grid-cols-2 justify-end gap-2 min-[525px]:flex md:gap-4">
-						<DeleteNote id={data.note.id} />
+						{canDelete ? <DeleteNote id={data.note.id} /> : null}
 						<Button
 							asChild
 							className="min-[525px]:max-md:aspect-square min-[525px]:max-md:px-0"
@@ -198,6 +219,7 @@ export function ErrorBoundary() {
 	return (
 		<GeneralErrorBoundary
 			statusHandlers={{
+				// 🐨 add a 403 handler here and just say they're not allowed.
 				404: ({ params }) => (
 					<p>No note with the id "{params.noteId}" exists</p>
 				),

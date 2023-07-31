@@ -57,7 +57,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 					roles: { some: { users: { some: { id: userId } } } },
 					entity: 'note',
 					action: 'delete',
-					access: note.ownerId === userId ? undefined : 'any',
+					access: note.ownerId === userId ? { in: ['any', 'own'] } : 'any',
 				},
 		  })
 		: null
@@ -91,7 +91,7 @@ export async function action({ request }: DataFunctionArgs) {
 	const { noteId } = submission.value
 
 	const note = await prisma.note.findFirst({
-		select: { id: true, owner: { select: { id: true, username: true } } },
+		select: { id: true, ownerId: true, owner: { select: { username: true } } },
 		where: { id: noteId },
 	})
 	invariantResponse(note, 'Not found', { status: 404 })
@@ -102,7 +102,7 @@ export async function action({ request }: DataFunctionArgs) {
 			roles: { some: { users: { some: { id: userId } } } },
 			entity: 'note',
 			action: 'delete',
-			access: note.ownerId === userId ? undefined : 'any',
+			access: note.ownerId === userId ? { in: ['any', 'own'] } : 'any',
 		},
 	})
 
@@ -110,9 +110,7 @@ export async function action({ request }: DataFunctionArgs) {
 		throw json(
 			{
 				error: 'Unauthorized',
-				message: `Unauthorized: requires permission note:delete:${
-					note.owner.id === userId
-				}`,
+				message: `Unauthorized: requires permission delete:note`,
 			},
 			{ status: 403 },
 		)

@@ -81,15 +81,15 @@ export async function action({ request }: DataFunctionArgs) {
 	const { noteId } = submission.value
 
 	const note = await prisma.note.findFirst({
-		select: { id: true, owner: { select: { id: true, username: true } } },
+		select: { id: true, ownerId: true, owner: { select: { username: true } } },
 		where: { id: noteId },
 	})
 	invariantResponse(note, 'Not found', { status: 404 })
 
-	const isOwner = note.owner.id === userId
+	const isOwner = note.ownerId === userId
 	await requireUserWithPermission(
 		request,
-		isOwner ? `delete:note` : `delete:note:any`,
+		isOwner ? `delete:note:any,own` : `delete:note:any`,
 	)
 
 	await prisma.note.delete({ where: { id: note.id } })
@@ -103,7 +103,7 @@ export default function NoteRoute() {
 	const isOwner = user?.id === data.note.ownerId
 	const canDelete = userHasPermission(
 		user,
-		isOwner ? `delete:note` : `delete:note:any`,
+		isOwner ? `delete:note:any,own` : `delete:note:any`,
 	)
 	const displayBar = canDelete || isOwner
 

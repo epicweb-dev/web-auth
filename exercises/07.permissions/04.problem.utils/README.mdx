@@ -1,1 +1,79 @@
 # Permissions Utils
+
+👨‍💼 It would be great to have some nicer utilities for determining a user's
+access to perform actions on an entity. So Kellie 🧝‍♂️ put some together
+in <InlineFile file="app/utils/permissions.ts" />. I'll let Kellie explain how
+it works.
+
+🧝‍♂️ Thanks Peter. Yeah, so there are now a few utilities you can use in the
+permissions module. Here's how you can use them:
+
+```tsx lines=3,11,24,31
+// requireUserWithPermission
+export async function loader({ request }: DataFunctionArgs) {
+	const userId = await requireUserWithPermission(request, 'update:user:own')
+	// it throws an error response if the user doesn't have this permission, so
+	// if you make it this far, you know they have it.
+
+	// ... do stuff
+}
+
+export async function action({ request }: DataFunctionArgs) {
+	const userId = await requireUserWithRole(request, 'admin')
+	// it throws an error response if the user doesn't have this role, so
+	// if you make it this far, you know they have it.
+
+	// NOTE: use this sparingly. It's better to use requireUserWithPermission
+	// because if we ever change permissions for a role they may no longer have
+	// access to perform this action.
+
+	// ... do stuff
+}
+
+function SomeRoute() {
+	const user = useOptionalUser()
+	const canCreateOwnNotes = userHasPermission(user, 'create:note:own')
+
+	// ... do stuff
+}
+
+function SomeRoute() {
+	const user = useOptionalUser()
+	const isAdmin = userHasRole(user, 'admin')
+
+	// ... do stuff
+}
+```
+
+Also, you can set the access to comma-separated accesses if you need. This can
+be useful if you've established the current user is an owner:
+
+```tsx
+// if the user is the owner, then they need to have either own or "any" access
+// if they're not, they need to have "any" access
+await requireUserWithPermission(
+	request,
+	isOwner ? `update:note:any,own` : `update:note:any`,
+)
+```
+
+One thing is the `userHasRole` and `userHasPermission` functions rely on user
+data loaded in the root loader and I haven't done that yet, so you'll need to
+handle that before you can use these utilities.
+
+👨‍💼 Thanks for building those utilities Kellie!
+
+🐨 Ok, so before you can actually start using these utilities, you need to add
+the permissions to the user query in <InlineFile file="app/root.tsx" />.
+
+🐨 While you're there, you may as well finish the user admin role work by updating
+the App component with a `userIsAdmin` variable and locking down
+the <InlineFile file="app/routes/admin.tsx" /> route.
+
+🦺 If you want to, you can remove the `ts-ignore`s
+in <InlineFile file="app/utils/permissions.ts" /> now that the root loader is
+loading the user's permissions.
+
+🐨 With that done, now you need to update
+the <InlineFile file="app/routes/users+/$username_+/notes.$noteId.tsx" /> route
+to use these utilities instead of what you did last time.

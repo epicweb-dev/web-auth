@@ -59,6 +59,8 @@ export async function loader({ request }: DataFunctionArgs) {
 					name: true,
 					username: true,
 					image: { select: { id: true } },
+					// 🐨 add roles and permissions to the query here. You should get the
+					// roles' names, and the permissions' action, entity, and access attributes.
 				},
 				where: { id: userId },
 		  })
@@ -137,6 +139,8 @@ export default function App() {
 	const theme = useTheme()
 	const user = useOptionalUser()
 	const matches = useMatches()
+	// 🐨 use the userHasRole utility to determine if the user is an admin
+	const userIsAdmin = false
 	const isOnSearchPage = matches.find(m => m.id === 'routes/users+/index')
 	return (
 		<Document theme={theme} env={data.ENV}>
@@ -169,6 +173,13 @@ export default function App() {
 										</span>
 									</Link>
 								</Button>
+								{userIsAdmin ? (
+									<Button asChild variant="secondary">
+										<Link to="/admin">
+											<Icon name="backpack">Admin</Icon>
+										</Link>
+									</Button>
+								) : null}
 							</div>
 						) : (
 							<Button asChild variant="default" size="sm">

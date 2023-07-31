@@ -1,25 +1,31 @@
 # Delete Note
 
-🦉 Adding a permissions model to an application requires quite a bit of extra work.
-It's possible you could build in this permissions model into the prisma client
-via [prisma client extensions](https://www.prisma.io/docs/concepts/components/prisma-client/client-extensions)
-which would drastically simplify the amount of work necessary. For example, you
-could do something like this:
-
-```tsx
-export function action(request) {
-	const client = prisma.$extend(getUserPrisma(request))
-}
-```
-
-And then the client would honor the permissions. If you're interested in
-building this out, please give it a shot and let us know how it goes!
-
-That said, there are some handy utilities we can make to make this easier. We'll
-get to those in the next step.
-
-👨‍💼 For now, we're going to have to do this integration manually. And we'll start
-with something simple: deleting notes.
+👨‍💼 Let's start with something simple: deleting notes.
 
 We need to adjust our code to support owners deleting their own notes if they
 have permission, and also allow admins to delete any note.
+
+Here's an example of how to query the database to see whether a user has a
+specific permission:
+
+```tsx
+const permission = await prisma.permission.findFirst({
+	select: { id: true },
+	where: {
+		roles: { some: { users: { some: { id: userId } } } },
+		entity: 'update',
+		action: 'user',
+		access: 'own',
+		// or access: 'any',
+	},
+})
+
+if (permission) {
+	// user has permission to update their own user record
+} else {
+	// user does not have permission to update their own user record
+}
+```
+
+- [📜 Prisma client reference "some"](https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#some)
+- [📜 Prisma client reference "in"](https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#in)

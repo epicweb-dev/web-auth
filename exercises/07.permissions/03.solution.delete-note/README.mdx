@@ -3,8 +3,28 @@
 👨‍💼 Great! Now admins can delete other user's notes. This will be useful for
 moderation purposes.
 
-🧝‍♂️ I'm going to make a couple utilities for working with permissions and we'll
-have you use those in the next step.
+🦉 Adding a permissions model to an application requires quite a bit of extra
+work in the app code. It's possible you could build in this permissions model
+into the prisma client via
+[prisma client extensions](https://www.prisma.io/docs/concepts/components/prisma-client/client-extensions)
+which would drastically simplify the amount of work necessary. For example, you
+could do something like this:
 
-Feel free to <DiffLink app1={0} app2={1}>check my work</DiffLink> if you're
+```tsx
+export function action(request) {
+	const client = prisma.$extend(getUserPrisma(request))
+}
+```
+
+And then the client would honor the permissions. If you're interested in
+building this out, please give it a shot and let us know how it goes!
+
+That said, there are some handy utilities we can make to make this easier. We'll
+get to those in the next step.
+
+🧝‍♂️ I'm going to make a couple utilities for working with permissions and we'll
+have you use those in the next step. I'm also going to add an `/admin` route
+which will just be a placeholder we'll build out later.
+
+Feel free to <DiffLink app1={0} app2={1} preview>check my work</DiffLink> if you're
 curious.

@@ -31,7 +31,7 @@ async function seed() {
 	console.time('🔑 Created permissions...')
 	const entities = ['user', 'note']
 	const actions = ['create', 'read', 'update', 'delete']
-	const accesses = ['own', 'any']
+	const accesses = ['own', 'any'] as const
 	for (const entity of entities) {
 		for (const action of actions) {
 			for (const access of accesses) {
@@ -196,7 +196,7 @@ async function seed() {
 			name: 'Kody',
 			image: { create: kodyImages.kodyUser },
 			password: { create: createPassword('kodylovesyou') },
-			roles: { connect: { name: 'admin' } },
+			roles: { connect: [{ name: 'admin' }, { name: 'user' }] },
 			notes: {
 				create: [
 					{

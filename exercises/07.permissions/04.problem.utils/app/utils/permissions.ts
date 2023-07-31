@@ -13,7 +13,18 @@ export async function requireUserWithPermission(
 		select: { id: true },
 		where: {
 			id: userId,
-			roles: { some: { permissions: { some: permissionData } } },
+			roles: {
+				some: {
+					permissions: {
+						some: {
+							...permissionData,
+							access: permissionData.access
+								? { in: permissionData.access }
+								: undefined,
+						},
+					},
+				},
+			},
 		},
 	})
 	if (!user) {
@@ -50,19 +61,19 @@ export async function requireUserWithRole(request: Request, name: string) {
 
 type Action = 'create' | 'read' | 'update' | 'delete'
 type Entity = 'user' | 'note'
-type Access = 'own' | 'any'
+type Access = 'own' | 'any' | 'own,any' | 'any,own'
 type PermissionString = `${Action}:${Entity}` | `${Action}:${Entity}:${Access}`
-function parsePermissionString(permissionString: PermissionString): {
-	action: Action
-	entity: Entity
-	access?: Access
-} {
+function parsePermissionString(permissionString: PermissionString) {
 	const [action, entity, access] = permissionString.split(':') as [
 		Action,
 		Entity,
 		Access | undefined,
 	]
-	return { action, entity, access }
+	return {
+		action,
+		entity,
+		access: access ? (access.split(',') as Array<Access>) : undefined,
+	}
 }
 
 export function userHasPermission(
@@ -79,7 +90,7 @@ export function userHasPermission(
 			permission =>
 				permission.entity === entity &&
 				permission.action === action &&
-				(!access || permission.access === access),
+				(!access || access.includes(permission.access)),
 		),
 	)
 }

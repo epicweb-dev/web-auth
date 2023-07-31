@@ -1,9 +1,10 @@
-import { json, type DataFunctionArgs } from '@remix-run/node'
+import { json } from '@remix-run/node'
 import { GeneralErrorBoundary } from '~/components/error-boundary.tsx'
 import { Spacer } from '~/components/spacer.tsx'
 
-export async function loader({ request }: DataFunctionArgs) {
-	// 🐨 lock down this route to only users with the "admin" role
+export async function loader() {
+	// 🐨 lock down this route to only users with the "admin" role with the
+	// requireUserWithRole utility
 	return json({})
 }
 
@@ -21,7 +22,7 @@ export default function AdminRoute() {
 			<Spacer size="xs" />
 			<p className="max-w-md mx-auto text-body-lg text-center">
 				Use your imagination. You could display all kinds of admin-y things on
-				this page...
+				this page... For example, maybe a way to manage permissions?
 			</p>
 		</div>
 	)

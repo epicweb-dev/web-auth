@@ -50,6 +50,8 @@ export async function loader({ request, params }: DataFunctionArgs) {
 	const date = new Date(note.updatedAt)
 	const timeAgo = formatDistanceToNow(date)
 
+	// 💣 we no longer need to determine whether the user can delete here (we'll
+	// do that in the UI), so you can remove this query entirely.
 	const permission = userId
 		? await prisma.permission.findFirst({
 				select: { id: true },
@@ -57,7 +59,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 					roles: { some: { users: { some: { id: userId } } } },
 					entity: 'note',
 					action: 'delete',
-					access: note.ownerId === userId ? undefined : 'any',
+					access: note.ownerId === userId ? { in: ['any', 'own'] } : 'any',
 				},
 		  })
 		: null
@@ -65,6 +67,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 	return json({
 		note,
 		timeAgo,
+		// 💣 you can remove this, we'll do this check in the UI.
 		canDelete: Boolean(permission),
 	})
 }
@@ -91,18 +94,19 @@ export async function action({ request }: DataFunctionArgs) {
 	const { noteId } = submission.value
 
 	const note = await prisma.note.findFirst({
-		select: { id: true, owner: { select: { id: true, username: true } } },
+		select: { id: true, ownerId: true, owner: { select: { username: true } } },
 		where: { id: noteId },
 	})
 	invariantResponse(note, 'Not found', { status: 404 })
 
+	// 💣 you can remove everything between here and the next 💣
 	const permission = await prisma.permission.findFirst({
 		select: { id: true },
 		where: {
 			roles: { some: { users: { some: { id: userId } } } },
 			entity: 'note',
 			action: 'delete',
-			access: note.ownerId === userId ? undefined : 'any',
+			access: note.ownerId === userId ? { in: ['any', 'own'] } : 'any',
 		},
 	})
 
@@ -110,13 +114,13 @@ export async function action({ request }: DataFunctionArgs) {
 		throw json(
 			{
 				error: 'Unauthorized',
-				message: `Unauthorized: requires permission note:delete:${
-					note.owner.id === userId
-				}`,
+				message: `Unauthorized: requires permission delete:note`,
 			},
 			{ status: 403 },
 		)
 	}
+	// 💣 you can remove everything between here and the previous 💣
+	// 🐨 use the `requireUserWithPermission`
 
 	await prisma.note.delete({ where: { id: note.id } })
 
@@ -127,6 +131,9 @@ export default function NoteRoute() {
 	const data = useLoaderData<typeof loader>()
 	const user = useOptionalUser()
 	const isOwner = user?.id === data.note.ownerId
+	// 🐨 we no longer are using the loader to determine whether the user has
+	// permission to delete. We load all the user's permissions in the root loader
+	// and can use the userHasPermission utility. Use that here:
 	const canDelete = data.canDelete
 	const displayBar = canDelete || isOwner
 
