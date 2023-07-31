@@ -38,6 +38,8 @@ export async function loader({ request }: DataFunctionArgs) {
 			image: {
 				select: { id: true },
 			},
+			// 🐨 add a count of the number of sessions for this user
+			// 📜 https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#select-a-_count-of-relations
 		},
 	})
 
@@ -244,15 +246,18 @@ function UpdateProfile() {
 }
 
 async function signOutOfSessionsAction({ request, userId }: ProfileActionArgs) {
-	// 🐨 TODO: write instructions
+	// 🐨 get the sessionId from the cookieSession (you'll need to use getSession for this)
+	// 🐨 delete all the sessions that are not the current session
+	// 📜 https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#not
 	return json({ status: 'success' } as const)
 }
 
 function SignOutOfSessions() {
+	// 🐨 get the loader data using useLoaderData
 	const dc = useDoubleCheck()
 
 	const fetcher = useFetcher<typeof signOutOfSessionsAction>()
-	const otherSessionsCount = 0 // 🐨 fix this
+	const otherSessionsCount = 0 // 🐨 this should be the count of sessions minus 1
 	return (
 		<div>
 			{otherSessionsCount ? (

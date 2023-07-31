@@ -75,7 +75,9 @@ export async function action({ request }: DataFunctionArgs) {
 				return
 			}
 		}).transform(async data => {
+			// 🐨 this is a session now
 			const user = await signup(data)
+			// 🐨 this should be a session not a user
 			return { ...data, user }
 		}),
 		async: true,
@@ -84,19 +86,24 @@ export async function action({ request }: DataFunctionArgs) {
 	if (submission.intent !== 'submit') {
 		return json({ status: 'idle', submission } as const)
 	}
-	if (!submission.value) {
+	// 🐨 this is a session now, not a user
+	if (!submission.value?.user) {
 		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 
+	// 🐨 this is a session, not a user
 	const { user, remember, redirectTo } = submission.value
 
 	const cookieSession = await getSession(request.headers.get('cookie'))
+	// 🐨 this is a sessionIdKey and session, not a userIdKey and user
 	cookieSession.set(userIdKey, user.id)
 
 	return redirect(safeRedirect(redirectTo), {
 		headers: {
 			'set-cookie': await commitSession(cookieSession, {
 				// Cookies with no expiration are cleared when the tab/window closes
+				// 🐨 the expiration date is now available on the session and doesn't
+				// need to be computed here.
 				expires: remember
 					? new Date(Date.now() + SESSION_EXPIRATION_TIME)
 					: undefined,

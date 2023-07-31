@@ -42,8 +42,10 @@ export async function action({ request }: DataFunctionArgs) {
 	const submission = await parse(formData, {
 		schema: intent =>
 			LoginFormSchema.transform(async (data, ctx) => {
+				// 🐨 this should be a session, not a user
 				if (intent !== 'submit') return { ...data, user: null }
 
+				// 🐨 this returns a session, not a user
 				const user = await login(data)
 				if (!user) {
 					ctx.addIssue({
@@ -53,6 +55,7 @@ export async function action({ request }: DataFunctionArgs) {
 					return z.NEVER
 				}
 
+				// 🐨 this returns a session, not a user
 				return { ...data, user }
 			}),
 		async: true,
@@ -65,19 +68,24 @@ export async function action({ request }: DataFunctionArgs) {
 		delete submission.value?.password
 		return json({ status: 'idle', submission } as const)
 	}
+	// 🐨 this is a session, not a user
 	if (!submission.value?.user) {
 		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 
+	// 🐨 this is a session, not a user
 	const { user, remember, redirectTo } = submission.value
 
 	const cookieSession = await getSession(request.headers.get('cookie'))
+	// 🐨 this is the sessionIdKey and a session, not userIdKey and user
 	cookieSession.set(userIdKey, user.id)
 
 	return redirect(safeRedirect(redirectTo), {
 		headers: {
 			'set-cookie': await commitSession(cookieSession, {
 				// Cookies with no expiration are cleared when the tab/window closes
+				// 🐨 the expiration date is now available on the session and doesn't
+				// need to be computed here.
 				expires: remember
 					? new Date(Date.now() + SESSION_EXPIRATION_TIME)
 					: undefined,

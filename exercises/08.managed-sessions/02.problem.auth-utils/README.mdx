@@ -1,1 +1,11 @@
 # Auth Utils
+
+👨‍💼 This is a pretty significant change to our auth model. So we're going to
+break this next bit into two steps:
+
+1. Updating the auth utils
+2. Updating the `/login` and `/signup` routes.
+
+For this step, let's just update the auth utils. Everywhere we're querying for
+the user based on the `userId` in the request, we'll instead query the session
+table with the `sessionId` in the request.

@@ -89,6 +89,8 @@ model Password {
 // - createdAt (as usual)
 // - updatedAt (as usual)
 // - roles - an array of Roles
+// @@unique constraint of action, entity, and access
+// 📜 https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#unique-1
 
 // 🐨 add a Role model that has an
 // - id (as usual)

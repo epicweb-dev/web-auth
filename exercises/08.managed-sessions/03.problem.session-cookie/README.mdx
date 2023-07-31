@@ -1,1 +1,10 @@
 # Session Cookie
+
+👨‍💼 Let's start in the <InlineFile file="app/utils/auth.server.ts" /> where we
+can update the exported `userIdKey` to `sessionIdKey`, and then you can go to
+the <InlineFile file="app/routes/_auth+/login.tsx" /> and
+the <InlineFile file="app/routes/_auth+/signup.tsx" /> routes to fix those.
+
+Aside from the normal refactoring variable names, we also now have the ability
+to use the session's expiration time instead of calculating that at the time
+we commit the cookie. Enjoy!

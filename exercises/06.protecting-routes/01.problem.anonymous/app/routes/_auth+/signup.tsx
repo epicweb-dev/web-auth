@@ -79,7 +79,7 @@ export async function action({ request }: DataFunctionArgs) {
 	if (submission.intent !== 'submit') {
 		return json({ status: 'idle', submission } as const)
 	}
-	if (!submission.value) {
+	if (!submission.value?.user) {
 		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 
