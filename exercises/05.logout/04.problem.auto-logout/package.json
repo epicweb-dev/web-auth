@@ -33,7 +33,6 @@
     "@remix-run/react": "^1.19.0",
     "@remix-run/router": "^1.7.2",
     "@remix-run/serve": "^1.19.0",
-    "activity-detector": "^3.0.0",
     "address": "^1.2.2",
     "bcryptjs": "^2.4.3",
     "chalk": "^5.3.0",
