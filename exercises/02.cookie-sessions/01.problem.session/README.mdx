@@ -26,9 +26,10 @@ to initialize this session storage object.
 - `httpOnly`: `true` - The cookie is not accessible via JavaScript. This is
   important for security because it prevents cross-site scripting attacks from
   accessing the cookie.
-- `secrets`: `[process.env.SESSION_SECRET]` - This is an array of secrets that
-  will be used to sign the cookie. This is important for security because it
-  prevents the cookie from being tampered with.
+- `secrets`: `process.env.SESSION_SECRET.split(',')` - This is an array of
+  secrets that will be used to sign the cookie. This is important for security
+  because it prevents the cookie from being tampered with. It's an array so you
+  can rotate their values over time.
 - `secure`: `process.env.NODE_ENV === 'production'` - The cookie is only sent
   over HTTPS. This is important for security because it prevents the cookie from
   being sent over an insecure connection. We only want to do this in production
