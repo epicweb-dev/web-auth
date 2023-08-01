@@ -95,7 +95,7 @@ export async function action({ request }: DataFunctionArgs) {
 	const { user, remember, redirectTo } = submission.value
 
 	const cookieSession = await getSession(request.headers.get('cookie'))
-	// 🐨 this is a sessionIdKey and session, not a userIdKey and user
+	// 🐨 this is a sessionKey and session, not a userIdKey and user
 	cookieSession.set(userIdKey, user.id)
 
 	return redirect(safeRedirect(redirectTo), {
