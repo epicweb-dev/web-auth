@@ -6,11 +6,11 @@ import { redirect } from '@remix-run/node'
 
 export const SESSION_EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 30
 
-export const sessionKey = 'sessionId'
+export const sessionIdKey = 'sessionId'
 
 export async function getUserId(request: Request) {
 	const cookieSession = await getSession(request.headers.get('cookie'))
-	const sessionId = cookieSession.get(sessionKey)
+	const sessionId = cookieSession.get(sessionIdKey)
 	if (!sessionId) return null
 	const session = await prisma.session.findUnique({
 		select: { user: { select: { id: true } } },
@@ -18,7 +18,7 @@ export async function getUserId(request: Request) {
 	})
 	if (!session?.user) {
 		// Perhaps user was deleted?
-		cookieSession.unset(sessionKey)
+		cookieSession.unset(sessionIdKey)
 		throw redirect('/', {
 			headers: {
 				'set-cookie': await commitSession(cookieSession),
@@ -111,7 +111,7 @@ export async function signup({
 
 export async function logout(request: Request) {
 	const cookieSession = await getSession(request.headers.get('cookie'))
-	cookieSession.unset(sessionKey)
+	cookieSession.unset(sessionIdKey)
 	throw redirect('/', {
 		headers: { 'set-cookie': await commitSession(cookieSession) },
 	})
