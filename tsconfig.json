@@ -159,6 +159,9 @@
     },
     {
       "path": "exercises/08.managed-sessions/04.solution.delete-sessions"
+    },
+    {
+      "path": "exercises/10.finished/01.problem.finished"
     }
   ]
 }
