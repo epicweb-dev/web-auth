@@ -13,7 +13,7 @@ import { GeneralErrorBoundary } from '~/components/error-boundary.tsx'
 import { CheckboxField, ErrorList, Field } from '~/components/forms.tsx'
 import { Spacer } from '~/components/spacer.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
-import { login, requireAnonymous, sessionIdKey } from '~/utils/auth.server.ts'
+import { login, requireAnonymous, sessionKey } from '~/utils/auth.server.ts'
 import { useIsSubmitting } from '~/utils/misc.tsx'
 import { commitSession, getSession } from '~/utils/session.server.ts'
 import { passwordSchema, usernameSchema } from '~/utils/user-validation.ts'
@@ -67,7 +67,7 @@ export async function action({ request }: DataFunctionArgs) {
 	const { session, remember, redirectTo } = submission.value
 
 	const cookieSession = await getSession(request.headers.get('cookie'))
-	cookieSession.set(sessionIdKey, session.id)
+	cookieSession.set(sessionKey, session.id)
 
 	return redirect(safeRedirect(redirectTo), {
 		headers: {

@@ -12,7 +12,7 @@ import { z } from 'zod'
 import { CheckboxField, ErrorList, Field } from '~/components/forms.tsx'
 import { Spacer } from '~/components/spacer.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
-import { requireAnonymous, sessionIdKey, signup } from '~/utils/auth.server.ts'
+import { requireAnonymous, sessionKey, signup } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import { useIsSubmitting } from '~/utils/misc.tsx'
 import { commitSession, getSession } from '~/utils/session.server.ts'
@@ -86,7 +86,7 @@ export async function action({ request }: DataFunctionArgs) {
 	const { session, remember, redirectTo } = submission.value
 
 	const cookieSession = await getSession(request.headers.get('cookie'))
-	cookieSession.set(sessionIdKey, session.id)
+	cookieSession.set(sessionKey, session.id)
 
 	return redirect(safeRedirect(redirectTo), {
 		headers: {

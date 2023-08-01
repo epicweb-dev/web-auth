@@ -7,7 +7,7 @@ import { ErrorList, Field } from '~/components/forms.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import { Icon } from '~/components/ui/icon.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
-import { requireUserId, sessionIdKey } from '~/utils/auth.server.ts'
+import { requireUserId, sessionKey } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import {
 	getUserImgSrc,
@@ -249,7 +249,7 @@ function UpdateProfile() {
 
 async function signOutOfSessionsAction({ request, userId }: ProfileActionArgs) {
 	const cookieSession = await getSession(request.headers.get('cookie'))
-	const sessionId = cookieSession.get(sessionIdKey)
+	const sessionId = cookieSession.get(sessionKey)
 	invariantResponse(
 		sessionId,
 		'You must be authenticated to sign out of other sessions',
