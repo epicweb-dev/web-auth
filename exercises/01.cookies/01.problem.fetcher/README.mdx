@@ -1,0 +1,63 @@
+# Fetchers
+
+👨‍💼 To get started with cookies in our application, we're going to start with
+something a little lighter weight than authentication: Theme Preference.
+
+Before we get to that though, we need to wire up our `ThemeSwitch` component to
+make a network request.
+
+🦉 Remix's `<Form />` component resembles the regular `<form />` component which
+is to say that it's a mechanism for navigating with data. However, there are
+lots of mutations we make that don't involve a navigation.
+
+- Navigation: Creating a GitHub issue -> Navigate to the new issue
+- Non-Navigation: Liking a Tweet -> Update the UI to show the like
+
+In Remix, we have a `<Form />` component for navigation and `useNavigation` to
+have information about the current navigation. We can do this because there can
+only be one navigation at time. However, with non-navigation mutations, you can
+have many of them at once. So we need a different mechanism for handling these
+mutations.
+
+That mechanism is [`useFetcher`](https://remix.run/docs/en/main/hooks/use-fetcher).
+`useFetcher` gives us the ability to perform any kind of fetch request. It
+definitely can result in a `redirect`, but often does not. It still uses
+`loader`s for GETs and `action`s for POSTs, but all the information about the
+request is contained within the fetcher object itself. Here's a code snippet
+from the docs demonstrating the different parts of a fetcher:
+
+```tsx
+import { useFetcher } from '@remix-run/react'
+
+function SomeComponent() {
+	const fetcher = useFetcher()
+
+	// trigger the fetch with these
+	const ui = <fetcher.Form {...formOptions} />
+	// for imperative fetches:
+	useEffect(() => {
+		// to submit data
+		fetcher.submit(data, options)
+		// or to get data:
+		fetcher.load(href)
+	}, [fetcher])
+
+	// build UI with these
+	fetcher.state
+	fetcher.formMethod
+	fetcher.formAction
+	fetcher.formData
+	fetcher.formEncType
+	fetcher.data
+}
+```
+
+👨‍💼 Thanks Olivia. Because a theme switcher is not a navigation type of mutation,
+we'll want to use `useFetcher` to make the request. Because the mutation is made
+as a result of the user action, we can use `fetcher.Form` to make the request.
+
+We'll not actually get the theme to switch in this step, but you should be able
+to add a `console.log` in the action and have the request data there when you're
+done.
+
+- [📜 `useFetcher`](https://remix.run/docs/en/main/hooks/use-fetcher)

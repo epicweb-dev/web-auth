@@ -256,6 +256,7 @@ function ThemeSwitch({ userPreference }: { userPreference?: Theme }) {
 				<button
 					name="intent"
 					value="update-theme"
+					type="submit"
 					className="flex h-8 w-8 cursor-pointer items-center justify-center"
 				>
 					{modeLabel[mode]}
