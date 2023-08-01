@@ -4,6 +4,34 @@
 they log in. Next, let's add some utilities that will make it much easier to
 access the user's information throughout our UI from anywhere in the app.
 
+## Timing Attacks
+
+🦉 I want to take a moment to talk about timing attacks. We're currently
+vulnerable to these though it doesn't matter to us. A timing attack is
+essentially a way to figure out a secret by measuring how long it takes to
+perform an operation. In our case, we're vulnerable because we're using
+`bcrypt.compare` to compare the user's password to the hash in the database.
+But before we do that, we're checking to see if the user exists. If the user
+doesn't exist, we return early.
+
+So an adversary could determine if a user exists by measuring how long it takes
+to get a response from the server. If the user doesn't exist, the response will
+be faster than if the user does exist.
+
+In our application, the users are public knowledge so it doesn't matter if an
+adversary can figure out if a user exists or not. Additionally, we require the
+username to be unique so an adversary could simply sign up for an account to
+figure out if a user exists or not.
+
+But, imagine a scenario where an adversary is trying to determine if a user with
+a specific email has an account a certain bank. That would probably be a bad
+thing, so it would be a good idea for that bank to hide the fact that a user
+exists or not. They could do this by always returning a response, even if the
+user doesn't exist and ensuring that response takes a random amount of time
+regardless of whether the user exists or not.
+
+## Kellie's work
+
 🧝‍♂️ I'm going to make a few changes for you to help you focus on your task,
 specifically, I'm going to:
 
