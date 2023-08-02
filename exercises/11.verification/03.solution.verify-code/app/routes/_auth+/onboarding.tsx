@@ -47,18 +47,22 @@ const SignupFormSchema = z
 		}
 	})
 
-export async function loader({ request }: DataFunctionArgs) {
-	await requireAnonymous(request)
-	return json({})
-}
-
-export async function action({ request }: DataFunctionArgs) {
+async function requireOnboardingEmail(request: Request) {
 	await requireAnonymous(request)
 	const cookieSession = await getSession(request.headers.get('cookie'))
 	const email = cookieSession.get(onboardingEmailSessionKey)
 	if (typeof email !== 'string' || !email) {
-		return redirect('/signup')
+		throw redirect('/signup')
 	}
+	return email
+}
+export async function loader({ request }: DataFunctionArgs) {
+	const email = await requireOnboardingEmail(request)
+	return json({ email })
+}
+
+export async function action({ request }: DataFunctionArgs) {
+	const email = await requireOnboardingEmail(request)
 	const formData = await request.formData()
 	const submission = await parse(formData, {
 		schema: SignupFormSchema.superRefine(async (data, ctx) => {
@@ -90,12 +94,12 @@ export async function action({ request }: DataFunctionArgs) {
 
 	const { session, remember, redirectTo } = submission.value
 
+	const cookieSession = await getSession(request.headers.get('cookie'))
 	cookieSession.set(sessionKey, session.id)
 
 	return redirect(safeRedirect(redirectTo), {
 		headers: {
 			'set-cookie': await commitSession(cookieSession, {
-				// Cookies with no expiration are cleared when the tab/window closes
 				expires: remember ? session.expirationDate : undefined,
 			}),
 		},
@@ -107,6 +111,7 @@ export const meta: V2_MetaFunction = () => {
 }
 
 export default function SignupRoute() {
+	const data = useLoaderData<typeof loader>()
 	const actionData = useActionData<typeof action>()
 	const isSubmitting = useIsSubmitting()
 	const [searchParams] = useSearchParams()
@@ -127,7 +132,7 @@ export default function SignupRoute() {
 		<div className="container flex min-h-full flex-col justify-center pb-32 pt-20">
 			<div className="mx-auto w-full max-w-lg">
 				<div className="flex flex-col gap-3 text-center">
-					<h1 className="text-h1">Welcome aboard!</h1>
+					<h1 className="text-h1">Welcome aboard {data.email}!</h1>
 					<p className="text-body-md text-muted-foreground">
 						Please enter your details.
 					</p>

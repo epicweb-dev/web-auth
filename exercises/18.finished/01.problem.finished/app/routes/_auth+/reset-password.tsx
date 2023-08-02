@@ -18,10 +18,37 @@ import { GeneralErrorBoundary } from '~/components/error-boundary.tsx'
 import { ErrorList, Field } from '~/components/forms.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
 import { requireAnonymous, resetUserPassword } from '~/utils/auth.server.ts'
+import { prisma } from '~/utils/db.server.ts'
+import { invariant } from '~/utils/misc.tsx'
 import { commitSession, getSession } from '~/utils/session.server.ts'
 import { passwordSchema } from '~/utils/user-validation.ts'
+import { type VerifyFunctionArgs } from './verify.tsx'
 
-export const resetPasswordUsernameSessionKey = 'resetPasswordUsername'
+const resetPasswordUsernameSessionKey = 'resetPasswordUsername'
+
+export async function handleVerification({
+	request,
+	submission,
+}: VerifyFunctionArgs) {
+	invariant(submission.value, 'submission.value should be defined by now')
+	const target = submission.value.target
+	const user = await prisma.user.findFirst({
+		where: { OR: [{ email: target }, { username: target }] },
+		select: { email: true, username: true },
+	})
+	// we don't want to say the user is not found if the email is not found
+	// because that would allow an attacker to check if an email is registered
+	if (!user) {
+		submission.error.code = 'Invalid code'
+		return json({ status: 'error', submission } as const, { status: 400 })
+	}
+
+	const session = await getSession(request.headers.get('cookie'))
+	session.set(resetPasswordUsernameSessionKey, user.username)
+	return redirect('/reset-password', {
+		headers: { 'set-cookie': await commitSession(session) },
+	})
+}
 
 const ResetPasswordSchema = z
 	.object({
@@ -33,22 +60,25 @@ const ResetPasswordSchema = z
 		path: ['confirmPassword'],
 	})
 
-export async function loader({ request }: DataFunctionArgs) {
+async function requireResetPasswordUsername(request: Request) {
 	await requireAnonymous(request)
 	const cookieSession = await getSession(request.headers.get('cookie'))
 	const resetPasswordUsername = cookieSession.get(
 		resetPasswordUsernameSessionKey,
 	)
 	if (typeof resetPasswordUsername !== 'string' || !resetPasswordUsername) {
-		return redirect('/login')
+		throw redirect('/login')
 	}
-	return json(
-		{ resetPasswordUsername },
-		{ headers: { 'set-cookie': await commitSession(cookieSession) } },
-	)
+	return resetPasswordUsername
+}
+
+export async function loader({ request }: DataFunctionArgs) {
+	const resetPasswordUsername = await requireResetPasswordUsername(request)
+	return json({ resetPasswordUsername })
 }
 
 export async function action({ request }: DataFunctionArgs) {
+	const resetPasswordUsername = await requireResetPasswordUsername(request)
 	const formData = await request.formData()
 	const submission = parse(formData, {
 		schema: ResetPasswordSchema,
@@ -57,20 +87,16 @@ export async function action({ request }: DataFunctionArgs) {
 	if (submission.intent !== 'submit') {
 		return json({ status: 'idle', submission } as const)
 	}
-	if (!submission.value) {
+	if (!submission.value?.password) {
 		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 	const { password } = submission.value
 
-	const session = await getSession(request.headers.get('cookie'))
-	const username = session.get(resetPasswordUsernameSessionKey)
-	if (typeof username !== 'string' || !username) {
-		return redirect('/login')
-	}
-	await resetUserPassword({ username, password })
-	session.unset(resetPasswordUsernameSessionKey)
+	await resetUserPassword({ username: resetPasswordUsername, password })
+	const cookieSession = await getSession(request.headers.get('cookie'))
+	cookieSession.unset(resetPasswordUsernameSessionKey)
 	return redirect('/login', {
-		headers: { 'set-cookie': await commitSession(session) },
+		headers: { 'set-cookie': await commitSession(cookieSession) },
 	})
 }
 

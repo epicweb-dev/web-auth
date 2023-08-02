@@ -83,7 +83,6 @@ export async function action({ request }: DataFunctionArgs) {
 	return redirect(safeRedirect(redirectTo), {
 		headers: {
 			'set-cookie': await commitSession(cookieSession, {
-				// Cookies with no expiration are cleared when the tab/window closes
 				// 🐨 the expiration date is now available on the session and doesn't
 				// need to be computed here.
 				expires: remember

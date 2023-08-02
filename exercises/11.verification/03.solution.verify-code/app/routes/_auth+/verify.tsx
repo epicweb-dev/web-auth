@@ -105,9 +105,6 @@ async function validateRequest(
 		},
 	})
 
-	// You'll want to actually wait until the user has verified their email
-	// before setting this in the session and sending them to onboarding, but
-	// we'll get to that later.
 	const session = await getSession(request.headers.get('cookie'))
 	session.set(onboardingEmailSessionKey, submission.value[targetQueryParam])
 	return redirect('/onboarding', {

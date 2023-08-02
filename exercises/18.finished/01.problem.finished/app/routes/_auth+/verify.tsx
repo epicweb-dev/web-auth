@@ -1,5 +1,6 @@
 import { conform, useForm, type Submission } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
+import { generateTOTP, verifyTOTP } from '@epic-web/totp'
 import { json, type DataFunctionArgs } from '@remix-run/node'
 import {
 	Form,
@@ -9,27 +10,20 @@ import {
 } from '@remix-run/react'
 import { z } from 'zod'
 import { ErrorList, Field } from '~/components/forms.tsx'
+import { Spacer } from '~/components/spacer.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
 import { handleVerification as handleChangeEmailVerification } from '~/routes/settings+/profile.change-email.tsx'
 import { prisma } from '~/utils/db.server.ts'
 import { getDomainUrl, useIsSubmitting } from '~/utils/misc.tsx'
-import { generateTOTP, verifyTOTP } from '@epic-web/totp'
-import { handleVerification as handleForgotPasswordVerification } from './forgot-password.tsx'
+import { handleVerification as handleResetPasswordVerification } from './reset-password.tsx'
 import { handleVerification as handleOnboardingVerification } from './onboarding.tsx'
-import { Spacer } from '~/components/spacer.tsx'
 
 export const codeQueryParam = 'code'
 export const targetQueryParam = 'target'
 export const typeQueryParam = 'type'
 export const redirectToQueryParam = 'redirectTo'
-const types = ['forgot-password', 'onboarding', 'change-email'] as const
+const types = ['reset-password', 'onboarding', 'change-email'] as const
 export type VerificationTypes = (typeof types)[number]
-
-const typeOTPConfig: Record<VerificationTypes, { window: number }> = {
-	'forgot-password': { window: 0 },
-	onboarding: { window: 0 },
-	'change-email': { window: 0 },
-}
 
 const VerifySchema = z.object({
 	[codeQueryParam]: z.string().min(6).max(6),
@@ -59,7 +53,7 @@ export async function action({ request }: DataFunctionArgs) {
 	return validateRequest(request, await request.formData())
 }
 
-export function getRedirectToUrl({
+function getRedirectToUrl({
 	request,
 	type,
 	target,
@@ -140,7 +134,6 @@ async function isCodeValid({
 		secret: verification.secret,
 		algorithm: verification.algorithm,
 		period: verification.period,
-		...typeOTPConfig[type],
 	})
 	if (!result) return false
 
@@ -191,8 +184,8 @@ async function validateRequest(
 	})
 
 	switch (submissionValue[typeQueryParam]) {
-		case 'forgot-password': {
-			return handleForgotPasswordVerification({ request, body, submission })
+		case 'reset-password': {
+			return handleResetPasswordVerification({ request, body, submission })
 		}
 		case 'onboarding': {
 			return handleOnboardingVerification({ request, body, submission })

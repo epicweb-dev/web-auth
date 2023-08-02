@@ -77,7 +77,6 @@ export async function action({ request }: DataFunctionArgs) {
 	return redirect(safeRedirect(redirectTo), {
 		headers: {
 			'set-cookie': await commitSession(cookieSession, {
-				// Cookies with no expiration are cleared when the tab/window closes
 				expires: remember
 					? new Date(Date.now() + SESSION_EXPIRATION_TIME)
 					: undefined,

@@ -197,10 +197,10 @@
       "path": "exercises/10.email/02.solution.mocks"
     },
     {
-      "path": "exercises/10.email/03.problem.send-email"
+      "path": "exercises/10.email/03.problem.session"
     },
     {
-      "path": "exercises/10.email/03.solution.send-email"
+      "path": "exercises/10.email/03.solution.session"
     },
     {
       "path": "exercises/11.verification/01.problem.schema"
@@ -221,7 +221,16 @@
       "path": "exercises/11.verification/03.solution.verify-code"
     },
     {
-      "path": "exercises/12.reset-password/01.problem.send-code"
+      "path": "exercises/12.reset-password/01.problem.handle-verification"
+    },
+    {
+      "path": "exercises/12.reset-password/01.solution.handle-verification"
+    },
+    {
+      "path": "exercises/12.reset-password/02.problem.reset-password"
+    },
+    {
+      "path": "exercises/12.reset-password/02.solution.reset-password"
     },
     {
       "path": "exercises/18.finished/01.problem.finished"
