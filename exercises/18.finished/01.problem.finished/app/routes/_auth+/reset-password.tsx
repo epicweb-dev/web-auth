@@ -47,13 +47,13 @@ export async function handleVerification({
 		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 
-	const session = await verifySessionStorage.getSession(
+	const verifySession = await verifySessionStorage.getSession(
 		request.headers.get('cookie'),
 	)
-	session.set(resetPasswordUsernameSessionKey, user.username)
+	verifySession.set(resetPasswordUsernameSessionKey, user.username)
 	return redirect('/reset-password', {
 		headers: {
-			'set-cookie': await verifySessionStorage.commitSession(session),
+			'set-cookie': await verifySessionStorage.commitSession(verifySession),
 		},
 	})
 }

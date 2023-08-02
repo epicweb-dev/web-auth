@@ -197,10 +197,16 @@
       "path": "exercises/10.email/02.solution.mocks"
     },
     {
-      "path": "exercises/10.email/03.problem.session"
+      "path": "exercises/10.email/03.problem.send"
     },
     {
-      "path": "exercises/10.email/03.solution.session"
+      "path": "exercises/10.email/03.solution.send"
+    },
+    {
+      "path": "exercises/10.email/04.problem.session"
+    },
+    {
+      "path": "exercises/10.email/04.solution.session"
     },
     {
       "path": "exercises/11.verification/01.problem.schema"

@@ -60,13 +60,13 @@ export async function action({ request }: DataFunctionArgs) {
 		// You'll want to actually wait until the user has verified their email
 		// before setting this in the session and sending them to onboarding, but
 		// we'll get to that later.
-		const session = await verifySessionStorage.getSession(
+		const verifySession = await verifySessionStorage.getSession(
 			request.headers.get('cookie'),
 		)
-		session.set(onboardingEmailSessionKey, email)
+		verifySession.set(onboardingEmailSessionKey, email)
 		return redirect('/onboarding', {
 			headers: {
-				'set-cookie': await verifySessionStorage.commitSession(session),
+				'set-cookie': await verifySessionStorage.commitSession(verifySession),
 			},
 		})
 	} else {
