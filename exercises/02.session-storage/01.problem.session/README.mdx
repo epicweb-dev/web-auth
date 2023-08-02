@@ -1,0 +1,71 @@
+# Cookie Session Storage
+
+👨‍💼 We're not talking about `window.sessionStorage` here. We're talking about
+storing information about the current session. For this feature, we want to be
+able to show the user a toast notification when they delete a note. And we'll
+want our solution to be generic enough to use for other notifications in the
+future.
+
+We could definitely use one of many React libraries to accomplish this, but
+we're going to go OG with the web and use cookies. The idea is in our `action`
+for the deletion, we'll set a cookie that has the message we want to show. And
+then the `root` loader will read that cookie and send the data along to the
+UI where we'll display the toast notification.
+
+🧝‍♂️ I've already implemented the UI bit for the toast notifications so you can
+focus on the session storage bit. Feel free
+to <DiffLink app1={-1} app2={0} preview>check out my work</DiffLink> if you'd
+like to see what that involved.
+
+👨‍💼 Based on our requirements, we'll use Remix's
+[`createCookieSessionStorage` API](https://remix.run/docs/en/main/utils/sessions#createcookiesessionstorage)
+to create a session storage object that we can use to store and retrieve the
+`toast` information.
+
+🐨 Please <InlineFile file="app/utils/toast.server.ts">Create `app/utils/toast.server.ts`</InlineFile>
+to initialize this session storage object.
+
+🐨 Configure the cookie option with the following properties:
+
+- `name`: `'ec_toast'` - this is the name of the cookie that will be created and
+  should be unique relative to other cookies on your domain ("ec" is short for
+  "Epic Notes").
+- `sameSite`: `'lax'` - The cookie is sent with "safe" HTTP methods (like
+  `GET`), and only when the request originates from the same site or when the
+  user navigates to the URL from an external site, such as by following a link.
+  This is a balance between security and usability, preventing the cookie from
+  being sent with cross-site POST requests (which are often used in
+  [cross-site request forgery attacks](https://owasp.org/www-community/attacks/csrf)),
+  but still allowing the user to access content via regular navigation.
+- `path`: `'/'` - The cookie is sent for all requests on the domain.
+- `httpOnly`: `true` - The cookie is not accessible via JavaScript. This is
+  important for security because it prevents cross-site scripting attacks from
+  accessing the cookie.
+- `secrets`: `process.env.SESSION_SECRET.split(',')` - This is an array of
+  secrets that will be used to sign the cookie. This is important for security
+  because it prevents the cookie from being tampered with. It's an array so you
+  can rotate their values over time. We are using an environment variable for
+  the secret. So you'll need to add that to the <InlineFile file=".env" /> file.
+  Once you have that set, you can
+  update <InlineFile file="app/utils/env.server.ts" /> so you have type-safe
+  access to that environment variable.
+- `secure`: `process.env.NODE_ENV === 'production'` - The cookie is only sent
+  over HTTPS. This is important for security because it prevents the cookie from
+  being sent over an insecure connection. We only want to do this in production
+  because while some browsers are fine ignoring this on `localhost`, Safari does
+  not.
+
+With that, you can add this to export all the bits of the sessionStorage so we
+can use them throughout the app:
+
+```ts filename=app/utils/toast.server.ts start=3
+export const toastSessionStorage = createCookieSessionStorage({
+	// ...
+})
+```
+
+There's not a great way to test that you've got this done correctly until the
+next step, so you <Link to="?preview=diff">may check the diff</Link> to
+make sure you got it right before moving on.
+
+- [📜 Remix's `createCookieSessionStorage` API](https://remix.run/docs/en/main/utils/sessions#createcookiesessionstorage)

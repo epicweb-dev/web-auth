@@ -1,0 +1,35 @@
+# Session Storage
+
+👨‍💼 Just like with the toast messages, we're going to want to use the
+[`createCookieSessionStorage` API](https://remix.run/docs/en/main/utils/sessions#createcookiesessionstorage)
+to create a session storage object that we can use to store and retrieve the
+`userId`.
+
+We'll make this a different one from the toast messages so that we can keep them
+separate. We'll call this one simply `sessionStorage`.
+
+🐨 Please <InlineFile file="app/utils/session.server.ts">Create `app/utils/session.server.ts`</InlineFile>
+to initialize this session storage object.
+
+🐨 This session should have a very similar configuration to the toast messages
+session. The only difference is the `name` should be `'en_session'` to avoid
+clashing with the toast messages session.
+
+(If you need a reminder, check <InlineFile file="app/utils/toast.server.ts" />).
+
+With that, you can add this to export all the bits of the sessionStorage so we
+can use them throughout the app:
+
+```ts filename=app/utils/session.server.ts start=14
+export const { getSession, commitSession, destroySession } = sessionStorage
+```
+
+We're exporting this differently from the `toastSessionStorage` because we'll
+be using these utilities a lot more often and it's what most people think of
+when they think about sessions.
+
+There's not a great way to test that you've got this done correctly until the
+next step, so you <Link to="?preview=diff">may check the diff</Link> to
+make sure you got it right before moving on.
+
+- [📜 Remix's `createCookieSessionStorage` API](https://remix.run/docs/en/main/utils/sessions#createcookiesessionstorage)

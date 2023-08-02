@@ -46,7 +46,7 @@ export const links: LinksFunction = () => {
 	].filter(Boolean)
 }
 
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader() {
 	return json({
 		username: os.userInfo().username,
 		// 🐨 get the theme from the request's cookie header using the getTheme utility:

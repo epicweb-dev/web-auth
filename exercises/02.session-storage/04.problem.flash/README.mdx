@@ -1,0 +1,30 @@
+# Session Flash Messages
+
+👨‍💼 Turns out the concept of creating a temporary session value is pretty common.
+So common in fact that there's a pattern and an API for handling this.
+
+The pattern is called the "flash" pattern. It's a temporary session value that
+is meant to be displayed to the user and then removed.
+
+Right now what we're doing can be represented like this:
+
+```
+get -> commit -> get -> unset -> commit
+```
+
+With the flash pattern it looks like this:
+
+```
+flash -> commit -> get -> commit
+```
+
+When you use `session.flash` it automatically `unset`s the value after the next
+`get` of that value.
+
+So what we can do is change our `set` call to `flash` and then we don't have to
+worry about calling `unset` anymore. So go ahead and make those updates and
+we'll be in a good spot.
+
+It's important to note that we do still need to commit the session because it
+is being changed. This isn't a web standard API or anything. This is just a
+common pattern that people use.

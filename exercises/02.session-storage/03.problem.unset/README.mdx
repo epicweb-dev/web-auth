@@ -1,0 +1,23 @@
+# Session Unset
+
+👨‍💼 We need to get rid of the toast value once we read it in the `root.tsx`.
+Here's how the API works:
+
+```tsx lines=5
+session.set('key', 'value')
+session.get('key') // 'value'
+
+// then:
+session.unset('key')
+
+// then later:
+session.get('key') // undefined
+```
+
+So we just want to add `unset` to <InlineFile file="app/root.tsx" line="57" />.
+
+But wait! We also need to make sure we commit the session. Any time you change
+the session, you need to make sure to let the client know otherwise it'll just
+keep sending you the old version of the cookie.
+
+- [📜 `session.unset`](https://remix.run/docs/en/main/utils/sessions#sessionunset)

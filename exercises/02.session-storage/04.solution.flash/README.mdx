@@ -1,0 +1,32 @@
+# Session Flash Messages
+
+👨‍💼 Great work. Now we've got a pretty good pattern for handling toast
+notifications.
+
+🧝‍♂️ I'm going to refactor the code a bit to make utilities out of this we can
+use in other areas of the app in the future. If you're interested, you
+can <DiffLink app1={0} app2={1} preview>review my changes</DiffLink>.
+
+The APIs you'll be able to use in the future are:
+
+```tsx
+return redirectWithToast(
+	'/somewhere',
+	{
+		title: 'Toast Title',
+		description: 'This is a toast description',
+		type: 'success',
+	},
+	{
+		status: 201,
+		// other response init stuff you wanna do
+	},
+)
+
+// or, a lower-level API
+const headers = createToastHeaders({
+	title: 'Toast Title',
+	description: 'This is a toast description',
+})
+return json({ status: 'success' }, { headers })
+```

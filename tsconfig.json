@@ -23,142 +23,166 @@
       "path": "exercises/01.cookies/03.solution.optimistic-theme"
     },
     {
-      "path": "exercises/02.cookie-sessions/01.problem.session"
+      "path": "exercises/02.session-storage/01.problem.session"
     },
     {
-      "path": "exercises/02.cookie-sessions/01.solution.session"
+      "path": "exercises/02.session-storage/01.solution.session"
     },
     {
-      "path": "exercises/02.cookie-sessions/02.problem.login"
+      "path": "exercises/02.session-storage/02.problem.set"
     },
     {
-      "path": "exercises/02.cookie-sessions/02.solution.login"
+      "path": "exercises/02.session-storage/02.solution.set"
     },
     {
-      "path": "exercises/02.cookie-sessions/03.problem.root"
+      "path": "exercises/02.session-storage/03.problem.unset"
     },
     {
-      "path": "exercises/02.cookie-sessions/03.solution.root"
+      "path": "exercises/02.session-storage/03.solution.unset"
     },
     {
-      "path": "exercises/03.password/01.problem.schema"
+      "path": "exercises/02.session-storage/04.problem.flash"
     },
     {
-      "path": "exercises/03.password/01.solution.schema"
+      "path": "exercises/02.session-storage/04.solution.flash"
     },
     {
-      "path": "exercises/03.password/02.problem.seed"
+      "path": "exercises/03.user-sessions/01.problem.session"
     },
     {
-      "path": "exercises/03.password/02.solution.seed"
+      "path": "exercises/03.user-sessions/01.solution.session"
     },
     {
-      "path": "exercises/03.password/03.problem.signup"
+      "path": "exercises/03.user-sessions/02.problem.login"
     },
     {
-      "path": "exercises/03.password/03.solution.signup"
+      "path": "exercises/03.user-sessions/02.solution.login"
     },
     {
-      "path": "exercises/04.login/01.problem.login"
+      "path": "exercises/03.user-sessions/03.problem.root"
     },
     {
-      "path": "exercises/04.login/01.solution.login"
+      "path": "exercises/03.user-sessions/03.solution.root"
     },
     {
-      "path": "exercises/04.login/02.problem.ui-utils"
+      "path": "exercises/04.password/01.problem.schema"
     },
     {
-      "path": "exercises/04.login/02.solution.ui-utils"
+      "path": "exercises/04.password/01.solution.schema"
     },
     {
-      "path": "exercises/05.logout/01.problem.logout"
+      "path": "exercises/04.password/02.problem.seed"
     },
     {
-      "path": "exercises/05.logout/01.solution.logout"
+      "path": "exercises/04.password/02.solution.seed"
     },
     {
-      "path": "exercises/05.logout/02.problem.expiration"
+      "path": "exercises/04.password/03.problem.signup"
     },
     {
-      "path": "exercises/05.logout/02.solution.expiration"
+      "path": "exercises/04.password/03.solution.signup"
     },
     {
-      "path": "exercises/05.logout/03.problem.deleted"
+      "path": "exercises/05.login/01.problem.login"
     },
     {
-      "path": "exercises/05.logout/03.solution.deleted"
+      "path": "exercises/05.login/01.solution.login"
     },
     {
-      "path": "exercises/05.logout/04.problem.auto-logout"
+      "path": "exercises/05.login/02.problem.ui-utils"
     },
     {
-      "path": "exercises/05.logout/04.solution.auto-logout"
+      "path": "exercises/05.login/02.solution.ui-utils"
     },
     {
-      "path": "exercises/06.protecting-routes/01.problem.anonymous"
+      "path": "exercises/06.logout/01.problem.logout"
     },
     {
-      "path": "exercises/06.protecting-routes/01.solution.anonymous"
+      "path": "exercises/06.logout/01.solution.logout"
     },
     {
-      "path": "exercises/06.protecting-routes/02.problem.authenticated"
+      "path": "exercises/06.logout/02.problem.expiration"
     },
     {
-      "path": "exercises/06.protecting-routes/02.solution.authenticated"
+      "path": "exercises/06.logout/02.solution.expiration"
     },
     {
-      "path": "exercises/06.protecting-routes/03.problem.redirect"
+      "path": "exercises/06.logout/03.problem.deleted"
     },
     {
-      "path": "exercises/06.protecting-routes/03.solution.redirect"
+      "path": "exercises/06.logout/03.solution.deleted"
     },
     {
-      "path": "exercises/07.permissions/01.problem.schema"
+      "path": "exercises/06.logout/04.problem.auto-logout"
     },
     {
-      "path": "exercises/07.permissions/01.solution.schema"
+      "path": "exercises/06.logout/04.solution.auto-logout"
     },
     {
-      "path": "exercises/07.permissions/02.problem.seed"
+      "path": "exercises/07.protecting-routes/01.problem.anonymous"
     },
     {
-      "path": "exercises/07.permissions/02.solution.seed"
+      "path": "exercises/07.protecting-routes/01.solution.anonymous"
     },
     {
-      "path": "exercises/07.permissions/03.problem.delete-note"
+      "path": "exercises/07.protecting-routes/02.problem.authenticated"
     },
     {
-      "path": "exercises/07.permissions/03.solution.delete-note"
+      "path": "exercises/07.protecting-routes/02.solution.authenticated"
     },
     {
-      "path": "exercises/07.permissions/04.problem.utils"
+      "path": "exercises/07.protecting-routes/03.problem.redirect"
     },
     {
-      "path": "exercises/07.permissions/04.solution.utils"
+      "path": "exercises/07.protecting-routes/03.solution.redirect"
     },
     {
-      "path": "exercises/08.managed-sessions/01.problem.schema"
+      "path": "exercises/08.permissions/01.problem.schema"
     },
     {
-      "path": "exercises/08.managed-sessions/01.solution.schema"
+      "path": "exercises/08.permissions/01.solution.schema"
     },
     {
-      "path": "exercises/08.managed-sessions/02.problem.auth-utils"
+      "path": "exercises/08.permissions/02.problem.seed"
     },
     {
-      "path": "exercises/08.managed-sessions/02.solution.auth-utils"
+      "path": "exercises/08.permissions/02.solution.seed"
     },
     {
-      "path": "exercises/08.managed-sessions/03.problem.session-cookie"
+      "path": "exercises/08.permissions/03.problem.delete-note"
     },
     {
-      "path": "exercises/08.managed-sessions/03.solution.session-cookie"
+      "path": "exercises/08.permissions/03.solution.delete-note"
     },
     {
-      "path": "exercises/08.managed-sessions/04.problem.delete-sessions"
+      "path": "exercises/08.permissions/04.problem.utils"
     },
     {
-      "path": "exercises/08.managed-sessions/04.solution.delete-sessions"
+      "path": "exercises/08.permissions/04.solution.utils"
+    },
+    {
+      "path": "exercises/09.managed-sessions/01.problem.schema"
+    },
+    {
+      "path": "exercises/09.managed-sessions/01.solution.schema"
+    },
+    {
+      "path": "exercises/09.managed-sessions/02.problem.auth-utils"
+    },
+    {
+      "path": "exercises/09.managed-sessions/02.solution.auth-utils"
+    },
+    {
+      "path": "exercises/09.managed-sessions/03.problem.session-cookie"
+    },
+    {
+      "path": "exercises/09.managed-sessions/03.solution.session-cookie"
+    },
+    {
+      "path": "exercises/09.managed-sessions/04.problem.delete-sessions"
+    },
+    {
+      "path": "exercises/09.managed-sessions/04.solution.delete-sessions"
     }
   ]
 }
