@@ -249,6 +249,12 @@
     },
     {
       "path": "exercises/13.change-email/02.solution.handle-verification"
+    },
+    {
+      "path": "exercises/14.2fa/01.problem.init"
+    },
+    {
+      "path": "exercises/14.2fa/09.problem.finish"
     }
   ]
 }
