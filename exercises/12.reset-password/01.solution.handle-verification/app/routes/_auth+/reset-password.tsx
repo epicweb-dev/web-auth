@@ -19,8 +19,8 @@ import { ErrorList, Field } from '~/components/forms.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
 import { prisma } from '~/utils/db.server.ts'
 import { invariant } from '~/utils/misc.tsx'
-import { commitSession, getSession } from '~/utils/session.server.ts'
 import { passwordSchema } from '~/utils/user-validation.ts'
+import { verifySessionStorage } from '~/utils/verification.server.ts'
 import { type VerifyFunctionArgs } from './verify.tsx'
 
 const resetPasswordUsernameSessionKey = 'resetPasswordUsername'
@@ -42,10 +42,14 @@ export async function handleVerification({
 		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 
-	const session = await getSession(request.headers.get('cookie'))
-	session.set(resetPasswordUsernameSessionKey, user.username)
+	const verifySession = await verifySessionStorage.getSession(
+		request.headers.get('cookie'),
+	)
+	verifySession.set(resetPasswordUsernameSessionKey, user.username)
 	return redirect('/reset-password', {
-		headers: { 'set-cookie': await commitSession(session) },
+		headers: {
+			'set-cookie': await verifySessionStorage.commitSession(verifySession),
+		},
 	})
 }
 

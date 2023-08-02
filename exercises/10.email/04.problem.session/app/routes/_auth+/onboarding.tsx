@@ -103,8 +103,17 @@ export async function action({ request }: DataFunctionArgs) {
 
 	const cookieSession = await getSession(request.headers.get('cookie'))
 	cookieSession.set(sessionKey, session.id)
+	// 🦉 you're going to need to set two cookies, one to get the user logged in
+	// and the other to destroy the verifySession. You can do this using the
+	// headers object
+	// 🐨 get the user's verifySession
+	// 🐨 create a new headers object: (💰 new Headers())
+	// 🐨 use headers.append to add the first 'set-cookie' header
+	// 🐨 use headers.append to add the second 'set-cookie' header
+	// 💰 the order doesn't matter
 
 	return redirect(safeRedirect(redirectTo), {
+		// 🐨 replace this object with the headers object you created above
 		headers: {
 			'set-cookie': await commitSession(cookieSession, {
 				expires: remember ? session.expirationDate : undefined,

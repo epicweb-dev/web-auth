@@ -239,7 +239,16 @@
       "path": "exercises/12.reset-password/02.solution.reset-password"
     },
     {
-      "path": "exercises/18.finished/01.problem.finished"
+      "path": "exercises/13.change-email/01.problem.totp"
+    },
+    {
+      "path": "exercises/13.change-email/01.solution.totp"
+    },
+    {
+      "path": "exercises/13.change-email/02.problem.handle-verification"
+    },
+    {
+      "path": "exercises/13.change-email/02.solution.handle-verification"
     }
   ]
 }

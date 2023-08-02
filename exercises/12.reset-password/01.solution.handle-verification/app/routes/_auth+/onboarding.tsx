@@ -105,14 +105,22 @@ export async function action({ request }: DataFunctionArgs) {
 
 	const cookieSession = await getSession(request.headers.get('cookie'))
 	cookieSession.set(sessionKey, session.id)
+	const verifySession = await verifySessionStorage.getSession(
+		request.headers.get('cookie'),
+	)
+	const headers = new Headers()
+	headers.append(
+		'set-cookie',
+		await commitSession(cookieSession, {
+			expires: remember ? session.expirationDate : undefined,
+		}),
+	)
+	headers.append(
+		'set-cookie',
+		await verifySessionStorage.destroySession(verifySession),
+	)
 
-	return redirect(safeRedirect(redirectTo), {
-		headers: {
-			'set-cookie': await commitSession(cookieSession, {
-				expires: remember ? session.expirationDate : undefined,
-			}),
-		},
-	})
+	return redirect(safeRedirect(redirectTo), { headers })
 }
 
 export async function handleVerification({
