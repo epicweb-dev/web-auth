@@ -215,10 +215,10 @@
       "path": "exercises/11.verification/01.solution.schema"
     },
     {
-      "path": "exercises/11.verification/02.problem.send-code"
+      "path": "exercises/11.verification/02.problem.totp"
     },
     {
-      "path": "exercises/11.verification/02.solution.send-code"
+      "path": "exercises/11.verification/02.solution.totp"
     },
     {
       "path": "exercises/11.verification/03.problem.verify-code"
