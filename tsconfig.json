@@ -203,6 +203,27 @@
       "path": "exercises/10.email/03.solution.send-email"
     },
     {
+      "path": "exercises/11.verification/01.problem.schema"
+    },
+    {
+      "path": "exercises/11.verification/01.solution.schema"
+    },
+    {
+      "path": "exercises/11.verification/02.problem.send-code"
+    },
+    {
+      "path": "exercises/11.verification/02.solution.send-code"
+    },
+    {
+      "path": "exercises/11.verification/03.problem.verify-code"
+    },
+    {
+      "path": "exercises/11.verification/03.solution.verify-code"
+    },
+    {
+      "path": "exercises/12.reset-password/01.problem.send-code"
+    },
+    {
       "path": "exercises/18.finished/01.problem.finished"
     }
   ]

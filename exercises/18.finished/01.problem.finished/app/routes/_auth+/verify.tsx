@@ -3,7 +3,7 @@ import { getFieldsetConstraint, parse } from '@conform-to/zod'
 import { json, type DataFunctionArgs } from '@remix-run/node'
 import {
 	Form,
-	useFetcher,
+	useActionData,
 	useLoaderData,
 	useSearchParams,
 } from '@remix-run/react'
@@ -13,7 +13,7 @@ import { StatusButton } from '~/components/ui/status-button.tsx'
 import { handleVerification as handleChangeEmailVerification } from '~/routes/settings+/profile.change-email.tsx'
 import { prisma } from '~/utils/db.server.ts'
 import { getDomainUrl, useIsSubmitting } from '~/utils/misc.tsx'
-import { generateTOTP, verifyTOTP } from '~/utils/totp.server.ts'
+import { generateTOTP, verifyTOTP } from '@epic-web/totp'
 import { handleVerification as handleForgotPasswordVerification } from './forgot-password.tsx'
 import { handleVerification as handleOnboardingVerification } from './onboarding.tsx'
 import { Spacer } from '~/components/spacer.tsx'
@@ -88,17 +88,20 @@ export async function prepareVerification({
 	const verifyUrl = getRedirectToUrl({ request, type, target })
 	const redirectTo = new URL(verifyUrl.toString())
 
-	const { otp, ...otpConfig } = generateTOTP({ algorithm: 'SHA256', period })
-	// delete old verifications. Users should not have more than one verification
-	// of a specific type for a specific target at a time.
-	await prisma.verification.deleteMany({ where: { type, target } })
-	await prisma.verification.create({
-		data: {
-			type,
-			target,
-			...otpConfig,
-			expiresAt: new Date(Date.now() + otpConfig.period * 1000),
-		},
+	const { otp, ...verificationConfig } = generateTOTP({
+		algorithm: 'SHA256',
+		period,
+	})
+	const verificationData = {
+		type,
+		target,
+		...verificationConfig,
+		expiresAt: new Date(Date.now() + verificationConfig.period * 1000),
+	}
+	await prisma.verification.upsert({
+		where: { target_type: { target, type } },
+		create: verificationData,
+		update: verificationData,
 	})
 
 	// add the otp to the url we'll email the user.
@@ -204,12 +207,12 @@ export default function VerifyRoute() {
 	const data = useLoaderData<typeof loader>()
 	const [searchParams] = useSearchParams()
 	const isSubmitting = useIsSubmitting()
-	const verifyFetcher = useFetcher<typeof action>()
+	const actionData = useActionData<typeof action>()
 
 	const [form, fields] = useForm({
 		id: 'verify-form',
 		constraint: getFieldsetConstraint(VerifySchema),
-		lastSubmission: verifyFetcher.data?.submission ?? data.submission,
+		lastSubmission: actionData?.submission ?? data.submission,
 		onValidate({ formData }) {
 			return parse(formData, { schema: VerifySchema })
 		},
@@ -259,9 +262,7 @@ export default function VerifyRoute() {
 						/>
 						<StatusButton
 							className="w-full"
-							status={
-								isSubmitting ? 'pending' : verifyFetcher.data?.status ?? 'idle'
-							}
+							status={isSubmitting ? 'pending' : actionData?.status ?? 'idle'}
 							type="submit"
 							disabled={isSubmitting}
 						>

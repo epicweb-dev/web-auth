@@ -85,7 +85,7 @@ export async function action({ request }: DataFunctionArgs) {
 		cookieSession.set(newEmailAddressSessionKey, submission.value.email)
 		return redirect(redirectTo.toString(), {
 			headers: {
-				'Set-Cookie': await commitSession(cookieSession),
+				'set-cookie': await commitSession(cookieSession),
 			},
 		})
 	} else {
@@ -155,7 +155,7 @@ export async function handleVerification({
 }: VerifyFunctionArgs) {
 	invariant(submission.value, 'submission.value should be defined by now')
 
-	const cookieSession = await getSession(request.headers.get('Cookie'))
+	const cookieSession = await getSession(request.headers.get('cookie'))
 	const newEmail = cookieSession.get(newEmailAddressSessionKey)
 	if (!newEmail) {
 		submission.error[''] = [
@@ -182,7 +182,7 @@ export async function handleVerification({
 	})
 
 	return redirect('/settings/profile', {
-		headers: { 'Set-Cookie': await commitSession(cookieSession) },
+		headers: { 'set-cookie': await commitSession(cookieSession) },
 	})
 }
 

@@ -139,7 +139,7 @@ export async function handleVerification({
 	const session = await getSession(request.headers.get('cookie'))
 	session.set(resetPasswordUsernameSessionKey, user.username)
 	return redirect('/reset-password', {
-		headers: { 'Set-Cookie': await commitSession(session) },
+		headers: { 'set-cookie': await commitSession(session) },
 	})
 }
 

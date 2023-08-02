@@ -44,7 +44,7 @@ export async function loader({ request }: DataFunctionArgs) {
 	}
 	return json(
 		{ resetPasswordUsername },
-		{ headers: { 'Set-Cookie': await commitSession(cookieSession) } },
+		{ headers: { 'set-cookie': await commitSession(cookieSession) } },
 	)
 }
 
@@ -70,7 +70,7 @@ export async function action({ request }: DataFunctionArgs) {
 	await resetUserPassword({ username, password })
 	session.unset(resetPasswordUsernameSessionKey)
 	return redirect('/login', {
-		headers: { 'Set-Cookie': await commitSession(session) },
+		headers: { 'set-cookie': await commitSession(session) },
 	})
 }
 
