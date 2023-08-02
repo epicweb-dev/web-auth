@@ -1,18 +1,15 @@
 import { conform, useForm } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
-import { getTOTPAuthUri } from '@epic-web/totp'
 import { json, redirect, type DataFunctionArgs } from '@remix-run/node'
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
-import * as QRCode from 'qrcode'
 import { z } from 'zod'
 import { Field } from '~/components/forms.tsx'
 import { Icon } from '~/components/ui/icon.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
 import { requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
-import { getDomainUrl, useIsSubmitting } from '~/utils/misc.tsx'
+import { useIsSubmitting } from '~/utils/misc.tsx'
 import { redirectWithToast } from '~/utils/toast.server.ts'
-import { isCodeValid, type VerificationTypes } from '../_auth+/verify.tsx'
 
 export const handle = {
 	breadcrumb: <Icon name="check">Verify</Icon>,
@@ -25,32 +22,8 @@ const VerifySchema = z.object({
 export const verificationType = '2fa-verify'
 
 export async function loader({ request }: DataFunctionArgs) {
-	const userId = await requireUserId(request)
-	const verification = await prisma.verification.findFirst({
-		where: { type: verificationType, target: userId },
-		select: {
-			id: true,
-			algorithm: true,
-			secret: true,
-			period: true,
-			digits: true,
-		},
-	})
-	if (!verification) {
-		return redirect('/settings/profile/two-factor')
-	}
-	const user = await prisma.user.findUniqueOrThrow({
-		where: { id: userId },
-		select: { email: true },
-	})
-	const issuer = new URL(getDomainUrl(request)).host
-	const otpUri = getTOTPAuthUri({
-		...verification,
-		accountName: user.email,
-		issuer,
-	})
-	const qrCode = await QRCode.toDataURL(otpUri)
-	return json({ otpUri, qrCode })
+	await requireUserId(request)
+	return json({ qrCode: `Not yet implemented`, otpUri: `Not yet implemented` })
 }
 
 export async function action({ request }: DataFunctionArgs) {
@@ -66,11 +39,7 @@ export async function action({ request }: DataFunctionArgs) {
 	const submission = await parse(formData, {
 		schema: () =>
 			VerifySchema.superRefine(async (data, ctx) => {
-				const codeIsValid = await isCodeValid({
-					code: data.code,
-					type: verificationType,
-					target: userId,
-				})
+				const codeIsValid = false
 				if (!codeIsValid) {
 					ctx.addIssue({
 						path: ['code'],
@@ -91,10 +60,8 @@ export async function action({ request }: DataFunctionArgs) {
 		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 
-	await prisma.verification.update({
-		where: { target_type: { type: verificationType, target: userId } },
-		data: { type: '2fa' satisfies VerificationTypes },
-	})
+	// we'll need to update the verification type here...
+
 	return redirectWithToast('/settings/profile/two-factor', {
 		type: 'success',
 		title: 'Enabled',

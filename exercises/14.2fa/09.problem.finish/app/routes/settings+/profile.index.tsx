@@ -25,7 +25,7 @@ const ProfileFormSchema = z.object({
 
 export async function loader({ request }: DataFunctionArgs) {
 	const userId = await requireUserId(request)
-	const user = await prisma.user.findUnique({
+	const user = await prisma.user.findUniqueOrThrow({
 		where: { id: userId },
 		select: {
 			id: true,
@@ -45,8 +45,6 @@ export async function loader({ request }: DataFunctionArgs) {
 		where: { type: twoFAVerificationType, target: userId },
 		select: { id: true },
 	})
-
-	invariantResponse(user, 'User not found', { status: 404 })
 
 	return json({ user, isTwoFactorEnabled: Boolean(twoFactorVerification) })
 }
@@ -122,7 +120,7 @@ export default function EditUserProfile() {
 				<div>
 					<Link to="two-factor">
 						{data.isTwoFactorEnabled ? (
-							<Icon name="lock-closed"> 2FA is enabled</Icon>
+							<Icon name="lock-closed">2FA is enabled</Icon>
 						) : (
 							<Icon name="lock-open-1">Enable 2FA</Icon>
 						)}

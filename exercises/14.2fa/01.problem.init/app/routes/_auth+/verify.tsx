@@ -15,14 +15,14 @@ import { StatusButton } from '~/components/ui/status-button.tsx'
 import { handleVerification as handleChangeEmailVerification } from '~/routes/settings+/profile.change-email.tsx'
 import { prisma } from '~/utils/db.server.ts'
 import { getDomainUrl, useIsSubmitting } from '~/utils/misc.tsx'
-import { handleVerification as handleResetPasswordVerification } from './reset-password.tsx'
 import { handleVerification as handleOnboardingVerification } from './onboarding.tsx'
+import { handleVerification as handleResetPasswordVerification } from './reset-password.tsx'
 
 export const codeQueryParam = 'code'
 export const targetQueryParam = 'target'
 export const typeQueryParam = 'type'
 export const redirectToQueryParam = 'redirectTo'
-const types = ['reset-password', 'onboarding', 'change-email'] as const
+const types = ['onboarding', 'reset-password', 'change-email'] as const
 export type VerificationTypes = (typeof types)[number]
 
 const VerifySchema = z.object({
@@ -191,7 +191,7 @@ async function validateRequest(
 			return handleOnboardingVerification({ request, body, submission })
 		}
 		case 'change-email': {
-			return await handleChangeEmailVerification({ request, body, submission })
+			return handleChangeEmailVerification({ request, body, submission })
 		}
 	}
 }

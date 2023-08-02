@@ -24,7 +24,7 @@ const ProfileFormSchema = z.object({
 
 export async function loader({ request }: DataFunctionArgs) {
 	const userId = await requireUserId(request)
-	const user = await prisma.user.findUnique({
+	const user = await prisma.user.findUniqueOrThrow({
 		where: { id: userId },
 		select: {
 			id: true,
@@ -40,9 +40,7 @@ export async function loader({ request }: DataFunctionArgs) {
 		},
 	})
 
-	invariantResponse(user, 'User not found', { status: 404 })
-
-	return json({ user })
+	return json({ user, isTwoFactorEnabled: false })
 }
 
 type ProfileActionArgs = {
@@ -111,6 +109,15 @@ export default function EditUserProfile() {
 						<Icon name="envelope-closed">
 							Change email from {data.user.email}
 						</Icon>
+					</Link>
+				</div>
+				<div>
+					<Link to="two-factor">
+						{data.isTwoFactorEnabled ? (
+							<Icon name="lock-closed">2FA is enabled</Icon>
+						) : (
+							<Icon name="lock-open-1">Enable 2FA</Icon>
+						)}
 					</Link>
 				</div>
 				<div>

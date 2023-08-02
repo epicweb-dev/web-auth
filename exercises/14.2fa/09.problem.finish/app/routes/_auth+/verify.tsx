@@ -12,20 +12,20 @@ import { z } from 'zod'
 import { ErrorList, Field } from '~/components/forms.tsx'
 import { Spacer } from '~/components/spacer.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
+import { handleVerification as handleChangeEmailVerification } from '~/routes/settings+/profile.change-email.tsx'
 import { prisma } from '~/utils/db.server.ts'
 import { getDomainUrl, useIsSubmitting } from '~/utils/misc.tsx'
-import { handleVerification as handleResetPasswordVerification } from '../_auth+/reset-password.tsx'
-import { handleVerification as handleOnboardingVerification } from '../_auth+/onboarding.tsx'
-import { handleVerification as handleChangeEmailVerification } from '~/routes/settings+/profile.change-email.tsx'
 import { handleVerification as handleLoginTwoFactorVerification } from './login.tsx'
+import { handleVerification as handleOnboardingVerification } from './onboarding.tsx'
+import { handleVerification as handleResetPasswordVerification } from './reset-password.tsx'
 
 export const codeQueryParam = 'code'
 export const targetQueryParam = 'target'
 export const typeQueryParam = 'type'
 export const redirectToQueryParam = 'redirectTo'
 const types = [
-	'reset-password',
 	'onboarding',
+	'reset-password',
 	'change-email',
 	'2fa',
 	'2fa-verify',
@@ -203,7 +203,7 @@ async function validateRequest(
 			return handleOnboardingVerification({ request, body, submission })
 		}
 		case 'change-email': {
-			return await handleChangeEmailVerification({ request, body, submission })
+			return handleChangeEmailVerification({ request, body, submission })
 		}
 		case '2fa': {
 			return handleLoginTwoFactorVerification({ request, body, submission })

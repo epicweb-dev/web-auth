@@ -1,34 +1,16 @@
-import { generateTOTP } from '@epic-web/totp'
 import { json, redirect, type DataFunctionArgs } from '@remix-run/node'
 import { Link, useFetcher, useLoaderData } from '@remix-run/react'
 import { Icon } from '~/components/ui/icon.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
 import { requireUserId } from '~/utils/auth.server.ts'
-import { prisma } from '~/utils/db.server.ts'
-import { shouldRequestTwoFA } from '../_auth+/login.tsx'
-import { twoFAVerificationType } from './profile.two-factor.tsx'
-import { verificationType as verifyVerificationType } from './profile.two-factor.verify.tsx'
 
 export async function loader({ request }: DataFunctionArgs) {
-	const userId = await requireUserId(request)
-	const verification = await prisma.verification.findFirst({
-		where: { type: twoFAVerificationType, target: userId },
-		select: { id: true },
-	})
-	const shouldReverify = await shouldRequestTwoFA(request)
-	return json({ is2FAEnabled: Boolean(verification), shouldReverify })
+	await requireUserId(request)
+	return json({ is2FAEnabled: false })
 }
 
 export async function action({ request }: DataFunctionArgs) {
-	const userId = await requireUserId(request)
-	const { otp: _otp, ...config } = generateTOTP()
-	// delete any existing entries
-	await prisma.verification.deleteMany({
-		where: { type: verifyVerificationType, target: userId },
-	})
-	await prisma.verification.create({
-		data: { ...config, type: verifyVerificationType, target: userId },
-	})
+	await requireUserId(request)
 	return redirect('/settings/profile/two-factor/verify')
 }
 

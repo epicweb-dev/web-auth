@@ -23,6 +23,7 @@ import { prisma } from '~/utils/db.server.ts'
 import { invariant, useIsSubmitting } from '~/utils/misc.tsx'
 import { commitSession, getSession } from '~/utils/session.server.ts'
 import { passwordSchema, usernameSchema } from '~/utils/user-validation.ts'
+import { verifySessionStorage } from '~/utils/verification.server.ts'
 import { checkboxSchema } from '~/utils/zod-extensions.ts'
 import { type VerificationTypes, type VerifyFunctionArgs } from './verify.tsx'
 
@@ -32,23 +33,35 @@ const verificationType = '2fa' satisfies VerificationTypes
 
 export async function handleVerification({
 	request,
-	body,
 	submission,
 }: VerifyFunctionArgs) {
 	invariant(submission.value, 'Submission should have a value by this point')
 	const cookieSession = await getSession(request.headers.get('cookie'))
+	const verifySession = await verifySessionStorage.getSession(
+		request.headers.get('cookie'),
+	)
+	if (verifySession.has(unverifiedSessionIdKey)) {
+		cookieSession.set(sessionKey, verifySession.get(unverifiedSessionIdKey))
+	}
 	const { redirectTo } = submission.value
 	cookieSession.set(verifiedTimeKey, Date.now())
-	const responseInit = {
-		headers: { 'Set-Cookie': await commitSession(cookieSession) },
-	}
 
-	return redirect(safeRedirect(redirectTo), responseInit)
+	const headers = new Headers()
+	headers.append('set-cookie', await commitSession(cookieSession))
+	headers.append(
+		'set-cookie',
+		await verifySessionStorage.destroySession(verifySession),
+	)
+
+	return redirect(safeRedirect(redirectTo), { headers })
 }
 
 export async function shouldRequestTwoFA(request: Request) {
 	const cookieSession = await getSession(request.headers.get('cookie'))
-	if (cookieSession.has(unverifiedSessionIdKey)) return true
+	const verifySession = await verifySessionStorage.getSession(
+		request.headers.get('cookie'),
+	)
+	if (verifySession.has(unverifiedSessionIdKey)) return true
 	const userId = await getUserId(request)
 	if (!userId) return false
 	// if it's over two hours since they last verified, we should request 2FA again
