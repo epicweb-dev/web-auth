@@ -54,8 +54,9 @@ export async function action({ request }: DataFunctionArgs) {
 	}
 
 	if (response.status === 'success') {
-		// 🐨 if the email was sent successfully, then set the email in the session
-		// under the "onboardingEmailSessionKey" key and redirect to the onboarding
+		// 🐨 if the email was sent successfully, then set the email in your new
+		// verifySessionStorage under the "onboardingEmailSessionKey" key and
+		// redirect to the onboarding
 		// 💰 don't forget to commit the session!
 		throw new Error('todo: implement this')
 	} else {

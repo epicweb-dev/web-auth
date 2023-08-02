@@ -3,6 +3,8 @@ import bcrypt from 'bcryptjs'
 import { prisma } from '~/utils/db.server.ts'
 import { commitSession, getSession } from './session.server.ts'
 import { redirect } from '@remix-run/node'
+import { safeRedirect } from 'remix-utils'
+import { combineHeaders } from './misc.tsx'
 
 export const SESSION_EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 30
 
@@ -129,11 +131,24 @@ export async function signup({
 	return session
 }
 
-export async function logout(request: Request) {
+export async function logout(
+	{
+		request,
+		redirectTo = '/',
+	}: {
+		request: Request
+		redirectTo?: string
+	},
+	responseInit?: ResponseInit,
+) {
 	const cookieSession = await getSession(request.headers.get('cookie'))
 	cookieSession.unset(sessionKey)
-	throw redirect('/', {
-		headers: { 'set-cookie': await commitSession(cookieSession) },
+	throw redirect(safeRedirect(redirectTo), {
+		...responseInit,
+		headers: combineHeaders(
+			{ 'set-cookie': await commitSession(cookieSession) },
+			responseInit?.headers,
+		),
 	})
 }
 

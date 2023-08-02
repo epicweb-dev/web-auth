@@ -14,7 +14,7 @@ import { Spacer } from '~/components/spacer.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
 import { prisma } from '~/utils/db.server.ts'
 import { useIsSubmitting } from '~/utils/misc.tsx'
-import { commitSession, getSession } from '~/utils/session.server.ts'
+import { verifySessionStorage } from '~/utils/verification.server.ts'
 import { onboardingEmailSessionKey } from './onboarding.tsx'
 
 export const codeQueryParam = 'code'
@@ -105,10 +105,17 @@ async function validateRequest(
 		},
 	})
 
-	const session = await getSession(request.headers.get('cookie'))
-	session.set(onboardingEmailSessionKey, submission.value[targetQueryParam])
+	const verifySession = await verifySessionStorage.getSession(
+		request.headers.get('cookie'),
+	)
+	verifySession.set(
+		onboardingEmailSessionKey,
+		submission.value[targetQueryParam],
+	)
 	return redirect('/onboarding', {
-		headers: { 'set-cookie': await commitSession(session) },
+		headers: {
+			'set-cookie': await verifySessionStorage.commitSession(verifySession),
+		},
 	})
 }
 

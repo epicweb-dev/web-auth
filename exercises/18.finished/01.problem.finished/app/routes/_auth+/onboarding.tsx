@@ -21,6 +21,7 @@ import {
 	passwordSchema,
 	usernameSchema,
 } from '~/utils/user-validation.ts'
+import { verifySessionStorage } from '~/utils/verification.server.ts'
 import { checkboxSchema } from '~/utils/zod-extensions.ts'
 import { type VerifyFunctionArgs } from './verify.tsx'
 
@@ -50,8 +51,10 @@ const SignupFormSchema = z
 
 async function requireOnboardingEmail(request: Request) {
 	await requireAnonymous(request)
-	const cookieSession = await getSession(request.headers.get('cookie'))
-	const email = cookieSession.get(onboardingEmailSessionKey)
+	const verifySession = await verifySessionStorage.getSession(
+		request.headers.get('cookie'),
+	)
+	const email = verifySession.get(onboardingEmailSessionKey)
 	if (typeof email !== 'string' || !email) {
 		throw redirect('/signup')
 	}
@@ -97,14 +100,22 @@ export async function action({ request }: DataFunctionArgs) {
 
 	const cookieSession = await getSession(request.headers.get('cookie'))
 	cookieSession.set(sessionKey, session.id)
+	const verifySession = await verifySessionStorage.getSession(
+		request.headers.get('cookie'),
+	)
+	const headers = new Headers()
+	headers.append(
+		'set-cookie',
+		await commitSession(cookieSession, {
+			expires: remember ? session.expirationDate : undefined,
+		}),
+	)
+	headers.append(
+		'set-cookie',
+		await verifySessionStorage.destroySession(verifySession),
+	)
 
-	return redirect(safeRedirect(redirectTo), {
-		headers: {
-			'set-cookie': await commitSession(cookieSession, {
-				expires: remember ? session.expirationDate : undefined,
-			}),
-		},
-	})
+	return redirect(safeRedirect(redirectTo), { headers })
 }
 
 export async function handleVerification({
@@ -112,10 +123,14 @@ export async function handleVerification({
 	submission,
 }: VerifyFunctionArgs) {
 	invariant(submission.value, 'submission.value should be defined by now')
-	const session = await getSession(request.headers.get('cookie'))
-	session.set(onboardingEmailSessionKey, submission.value.target)
+	const verifySession = await verifySessionStorage.getSession(
+		request.headers.get('cookie'),
+	)
+	verifySession.set(onboardingEmailSessionKey, submission.value.target)
 	return redirect('/onboarding', {
-		headers: { 'set-cookie': await commitSession(session) },
+		headers: {
+			'set-cookie': await verifySessionStorage.commitSession(verifySession),
+		},
 	})
 }
 

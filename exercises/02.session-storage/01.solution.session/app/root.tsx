@@ -37,7 +37,6 @@ import tailwindStylesheetUrl from './styles/tailwind.css'
 import { getEnv } from './utils/env.server.ts'
 import { invariantResponse } from './utils/misc.tsx'
 import { getTheme, setTheme, type Theme } from './utils/theme.server.ts'
-import { type Toast } from './utils/toast.server.ts'
 
 export const links: LinksFunction = () => {
 	return [
@@ -224,8 +223,13 @@ function ThemeSwitch({ userPreference }: { userPreference?: Theme }) {
 	)
 }
 
-function ShowToast({ toast }: { toast: Toast }) {
-	const { id, type, title, description } = toast
+function ShowToast({ toast }: { toast: any }) {
+	const { id, type, title, description } = toast as {
+		id: string
+		type: 'success' | 'message'
+		title: string
+		description: string
+	}
 	useEffect(() => {
 		setTimeout(() => {
 			showToast[type](title, { id, description })

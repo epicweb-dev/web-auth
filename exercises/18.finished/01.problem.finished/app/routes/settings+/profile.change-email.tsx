@@ -15,8 +15,9 @@ import { requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import { sendEmail } from '~/utils/email.server.ts'
 import { invariant, useIsSubmitting } from '~/utils/misc.tsx'
-import { commitSession, getSession } from '~/utils/session.server.ts'
+import { redirectWithToast } from '~/utils/toast.server.ts'
 import { emailSchema } from '~/utils/user-validation.ts'
+import { verifySessionStorage } from '~/utils/verification.server.ts'
 
 export const handle = {
 	breadcrumb: <Icon name="envelope-closed">Change Email</Icon>,
@@ -81,11 +82,13 @@ export async function action({ request }: DataFunctionArgs) {
 	})
 
 	if (response.status === 'success') {
-		const cookieSession = await getSession(request.headers.get('cookie'))
-		cookieSession.set(newEmailAddressSessionKey, submission.value.email)
+		const verifySession = await verifySessionStorage.getSession(
+			request.headers.get('cookie'),
+		)
+		verifySession.set(newEmailAddressSessionKey, submission.value.email)
 		return redirect(redirectTo.toString(), {
 			headers: {
-				'set-cookie': await commitSession(cookieSession),
+				'set-cookie': await verifySessionStorage.commitSession(verifySession),
 			},
 		})
 	} else {
@@ -155,8 +158,10 @@ export async function handleVerification({
 }: VerifyFunctionArgs) {
 	invariant(submission.value, 'submission.value should be defined by now')
 
-	const cookieSession = await getSession(request.headers.get('cookie'))
-	const newEmail = cookieSession.get(newEmailAddressSessionKey)
+	const verifySession = await verifySessionStorage.getSession(
+		request.headers.get('cookie'),
+	)
+	const newEmail = verifySession.get(newEmailAddressSessionKey)
 	if (!newEmail) {
 		submission.error[''] = [
 			'You must submit the code on the same device that requested the email change.',
@@ -173,17 +178,25 @@ export async function handleVerification({
 		data: { email: newEmail },
 	})
 
-	cookieSession.unset(newEmailAddressSessionKey)
-
 	void sendEmail({
 		to: preUpdateUser.email,
 		subject: 'Epic Stack email changed',
 		react: <EmailChangeNoticeEmail userId={user.id} />,
 	})
 
-	return redirect('/settings/profile', {
-		headers: { 'set-cookie': await commitSession(cookieSession) },
-	})
+	return redirectWithToast(
+		'/settings/profile',
+		{
+			title: 'Email Changed',
+			type: 'success',
+			description: `Your email has been changed to ${user.email}`,
+		},
+		{
+			headers: {
+				'set-cookie': await verifySessionStorage.destroySession(verifySession),
+			},
+		},
+	)
 }
 
 export default function ChangeEmailIndex() {

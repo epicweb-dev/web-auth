@@ -6,12 +6,7 @@ import {
 	type DataFunctionArgs,
 	type V2_MetaFunction,
 } from '@remix-run/node'
-import {
-	Form,
-	useActionData,
-	useLoaderData,
-	useSearchParams,
-} from '@remix-run/react'
+import { Form, useActionData, useSearchParams } from '@remix-run/react'
 import { safeRedirect } from 'remix-utils'
 import { z } from 'zod'
 import { CheckboxField, ErrorList, Field } from '~/components/forms.tsx'
@@ -107,7 +102,6 @@ export const meta: V2_MetaFunction = () => {
 }
 
 export default function SignupRoute() {
-	const data = useLoaderData<typeof loader>()
 	const actionData = useActionData<typeof action>()
 	const isSubmitting = useIsSubmitting()
 	const [searchParams] = useSearchParams()
@@ -128,7 +122,7 @@ export default function SignupRoute() {
 		<div className="container flex min-h-full flex-col justify-center pb-32 pt-20">
 			<div className="mx-auto w-full max-w-lg">
 				<div className="flex flex-col gap-3 text-center">
-					<h1 className="text-h1">Welcome aboard {data.email}!</h1>
+					<h1 className="text-h1">Welcome aboard!</h1>
 					<p className="text-body-md text-muted-foreground">
 						Please enter your details.
 					</p>

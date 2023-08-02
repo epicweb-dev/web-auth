@@ -54,7 +54,7 @@ const SignupFormSchema = z
 
 export async function loader({ request }: DataFunctionArgs) {
 	await requireAnonymous(request)
-	// 🐨 verify the user has an onboarding email in their session
+	// 🐨 verify the user has an onboarding email in their verifySession
 	// if they don't redirect them to /signup
 	// 💰 you may consider making a function for this since you need to do this in
 	// the loader and the action.
@@ -64,8 +64,7 @@ export async function loader({ request }: DataFunctionArgs) {
 
 export async function action({ request }: DataFunctionArgs) {
 	await requireAnonymous(request)
-	const cookieSession = await getSession(request.headers.get('cookie'))
-	// 🐨 get the email out of the session. If it's not a string or not there
+	// 🐨 get the email out of the verifySession. If it's not a string or not there
 	// then redirect the user to /signup
 	// 💰 you may consider making a function for this since you need to do this in
 	// the loader and the action.
@@ -102,6 +101,7 @@ export async function action({ request }: DataFunctionArgs) {
 
 	const { session, remember, redirectTo } = submission.value
 
+	const cookieSession = await getSession(request.headers.get('cookie'))
 	cookieSession.set(sessionKey, session.id)
 
 	return redirect(safeRedirect(redirectTo), {

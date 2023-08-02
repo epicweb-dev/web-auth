@@ -23,6 +23,7 @@ import { invariant } from '~/utils/misc.tsx'
 import { commitSession, getSession } from '~/utils/session.server.ts'
 import { passwordSchema } from '~/utils/user-validation.ts'
 import { type VerifyFunctionArgs } from './verify.tsx'
+import { verifySessionStorage } from '~/utils/verification.server.ts'
 
 const resetPasswordUsernameSessionKey = 'resetPasswordUsername'
 
@@ -62,8 +63,10 @@ const ResetPasswordSchema = z
 
 async function requireResetPasswordUsername(request: Request) {
 	await requireAnonymous(request)
-	const cookieSession = await getSession(request.headers.get('cookie'))
-	const resetPasswordUsername = cookieSession.get(
+	const verifySession = await verifySessionStorage.getSession(
+		request.headers.get('cookie'),
+	)
+	const resetPasswordUsername = verifySession.get(
 		resetPasswordUsernameSessionKey,
 	)
 	if (typeof resetPasswordUsername !== 'string' || !resetPasswordUsername) {
@@ -94,10 +97,13 @@ export async function action({ request }: DataFunctionArgs) {
 	const { password } = submission.value
 
 	await resetUserPassword({ username: resetPasswordUsername, password })
-	const cookieSession = await getSession(request.headers.get('cookie'))
-	cookieSession.unset(resetPasswordUsernameSessionKey)
+	const verifySession = await verifySessionStorage.getSession(
+		request.headers.get('cookie'),
+	)
 	return redirect('/login', {
-		headers: { 'set-cookie': await commitSession(cookieSession) },
+		headers: {
+			'set-cookie': await verifySessionStorage.destroySession(verifySession),
+		},
 	})
 }
 

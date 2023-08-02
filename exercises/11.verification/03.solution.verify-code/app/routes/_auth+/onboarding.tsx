@@ -6,7 +6,12 @@ import {
 	type DataFunctionArgs,
 	type V2_MetaFunction,
 } from '@remix-run/node'
-import { Form, useActionData, useSearchParams } from '@remix-run/react'
+import {
+	Form,
+	useActionData,
+	useLoaderData,
+	useSearchParams,
+} from '@remix-run/react'
 import { safeRedirect } from 'remix-utils'
 import { z } from 'zod'
 import { CheckboxField, ErrorList, Field } from '~/components/forms.tsx'
@@ -21,6 +26,7 @@ import {
 	passwordSchema,
 	usernameSchema,
 } from '~/utils/user-validation.ts'
+import { verifySessionStorage } from '~/utils/verification.server.ts'
 import { checkboxSchema } from '~/utils/zod-extensions.ts'
 
 export const onboardingEmailSessionKey = 'onboardingEmail'
@@ -49,8 +55,10 @@ const SignupFormSchema = z
 
 async function requireOnboardingEmail(request: Request) {
 	await requireAnonymous(request)
-	const cookieSession = await getSession(request.headers.get('cookie'))
-	const email = cookieSession.get(onboardingEmailSessionKey)
+	const verifySession = await verifySessionStorage.getSession(
+		request.headers.get('cookie'),
+	)
+	const email = verifySession.get(onboardingEmailSessionKey)
 	if (typeof email !== 'string' || !email) {
 		throw redirect('/signup')
 	}

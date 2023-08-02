@@ -15,8 +15,8 @@ import { prisma } from '~/utils/db.server.ts'
 import { sendEmail } from '~/utils/email.server.ts'
 import { useIsSubmitting } from '~/utils/misc.tsx'
 import { emailSchema } from '~/utils/user-validation.ts'
+import { verifySessionStorage } from '~/utils/verification.server.ts'
 import { onboardingEmailSessionKey } from './onboarding.tsx'
-import { commitSession, getSession } from '~/utils/session.server.ts'
 
 const SignupSchema = z.object({
 	email: emailSchema,
@@ -60,10 +60,14 @@ export async function action({ request }: DataFunctionArgs) {
 		// You'll want to actually wait until the user has verified their email
 		// before setting this in the session and sending them to onboarding, but
 		// we'll get to that later.
-		const session = await getSession(request.headers.get('cookie'))
+		const session = await verifySessionStorage.getSession(
+			request.headers.get('cookie'),
+		)
 		session.set(onboardingEmailSessionKey, email)
 		return redirect('/onboarding', {
-			headers: { 'set-cookie': await commitSession(session) },
+			headers: {
+				'set-cookie': await verifySessionStorage.commitSession(session),
+			},
 		})
 	} else {
 		submission.error[''] = response.error
