@@ -7,12 +7,16 @@ import { z } from 'zod'
 import { ErrorList, Field } from '~/components/forms.tsx'
 import { Icon } from '~/components/ui/icon.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
-import { type VerifyFunctionArgs } from '~/routes/_auth+/verify.tsx'
+import {
+	prepareVerification,
+	type VerifyFunctionArgs,
+} from '~/routes/_auth+/verify.tsx'
 import { requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import { sendEmail } from '~/utils/email.server.ts'
 import { useIsSubmitting } from '~/utils/misc.tsx'
 import { emailSchema } from '~/utils/user-validation.ts'
+import { verifySessionStorage } from '~/utils/verification.server.ts'
 
 export const handle = {
 	breadcrumb: <Icon name="envelope-closed">Change Email</Icon>,
@@ -24,8 +28,8 @@ export async function handleVerification({
 	request,
 	submission,
 }: VerifyFunctionArgs) {
-	// we'll handle this next
-	throw new Error('This is not yet implemented')
+	submission.error[''] = `We'll implement this soon`
+	return json({ status: 'error', submission } as const, { status: 500 })
 }
 
 const ChangeEmailSchema = z.object({

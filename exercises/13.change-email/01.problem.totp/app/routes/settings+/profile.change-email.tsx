@@ -21,6 +21,14 @@ export const handle = {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- we'll use this below
 const newEmailAddressSessionKey = 'new-email-address'
 
+export async function handleVerification({
+	request,
+	submission,
+}: VerifyFunctionArgs) {
+	submission.error[''] = `We'll implement this soon`
+	return json({ status: 'error', submission } as const, { status: 500 })
+}
+
 const ChangeEmailSchema = z.object({
 	email: emailSchema,
 })
@@ -146,14 +154,6 @@ export function EmailChangeNoticeEmail({ userId }: { userId: string }) {
 			</E.Container>
 		</E.Html>
 	)
-}
-
-export async function handleVerification({
-	request,
-	submission,
-}: VerifyFunctionArgs) {
-	// we'll handle this next
-	throw new Error('This is not yet implemented')
 }
 
 export default function ChangeEmailIndex() {
