@@ -107,7 +107,7 @@ export async function action({ request }: DataFunctionArgs) {
 	const verifySession = await verifySessionStorage.getSession(
 		request.headers.get('cookie'),
 	)
-	throw logout(
+	throw await logout(
 		{ request, redirectTo: '/login' },
 		{
 			headers: {

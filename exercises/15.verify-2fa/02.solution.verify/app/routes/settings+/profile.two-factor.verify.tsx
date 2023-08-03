@@ -153,7 +153,7 @@ export default function TwoFactorRoute() {
 								htmlFor: fields.code.id,
 								children: 'Code',
 							}}
-							inputProps={conform.input(fields.code)}
+							inputProps={{ ...conform.input(fields.code), autoFocus: true }}
 							errors={fields.code.errors}
 						/>
 						<StatusButton

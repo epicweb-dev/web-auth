@@ -281,7 +281,22 @@
       "path": "exercises/15.verify-2fa/02.solution.verify"
     },
     {
-      "path": "exercises/16.disable-2fa/09.problem.finish"
+      "path": "exercises/16.2fa-check/01.problem.delete"
+    },
+    {
+      "path": "exercises/16.2fa-check/01.solution.delete"
+    },
+    {
+      "path": "exercises/16.2fa-check/02.problem.reverify"
+    },
+    {
+      "path": "exercises/16.2fa-check/02.solution.reverify"
+    },
+    {
+      "path": "exercises/16.2fa-check/03.problem.change-email"
+    },
+    {
+      "path": "exercises/16.2fa-check/03.solution.change-email"
     }
   ]
 }
