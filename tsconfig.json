@@ -297,6 +297,9 @@
     },
     {
       "path": "exercises/16.2fa-check/03.solution.change-email"
+    },
+    {
+      "path": "exercises/17.oauth/09.problem.finished"
     }
   ]
 }
