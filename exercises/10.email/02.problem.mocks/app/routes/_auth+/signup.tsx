@@ -202,7 +202,7 @@ export default function SignupRoute() {
 						errors={fields.remember.errors}
 					/>
 
-					<input {...conform.input(fields.redirectTo)} type="hidden" />
+					<input {...conform.input(fields.redirectTo, { type: 'hidden' })} />
 					<ErrorList errors={form.errors} id={form.errorId} />
 
 					<div className="flex items-center justify-between gap-6">

@@ -156,7 +156,9 @@ export default function LoginPage() {
 								</div>
 							</div>
 
-							<input {...conform.input(fields.redirectTo)} type="hidden" />
+							<input
+								{...conform.input(fields.redirectTo, { type: 'hidden' })}
+							/>
 							<ErrorList errors={form.errors} id={form.errorId} />
 
 							<div className="flex items-center justify-between gap-6 pt-3">

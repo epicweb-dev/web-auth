@@ -14,6 +14,9 @@ That way, our `requireUserId` utility can take the `request.url` and create an
 appropriate `redirectTo` query param automatically when it redirects to the
 login page.
 
+🧝‍♂️ Supporting `redirectTo` in `/login` and `/signup` is exactly the same, so
+I'll do the `/signup` route for you. Deal? Cool 👍
+
 We'll also want to update the link from our `/login` page to the `/signup` page
 so if the user needs to create an account instead, the `redirectTo` will carry
 over to that page too.

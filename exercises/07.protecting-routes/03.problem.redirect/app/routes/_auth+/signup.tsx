@@ -6,7 +6,8 @@ import {
 	type DataFunctionArgs,
 	type V2_MetaFunction,
 } from '@remix-run/node'
-import { Form, useActionData } from '@remix-run/react'
+import { Form, useActionData, useSearchParams } from '@remix-run/react'
+import { safeRedirect } from 'remix-utils'
 import { z } from 'zod'
 import { CheckboxField, ErrorList, Field } from '~/components/forms.tsx'
 import { Spacer } from '~/components/spacer.tsx'
@@ -38,8 +39,8 @@ const SignupFormSchema = z
 		agreeToTermsOfServiceAndPrivacyPolicy: checkboxSchema(
 			'You must agree to the terms of service and privacy policy',
 		),
-		// 🐨 add config for a redirectTo (optional string)
 		remember: checkboxSchema(),
+		redirectTo: z.string().optional(),
 	})
 	.superRefine(({ confirmPassword, password }, ctx) => {
 		if (confirmPassword !== password) {
@@ -87,15 +88,12 @@ export async function action({ request }: DataFunctionArgs) {
 		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 
-	// 🐨 get the redirectTo from the submission
-	const { user, remember } = submission.value
+	const { user, remember, redirectTo } = submission.value
 
 	const cookieSession = await getSession(request.headers.get('cookie'))
 	cookieSession.set(userIdKey, user.id)
 
-	// 🐨 redirect to the redirectTo
-	// 🦉 Make sure to use the safeRedirect utility from remix-utils
-	return redirect('/', {
+	return redirect(safeRedirect(redirectTo), {
 		headers: {
 			'set-cookie': await commitSession(cookieSession, {
 				expires: remember
@@ -113,13 +111,13 @@ export const meta: V2_MetaFunction = () => {
 export default function SignupRoute() {
 	const actionData = useActionData<typeof action>()
 	const isSubmitting = useIsSubmitting()
-	// 🐨 get the search params via useSearchParams from @remix-run/react
-	// 🐨 get the redirectTo from the search params
+	const [searchParams] = useSearchParams()
+	const redirectTo = searchParams.get('redirectTo')
 
 	const [form, fields] = useForm({
 		id: 'signup-form',
 		constraint: getFieldsetConstraint(SignupFormSchema),
-		// 🐨 add a defaultValues object with the redirectTo
+		defaultValue: { redirectTo },
 		lastSubmission: actionData?.submission,
 		onValidate({ formData }) {
 			return parse(formData, { schema: SignupFormSchema })
@@ -211,7 +209,7 @@ export default function SignupRoute() {
 						errors={fields.remember.errors}
 					/>
 
-					{/* 🐨 add a hidden input here for the redirectTo */}
+					<input {...conform.input(fields.redirectTo, { type: 'hidden' })} />
 
 					<ErrorList errors={form.errors} id={form.errorId} />
 
