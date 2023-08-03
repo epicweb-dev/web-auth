@@ -16,6 +16,8 @@ export async function getUserId(request: Request) {
 	const userId = cookieSession.get(userIdKey)
 	if (!userId) return null
 	// 🐨 query the sessionId table instead. Do a subquery to get the user id
+	// 💰 make sure to only select sessions that have not yet expired!
+	// 📜 https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#gt
 	const user = await prisma.user.findUnique({
 		select: { id: true },
 		where: { id: userId },

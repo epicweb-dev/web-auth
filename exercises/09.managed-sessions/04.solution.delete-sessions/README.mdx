@@ -5,3 +5,13 @@ control over our sessions and when they expire. This also allows us to
 proactively log out a user if they change their password if we so desire.
 
 Great work. 👏👏
+
+🦉 You may have noticed an edge case we did not resolve. If a user does not
+check the "Remember Me" checkbox, then their browser cookie could be deleted
+before the session in the database expires. This would leave a session in the
+database that will never be accessed. Which will mean the user could see a count
+of sessions which is technically incorrect.
+
+Unfortunately, there's no way for us to know if a user has deleted their cookie.
+Even if they do check "Remember Me," they can clear their cookies at any time.
+This is just a problem without a solution. Luckily it's not really a big deal.

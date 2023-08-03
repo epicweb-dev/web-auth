@@ -36,7 +36,13 @@ export async function loader({ request }: DataFunctionArgs) {
 				select: { id: true },
 			},
 			_count: {
-				select: { sessions: true },
+				select: {
+					sessions: {
+						where: {
+							expirationDate: { gt: new Date() },
+						},
+					},
+				},
 			},
 		},
 	})

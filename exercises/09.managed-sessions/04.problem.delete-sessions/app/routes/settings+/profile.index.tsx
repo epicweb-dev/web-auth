@@ -40,6 +40,8 @@ export async function loader({ request }: DataFunctionArgs) {
 			},
 			// 🐨 add a count of the number of sessions for this user
 			// 📜 https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#select-a-_count-of-relations
+			// 💰 also only select those which have not yet expired!
+			// 📜 https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#gt
 		},
 	})
 

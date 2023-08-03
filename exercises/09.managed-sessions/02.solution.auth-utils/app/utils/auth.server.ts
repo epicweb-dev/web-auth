@@ -14,7 +14,7 @@ export async function getUserId(request: Request) {
 	if (!sessionId) return null
 	const session = await prisma.session.findUnique({
 		select: { user: { select: { id: true } } },
-		where: { id: sessionId },
+		where: { id: sessionId, expirationDate: { gt: new Date() } },
 	})
 	if (!session?.user) {
 		// Perhaps user was deleted?
