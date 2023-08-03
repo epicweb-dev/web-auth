@@ -30,12 +30,10 @@ const handlers = [
 		'https://github.com/login/oauth/access_token',
 		async (req, res, ctx) => {
 			const params = new URLSearchParams(await req.text())
-			console.log({ params })
 			if (params.get('code') !== 'MOCK_CODE') {
-				console.log('passing through')
 				return req.passthrough()
 			}
-			console.log('returning mock stuff')
+
 			return res(
 				ctx.body(
 					new URLSearchParams({
@@ -46,10 +44,26 @@ const handlers = [
 			)
 		},
 	),
+	rest.get('https://api.github.com/user/:id', async (req, res, ctx) => {
+		if (req.params.id !== 'MOCK_ID') {
+			return req.passthrough()
+		}
+
+		return res(
+			ctx.json({
+				login: 'mocked-login',
+				id: 123456789,
+				name: 'Mocked User',
+				avatar_url: 'https://github.com/ghost.png',
+				emails: ['mock@example.com'],
+			}),
+		)
+	}),
 	rest.get('https://api.github.com/user', async (req, res, ctx) => {
 		if (!req.headers.get('authorization')?.includes('__MOCK_ACCESS_TOKEN__')) {
 			return req.passthrough()
 		}
+
 		return res(
 			ctx.json({
 				login: 'mocked-login',
@@ -64,6 +78,7 @@ const handlers = [
 		if (!req.headers.get('authorization')?.includes('__MOCK_ACCESS_TOKEN__')) {
 			return req.passthrough()
 		}
+
 		return res(ctx.json([{ email: 'mock@example.com' }]))
 	}),
 ].filter(Boolean)

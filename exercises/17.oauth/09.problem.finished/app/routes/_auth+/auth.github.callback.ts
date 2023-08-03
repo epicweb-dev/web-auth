@@ -20,10 +20,7 @@ import { commitSession, getSession } from '~/utils/session.server.ts'
 
 export async function loader({ request }: DataFunctionArgs) {
 	const reqUrl = new URL(request.url)
-	if (
-		process.env.NODE_ENV === 'development' &&
-		reqUrl.searchParams.get('state') === 'MOCK_STATE'
-	) {
+	if (process.env.MOCKS && reqUrl.searchParams.get('state') === 'MOCK_STATE') {
 		const cookieSession = await getSession(request.headers.get('cookie'))
 		const state = cookieSession.get('oauth2:state') ?? 'MOCK_STATE'
 		cookieSession.set('oauth2:state', state)
