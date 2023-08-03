@@ -45,16 +45,13 @@ function SomeRoute() {
 }
 ```
 
-Also, you can set the access to comma-separated accesses if you need. This can
-be useful if you've established the current user is an owner:
+Also, you can set the access to comma-separated accesses if you need.
 
 ```tsx
-// if the user is the owner, then they need to have either own or "any" access
+// if the user is the owner, then they need to have "own" access
 // if they're not, they need to have "any" access
-await requireUserWithPermission(
-	request,
-	isOwner ? `update:note:any,own` : `update:note:any`,
-)
+await requireUserWithPermission(request, `update:note:any,own`)
+// 🦉 we'll not be using this feature of the util today though.
 ```
 
 One thing is the `userHasRole` and `userHasPermission` functions rely on user

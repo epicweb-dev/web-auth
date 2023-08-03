@@ -57,8 +57,7 @@ export async function loader({ params }: DataFunctionArgs) {
 	// permission where "some" of the permission's roles have "some" users with the userId
 	// 📜 https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#some
 	// 💰 you have the note.ownerId, so you can use that to decide whether you
-	// should be looking for "access: { in: ['own', 'any'] }" or "access: 'any'".
-	// 📜 https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#in
+	// should be looking for "access: 'own'" or "access: 'any'".
 
 	return json({
 		note,

@@ -7,3 +7,21 @@ application.
 As mentioned, there is definitely opportunity to improve this with a custom
 [Prisma client extension](https://www.prisma.io/docs/concepts/components/prisma-client/client-extensions).
 If you figure out a good solution for that, let us know!
+
+🦉 It should be mentioned that our approach works because we allow admins to
+also be users (we added both roles to the Kody user). However, if you wanted to
+not add the user role to the admin, you would need to do one of two things:
+
+1. Make sure the admin role also gets permissions to modify their `own` entities
+2. Adjust the application code to use `own` OR `any` permissions. Like so:
+
+```ts
+await requireUserWithPermission(
+	request,
+	isOwner ? `update:note:any,own` : `update:note:any`,
+)
+```
+
+If you ask me, you should probably just make admins users as well. But, making
+the admin role also get permissions to modify their `own` entities makes sense
+as well.

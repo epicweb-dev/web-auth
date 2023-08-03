@@ -60,7 +60,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 					roles: { some: { users: { some: { id: userId } } } },
 					entity: 'note',
 					action: 'delete',
-					access: note.ownerId === userId ? { in: ['any', 'own'] } : 'any',
+					access: note.ownerId === userId ? 'own' : 'any',
 				},
 		  })
 		: null
@@ -107,7 +107,7 @@ export async function action({ request }: DataFunctionArgs) {
 			roles: { some: { users: { some: { id: userId } } } },
 			entity: 'note',
 			action: 'delete',
-			access: note.ownerId === userId ? { in: ['any', 'own'] } : 'any',
+			access: note.ownerId === userId ? 'own' : 'any',
 		},
 	})
 
