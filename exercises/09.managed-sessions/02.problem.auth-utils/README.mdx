@@ -9,3 +9,5 @@ break this next bit into two steps:
 For this step, let's just update the auth utils. Everywhere we're querying for
 the user based on the `userId` in the request, we'll instead query the session
 table with the `sessionId` in the request.
+
+We'll also want to make sure when the user logs out we delete their old session.

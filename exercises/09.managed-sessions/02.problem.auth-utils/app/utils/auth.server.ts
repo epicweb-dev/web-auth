@@ -115,6 +115,8 @@ export async function signup({
 
 export async function logout(request: Request) {
 	const cookieSession = await getSession(request.headers.get('cookie'))
+	// 🐨 get the sessionId from the cookieSession
+	// 🐨 delete the session from the database by that sessionId
 	cookieSession.unset(userIdKey)
 	throw redirect('/', {
 		headers: { 'set-cookie': await commitSession(cookieSession) },
