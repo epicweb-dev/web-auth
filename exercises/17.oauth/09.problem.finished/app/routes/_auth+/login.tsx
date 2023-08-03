@@ -279,7 +279,7 @@ export default function LoginPage() {
 								className="w-full"
 								status={isGitHubSubmitting ? 'pending' : 'idle'}
 							>
-								Login up with GitHub
+								Login with GitHub
 							</StatusButton>
 						</Form>
 						<div className="flex items-center justify-center gap-2 pt-6">
