@@ -12,7 +12,21 @@ There are a few ways to do this, but the most common is to use a query string
 parameter. We'll add `redirectTo` support to both our login and signup forms.
 That way, our `requireUserId` utility can take the `request.url` and create an
 appropriate `redirectTo` query param automatically when it redirects to the
-login page.
+login page. Here's how it should work:
+
+```tsx filename=app/routes/kittens/new.tsx
+// Defaults to the current request.url.
+// This would redirect to `/login?redirectTo=%2Fkittens%2Fnew`
+await requireUserId(request)
+
+// Can override the default with a custom redirectTo.
+// This would redirect to `/login?redirectTo=%2Fkittens`
+await requireUserId(request, { redirectTo: '/kittens' })
+
+// Can disable the default with null.
+// This would redirect to `/login`
+await requireUserId(request, { redirectTo: null })
+```
 
 🧝‍♂️ Supporting `redirectTo` in `/login` and `/signup` is exactly the same, so
 I'll do the `/signup` route for you. Deal? Cool 👍
