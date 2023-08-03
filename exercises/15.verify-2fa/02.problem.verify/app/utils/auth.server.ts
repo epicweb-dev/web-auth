@@ -142,6 +142,8 @@ export async function logout(
 	responseInit?: ResponseInit,
 ) {
 	const cookieSession = await getSession(request.headers.get('cookie'))
+	const sessionId = cookieSession.get(sessionKey)
+	await prisma.session.delete({ where: { id: sessionId } })
 	cookieSession.unset(sessionKey)
 	throw redirect(safeRedirect(redirectTo), {
 		...responseInit,

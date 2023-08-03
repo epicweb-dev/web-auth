@@ -111,6 +111,8 @@ export async function signup({
 
 export async function logout(request: Request) {
 	const cookieSession = await getSession(request.headers.get('cookie'))
+	const sessionId = cookieSession.get(userIdKey)
+	await prisma.session.delete({ where: { id: sessionId } })
 	cookieSession.unset(userIdKey)
 	throw redirect('/', {
 		headers: { 'set-cookie': await commitSession(cookieSession) },
