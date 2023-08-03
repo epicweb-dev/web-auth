@@ -40,7 +40,7 @@ import { getEnv } from './utils/env.server.ts'
 import { getUserImgSrc, invariantResponse } from './utils/misc.tsx'
 import { userHasRole } from './utils/permissions.ts'
 import { getTheme, setTheme, type Theme } from './utils/theme.server.ts'
-import { type Toast, getToast } from './utils/toast.server.ts'
+import { getToast, type Toast } from './utils/toast.server.ts'
 import { useOptionalUser } from './utils/user.ts'
 
 export const links: LinksFunction = () => {

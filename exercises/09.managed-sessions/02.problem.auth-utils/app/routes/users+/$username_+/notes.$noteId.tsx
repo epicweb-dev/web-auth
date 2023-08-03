@@ -16,6 +16,7 @@ import { ErrorList } from '~/components/forms.tsx'
 import { Button } from '~/components/ui/button.tsx'
 import { Icon } from '~/components/ui/icon.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
+import { requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import {
 	getNoteImgSrc,
@@ -29,7 +30,6 @@ import {
 import { redirectWithToast } from '~/utils/toast.server.ts'
 import { useOptionalUser } from '~/utils/user.ts'
 import { type loader as notesLoader } from './notes.tsx'
-import { requireUserId } from '~/utils/auth.server.ts'
 
 export async function loader({ params }: DataFunctionArgs) {
 	const note = await prisma.note.findUnique({
