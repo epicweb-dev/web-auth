@@ -1,1 +1,28 @@
 # Pass Data Between Routes
+
+🦉 Normally when you want to pass data in a React application you start reaching
+for things like context or other libraries. The problem with this is in our case
+the user could actually navigate away from the site to check their email and get
+the code or link we've sent them. So you can't do that!
+
+So instead, we're going to use a cookie session. But we don't want to re-use the
+existing user session for this because we want this session to be short-lived.
+It should expire after only 10 minutes. We're going to call this our
+`verifySession` which we'll use for all sorts of verifications in the future.
+
+👨‍💼 Thanks Olivia. Ok, so now we need you to create a new session storage object
+(you should be a pro at that by now), and then use that when you send the email
+to set the email address they signed up with.
+
+Then when they get to the onboarding page we can get the email they signed up
+with out of the session and proceed with the onboarding.
+
+I should note that we're not _quite_ going to get to actually _verifying_ the
+user's email just yet. That will come in the next exercise. But hopefully this
+gives you an idea of how to communicate state between routes!
+
+I suggest you start in <InlineFile file="app/utils/verification.server.ts" />,
+then go to <InlineFile file="app/routes/_auth+/signup.tsx" /> to set the email
+and finally <InlineFile file="app/routes/_auth+/onboarding.tsx" /> to get it.
+
+- [📜 Remix `createCookieSessionStorage`](https://remix.run/docs/en/main/utils/sessions#createcookiesessionstorage)

@@ -1,1 +1,17 @@
 # Pass Data Between Routes
+
+👨‍💼 Awesome work! We now have a safe and secure mechanism for storing temporary
+verification data in the user's session. But we do still need to _actually_
+verify the user's email address. That'll come next!
+
+🧝‍♂️ I'm going to make a new route `/verify` which we'll be using for users to
+enter a special code we'll send them. It's work you've done before so I'll do it
+for you (unless you've got extra time and want to do it yourself). The basic
+idea is it just accepts a `code` query parameter and if that's already provided
+(because they clicked on a link), then we'll check it and if it's valid, we'll
+continue to the "next step" (which you will build), otherwise we'll show them
+the form and allow them to enter the code.
+
+We're also going to have a "target" field which is a hidden field and you'll
+learn more about that in the next exercise. Oh, and a `redirectTo` hidden field
+as well which will come in handy. See you soon!

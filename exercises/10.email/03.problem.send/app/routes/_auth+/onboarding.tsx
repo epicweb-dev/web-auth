@@ -54,20 +54,14 @@ const SignupFormSchema = z
 
 export async function loader({ request }: DataFunctionArgs) {
 	await requireAnonymous(request)
-	// 🐨 verify the user has an onboarding email in their verifySession
-	// if they don't redirect them to /signup
-	// 💰 you may consider making a function for this since you need to do this in
-	// the loader and the action.
+	// We'll do handle this later
 	const email = 'fake@email.com'
 	return json({ email })
 }
 
 export async function action({ request }: DataFunctionArgs) {
 	await requireAnonymous(request)
-	// 🐨 get the email out of the verifySession. If it's not a string or not there
-	// then redirect the user to /signup
-	// 💰 you may consider making a function for this since you need to do this in
-	// the loader and the action.
+	// We'll do handle this later
 	const email = 'fake@email.com'
 
 	const formData = await request.formData()

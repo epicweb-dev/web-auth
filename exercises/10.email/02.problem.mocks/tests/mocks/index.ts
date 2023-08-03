@@ -4,6 +4,8 @@ import closeWithGrace from 'close-with-grace'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const handlers = [
+	// 🦉 this is here for the Remix dev server which needs to communicate over
+	// HTTP with our server to handle Hot Module Replacement.
 	process.env.REMIX_DEV_HTTP_ORIGIN
 		? rest.post(`${process.env.REMIX_DEV_HTTP_ORIGIN}ping`, req =>
 				req.passthrough(),

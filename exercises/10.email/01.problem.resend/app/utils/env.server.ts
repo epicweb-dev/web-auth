@@ -4,6 +4,7 @@ const schema = z.object({
 	NODE_ENV: z.enum(['production', 'development', 'test'] as const),
 	DATABASE_URL: z.string(),
 	SESSION_SECRET: z.string(),
+	// 🐨 add the RESEND_API_KEY environment variable here
 })
 
 declare global {

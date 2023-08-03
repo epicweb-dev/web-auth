@@ -1,5 +1,13 @@
 import { getErrorMessage } from './misc.tsx'
 
+// 🐨 uncomment this to test it out:
+// sendEmail({
+// 	to: 'kody@kcd.dev',
+// 	subject: 'Hello World',
+// 	text: 'This is the plain text version',
+// 	html: '<p>This is the HTML version</p>',
+// })
+
 export async function sendEmail(options: {
 	to: string
 	subject: string

@@ -1,1 +1,54 @@
 # Mocks
+
+Mocking API calls is important not only for testing (which is where it's more
+often associated), but also during development. It makes you faster at releasing
+features because it allows you to work in parallel with the team responsible
+for the API you're calling and it also helps you avoid issues with keeping
+private keys locally and if the service ever falls over you can continue to
+develop.
+
+The de-facto standard for mocking API calls in Node.js applications is
+[MSW](https://mswjs.io/). MSW is a library that can run in both the browser and
+on the server and allows you to intercept any request made by your application.
+It gives you the opportunity to either let the request go through to the
+original endpoint or to return a mocked response.
+
+Here's a simple example of setting up a mock for an API call (modified slightly)
+from their docs:
+
+```ts
+import { rest } from 'msw'
+import { setupServer } from 'msw/node'
+
+const server = setupServer(
+	// Describe the requests to mock.
+	rest.get('https://example.com/book/:bookId', (req, res, ctx) => {
+		return res(
+			ctx.json({
+				title: 'Lord of the Rings',
+				author: 'J. R. R. Tolkien',
+			}),
+		)
+	}),
+)
+
+server.listen()
+```
+
+With this set up and running within your server, any GET request made to a URL
+matching that pattern will be intercepted by MSW and return a mocked response
+instead.
+
+🧝‍♂️ Like I said, I already got some things set up for you, so you'll just need to
+add a mock for the resend email API call. You'll also need to be the one who
+gets the mocks file imported and sets the right environment variable during
+development to enable that.
+
+👨‍💼 I recommend you start in the <InlineFile file="tests/mocks/index.ts" /> file
+to add the mock, and then set the `MOCKS` environment variable
+in <InlineFile file="server/dev-server.js" />, and then finally import the mocks
+file in <InlineFile file="index.js" />.
+
+Once you're done, you should be able to do another test by calling `sendEmail`
+from within <InlineFile file="app/utils/email.server.ts" /> and you'll see the
+email that was sent is logged to the console!

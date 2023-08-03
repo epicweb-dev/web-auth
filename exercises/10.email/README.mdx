@@ -1,3 +1,66 @@
 # Email
 
-TODO: write this
+Email is one of the most common ways to verify a user's identity. If they lose
+access to their account, need to reset their password, or want to change their
+email address, we send them a link to their email address.
+
+The trouble with sending email is summed up in one word: deliverability. It's an
+unfortunate state of affairs, but if you're not using a service for email then
+you're probably not going to be able to send email reliably. Read more about
+this in this depressing blog post:
+[After self-hosting my email for twenty-three years I have thrown in the towel. The oligopoly has won.](https://cfenollosa.com/blog/after-self-hosting-my-email-for-twenty-three-years-i-have-thrown-in-the-towel-the-oligopoly-has-won.html).
+😢
+
+So which service do you use? After evaluating many options, I have settled on
+[Resend](https://resend.com) which has a great free tier for while you're
+getting started and then a very reasonable pricing model after that.
+Additionally, deliverability is excellent and they have a great API.
+
+There is a standard for sending email and that's called SMTP. It's a bit of a
+pain to work with, so I recommend using a library to do it for you. A common
+library for Node.js applications is [Nodemailer](https://nodemailer.com/about/).
+The nice thing about using a service is it means you should be able to swap out
+your email provider without issue.
+
+However, the problem with SMTP is that it's difficult to mock for local
+development. I prefer all my local development to work offline, so instead of
+using Nodemailer, I use the Resend REST API directly. It's simple and if you
+package things up well you shouldn't have any issue switching to a different
+provider anyway. I've actually done this (when I
+[switched to Resend](https://github.com/epicweb-dev/epic-stack/blob/main/docs/decisions/017-resend-email.md))
+and it didn't involve much work.
+
+Another challenge with email is the limitation around styling and client
+support for various features. It's an enormous pain. However, Resend has worked
+on an incredibly useful library of React components and a custom React renderer
+so you can actually write your emails using React components! It even supports
+a custom tailwind config and converts those classes to styles supported by email
+clients. The library is [react.email](https://react.email) and you can find all
+the components via [`@react-email/components`](https://www.npmjs.com/package/@react-email/components).
+
+```tsx
+function PositiveAffirmationEmail({ name }: { name: string }) {
+	return (
+		<E.Html lang="en" dir="ltr">
+			<E.Container>
+				<h1>
+					<E.Text>You are great, {name}</E.Text>
+				</h1>
+				<p>
+					<E.Text>I just think you should know you are awesome.</E.Text>
+				</p>
+				<E.Link href="https://kcd.im/emoji">Here's my favorite emoji</E.Link>
+			</E.Container>
+		</E.Html>
+	)
+}
+
+const [html, text] = await renderReactEmail(<PositiveAffirmationEmail />)
+async function renderReactEmail(react: ReactElement) {
+	const [html, text] = await Promise.all([
+		renderAsync(react),
+		renderAsync(react, { plainText: true }),
+	])
+	return { html, text }
+}
+```

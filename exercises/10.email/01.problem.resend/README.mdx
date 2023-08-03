@@ -1,1 +1,23 @@
 # Resend
+
+👨‍💼 Let's get set up with Resend. Now if you'd like to sign up for an account be
+my guest, but the company's not going to pay for all your development emails. So
+instead I recommend you just make a fake `RESEND_API_KEY` because in the next
+step we're going to mock the API for local development anyway.
+
+🐨 First create the `RESEND_API_KEY` environment variable
+in <InlineFile file=".env" /> and add it to the validated variables in
+the <InlineFile file="app/utils/env.server.ts" /> file.
+
+Once you've got that done, I want you to write up the email sending utility
+in <InlineFile file="app/utils/email.server.ts" /> which Kellie 🧝‍♂️ already started a
+bit.
+
+NOTE: we'll get to the `@react-email/components` stuff later. Right now you'll
+just use the basic `text` and `html` options.
+
+If you'd like to test it out, be my guest (just stick a `sendEmail` call in the
+bottom of the file or something), but unless you set up a real account, it won't
+do anything. We'll get to that next.
+
+- [📜 Resend's REST API](https://resend.com/docs/api-reference/emails/send-email)
