@@ -61,6 +61,7 @@ export async function action({ request }: DataFunctionArgs) {
 
 		// 🐨 get the user's verifySession from your new verifySessionStorage
 		// 🐨 set the onboardingEmailSessionKey in the verifySession to the email
+		// 💰 the onboardingEmailSessionKey comes from './onboarding.tsx'
 		// 🐨 commit the verifySession to the verifySessionStorage
 		return redirect('/onboarding')
 	} else {
