@@ -13,8 +13,8 @@ on the server and allows you to intercept any request made by your application.
 It gives you the opportunity to either let the request go through to the
 original endpoint or to return a mocked response.
 
-Here's a simple example of setting up a mock for an API call (modified slightly)
-from their docs:
+Here's a simple example of setting up a mock for an API call (modified) from
+their docs:
 
 ```ts
 import { rest } from 'msw'
@@ -30,13 +30,26 @@ const server = setupServer(
 			}),
 		)
 	}),
+	rest.post('/users/:userId', (req, res, ctx) => {
+		const { userId } = req.params
+		const data = await req.json()
+		// do something with the data
+
+		return res(
+			ctx.json({
+				id: userId,
+				firstName: 'John',
+				lastName: 'Maverick',
+			}),
+		)
+	}),
 )
 
-server.listen()
+server.listen({ onUnhandledRequest: 'warn' })
 ```
 
-With this set up and running within your server, any GET request made to a URL
-matching that pattern will be intercepted by MSW and return a mocked response
+With this set up and running within your server, any request made to a URL
+matching those patterns will be intercepted by MSW and return a mocked response
 instead.
 
 🧝‍♂️ Like I said, I already got some things set up for you, so you'll just need to
