@@ -22,11 +22,12 @@ export const typeQueryParam = 'type'
 export const redirectToQueryParam = 'redirectTo'
 // 🐨 add a 'reset-password' verification type to this type array
 const types = ['onboarding'] as const
-export type VerificationTypes = (typeof types)[number]
+const VerificationTypeSchema = z.enum(types)
+export type VerificationTypes = z.infer<typeof VerificationTypeSchema>
 
 const VerifySchema = z.object({
 	[codeQueryParam]: z.string().min(6).max(6),
-	[typeQueryParam]: z.enum(types),
+	[typeQueryParam]: VerificationTypeSchema,
 	[targetQueryParam]: z.string(),
 	[redirectToQueryParam]: z.string().optional(),
 })
@@ -52,7 +53,7 @@ export async function action({ request }: DataFunctionArgs) {
 	return validateRequest(request, await request.formData())
 }
 
-function getRedirectToUrl({
+export function getRedirectToUrl({
 	request,
 	type,
 	target,
@@ -110,7 +111,7 @@ export type VerifyFunctionArgs = {
 	body: FormData | URLSearchParams
 }
 
-async function isCodeValid({
+export async function isCodeValid({
 	code,
 	type,
 	target,
@@ -119,12 +120,10 @@ async function isCodeValid({
 	type: VerificationTypes
 	target: string
 }) {
-	const verification = await prisma.verification.findFirst({
+	const verification = await prisma.verification.findUnique({
 		where: {
-			OR: [
-				{ type, target, expiresAt: { gt: new Date() } },
-				{ type, target, expiresAt: null },
-			],
+			target_type: { target, type },
+			OR: [{ expiresAt: { gt: new Date() } }, { expiresAt: null }],
 		},
 		select: { algorithm: true, secret: true, period: true },
 	})
@@ -206,10 +205,10 @@ export default function VerifyRoute() {
 			return parse(formData, { schema: VerifySchema })
 		},
 		defaultValue: {
-			code: searchParams.get('code') ?? '',
-			type: searchParams.get('type') ?? '',
-			target: searchParams.get('target') ?? '',
-			redirectTo: searchParams.get('redirectTo') ?? '',
+			code: searchParams.get(codeQueryParam) ?? '',
+			type: searchParams.get(typeQueryParam) ?? '',
+			target: searchParams.get(targetQueryParam) ?? '',
+			redirectTo: searchParams.get(redirectToQueryParam) ?? '',
 		},
 	})
 

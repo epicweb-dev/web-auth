@@ -92,10 +92,9 @@ export default function VerifyRoute() {
 			return parse(formData, { schema: VerifySchema })
 		},
 		defaultValue: {
-			code: searchParams.get('code') ?? '',
-			type: searchParams.get('type') ?? '',
-			target: searchParams.get('target') ?? '',
-			redirectTo: searchParams.get('redirectTo') ?? '',
+			code: searchParams.get(codeQueryParam) ?? '',
+			target: searchParams.get(targetQueryParam) ?? '',
+			redirectTo: searchParams.get(redirectToQueryParam) ?? '',
 		},
 	})
 

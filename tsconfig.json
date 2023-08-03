@@ -251,10 +251,37 @@
       "path": "exercises/13.change-email/02.solution.handle-verification"
     },
     {
-      "path": "exercises/14.2fa/01.problem.init"
+      "path": "exercises/14.enable-2fa/01.problem.init"
     },
     {
-      "path": "exercises/14.2fa/09.problem.finish"
+      "path": "exercises/14.enable-2fa/01.solution.init"
+    },
+    {
+      "path": "exercises/14.enable-2fa/02.problem.qr-code"
+    },
+    {
+      "path": "exercises/14.enable-2fa/02.solution.qr-code"
+    },
+    {
+      "path": "exercises/14.enable-2fa/03.problem.verify"
+    },
+    {
+      "path": "exercises/14.enable-2fa/03.solution.verify"
+    },
+    {
+      "path": "exercises/15.verify-2fa/01.problem.unverified"
+    },
+    {
+      "path": "exercises/15.verify-2fa/01.solution.unverified"
+    },
+    {
+      "path": "exercises/15.verify-2fa/02.problem.verify"
+    },
+    {
+      "path": "exercises/15.verify-2fa/02.solution.verify"
+    },
+    {
+      "path": "exercises/16.disable-2fa/09.problem.finish"
     }
   ]
 }
