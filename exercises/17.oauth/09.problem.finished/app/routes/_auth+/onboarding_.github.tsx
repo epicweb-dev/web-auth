@@ -24,7 +24,7 @@ import {
 	signupWithGitHub,
 } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
-import { invariant, useIsSubmitting } from '~/utils/misc.tsx'
+import { invariant, useIsPending } from '~/utils/misc.tsx'
 import { sessionStorage } from '~/utils/session.server.ts'
 import { nameSchema, usernameSchema } from '~/utils/user-validation.ts'
 import { verifySessionStorage } from '~/utils/verification.server.ts'
@@ -171,7 +171,7 @@ export const meta: V2_MetaFunction = () => {
 export default function SignupRoute() {
 	const data = useLoaderData<typeof loader>()
 	const actionData = useActionData<typeof action>()
-	const isSubmitting = useIsSubmitting()
+	const isPending = useIsPending()
 	const [searchParams] = useSearchParams()
 	const redirectTo = searchParams.get('redirectTo')
 
@@ -184,7 +184,6 @@ export default function SignupRoute() {
 		},
 		shouldRevalidate: 'onBlur',
 	})
-	// console.log(fields.redirectTo)
 
 	return (
 		<div className="container flex min-h-full flex-col justify-center pb-32 pt-20">
@@ -262,9 +261,9 @@ export default function SignupRoute() {
 					<div className="flex items-center justify-between gap-6">
 						<StatusButton
 							className="w-full"
-							status={isSubmitting ? 'pending' : actionData?.status ?? 'idle'}
+							status={isPending ? 'pending' : actionData?.status ?? 'idle'}
 							type="submit"
-							disabled={isSubmitting}
+							disabled={isPending}
 						>
 							Create an account
 						</StatusButton>

@@ -14,7 +14,7 @@ import { Spacer } from '~/components/spacer.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
 import { handleVerification as handleChangeEmailVerification } from '~/routes/settings+/profile.change-email.tsx'
 import { prisma } from '~/utils/db.server.ts'
-import { getDomainUrl, useIsSubmitting } from '~/utils/misc.tsx'
+import { getDomainUrl, useIsPending } from '~/utils/misc.tsx'
 import { handleVerification as handleOnboardingVerification } from './onboarding.tsx'
 import { handleVerification as handleResetPasswordVerification } from './reset-password.tsx'
 
@@ -199,7 +199,7 @@ async function validateRequest(
 export default function VerifyRoute() {
 	const data = useLoaderData<typeof loader>()
 	const [searchParams] = useSearchParams()
-	const isSubmitting = useIsSubmitting()
+	const isPending = useIsPending()
 	const actionData = useActionData<typeof action>()
 
 	const [form, fields] = useForm({
@@ -255,9 +255,9 @@ export default function VerifyRoute() {
 						/>
 						<StatusButton
 							className="w-full"
-							status={isSubmitting ? 'pending' : actionData?.status ?? 'idle'}
+							status={isPending ? 'pending' : actionData?.status ?? 'idle'}
 							type="submit"
-							disabled={isSubmitting}
+							disabled={isPending}
 						>
 							Submit
 						</StatusButton>

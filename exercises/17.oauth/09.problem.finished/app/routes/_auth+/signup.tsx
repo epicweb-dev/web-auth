@@ -14,7 +14,7 @@ import { ErrorList, Field } from '~/components/forms.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
 import { prisma } from '~/utils/db.server.ts'
 import { sendEmail } from '~/utils/email.server.ts'
-import { useIsSubmitting } from '~/utils/misc.tsx'
+import { useIsPending } from '~/utils/misc.tsx'
 import { emailSchema } from '~/utils/user-validation.ts'
 import { prepareVerification } from './verify.tsx'
 
@@ -103,13 +103,13 @@ export const meta: V2_MetaFunction = () => {
 
 export default function SignupRoute() {
 	const actionData = useActionData<typeof action>()
-	const isSubmitting = useIsSubmitting()
-	const isGitHubSubmitting = useIsSubmitting({
+	const isPending = useIsPending()
+	const isGitHubSubmitting = useIsPending({
 		formAction: '/auth/github',
 		state: 'non-idle',
 	})
 	const [searchParams] = useSearchParams()
-	const redirectTo = searchParams.get('redirectTo') ?? '/'
+	const redirectTo = searchParams.get('redirectTo')
 
 	const [form, fields] = useForm({
 		id: 'signup-form',
@@ -143,9 +143,9 @@ export default function SignupRoute() {
 					<ErrorList errors={form.errors} id={form.errorId} />
 					<StatusButton
 						className="w-full"
-						status={isSubmitting ? 'pending' : actionData?.status ?? 'idle'}
+						status={isPending ? 'pending' : actionData?.status ?? 'idle'}
 						type="submit"
-						disabled={isSubmitting}
+						disabled={isPending}
 					>
 						Submit
 					</StatusButton>
@@ -155,9 +155,7 @@ export default function SignupRoute() {
 					action="/auth/github"
 					method="POST"
 				>
-					{redirectTo ? (
-						<input type="hidden" name="redirectTo" value={redirectTo} />
-					) : null}
+					<input type="hidden" name="redirectTo" value={redirectTo ?? '/'} />
 					<StatusButton
 						type="submit"
 						className="w-full"

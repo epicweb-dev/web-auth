@@ -6,13 +6,7 @@ import {
 	type DataFunctionArgs,
 	type V2_MetaFunction,
 } from '@remix-run/node'
-import {
-	Form,
-	useActionData,
-	useFormAction,
-	useLoaderData,
-	useNavigation,
-} from '@remix-run/react'
+import { Form, useActionData, useLoaderData } from '@remix-run/react'
 import { z } from 'zod'
 import { GeneralErrorBoundary } from '~/components/error-boundary.tsx'
 import { ErrorList, Field } from '~/components/forms.tsx'
@@ -23,7 +17,7 @@ import {
 	resetUserPassword,
 } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
-import { invariant } from '~/utils/misc.tsx'
+import { invariant, useIsPending } from '~/utils/misc.tsx'
 import { passwordSchema } from '~/utils/user-validation.ts'
 import { verifySessionStorage } from '~/utils/verification.server.ts'
 import { type VerifyFunctionArgs } from './verify.tsx'
@@ -123,8 +117,7 @@ export const meta: V2_MetaFunction = () => {
 export default function ResetPasswordPage() {
 	const data = useLoaderData<typeof loader>()
 	const actionData = useActionData<typeof action>()
-	const formAction = useFormAction()
-	const navigation = useNavigation()
+	const isPending = useIsPending()
 
 	const [form, fields] = useForm({
 		id: 'reset-password',
@@ -144,52 +137,44 @@ export default function ResetPasswordPage() {
 					Hi, {data.resetPasswordUsername}. No worries. It happens all the time.
 				</p>
 			</div>
-			<Form
-				method="POST"
-				className="mx-auto mt-16 min-w-[368px] max-w-sm"
-				{...form.props}
-			>
-				<Field
-					labelProps={{
-						htmlFor: fields.password.id,
-						children: 'New Password',
-					}}
-					inputProps={{
-						...conform.input(fields.password, { type: 'password' }),
-						autoComplete: 'new-password',
-						autoFocus: true,
-					}}
-					errors={fields.password.errors}
-				/>
-				<Field
-					labelProps={{
-						htmlFor: fields.confirmPassword.id,
-						children: 'Confirm Password',
-					}}
-					inputProps={{
-						...conform.input(fields.confirmPassword, { type: 'password' }),
-						autoComplete: 'new-password',
-					}}
-					errors={fields.confirmPassword.errors}
-				/>
+			<div className="mx-auto mt-16 min-w-[368px] max-w-sm">
+				<Form method="POST" {...form.props}>
+					<Field
+						labelProps={{
+							htmlFor: fields.password.id,
+							children: 'New Password',
+						}}
+						inputProps={{
+							...conform.input(fields.password, { type: 'password' }),
+							autoComplete: 'new-password',
+							autoFocus: true,
+						}}
+						errors={fields.password.errors}
+					/>
+					<Field
+						labelProps={{
+							htmlFor: fields.confirmPassword.id,
+							children: 'Confirm Password',
+						}}
+						inputProps={{
+							...conform.input(fields.confirmPassword, { type: 'password' }),
+							autoComplete: 'new-password',
+						}}
+						errors={fields.confirmPassword.errors}
+					/>
 
-				<ErrorList errors={form.errors} id={form.errorId} />
+					<ErrorList errors={form.errors} id={form.errorId} />
 
-				<StatusButton
-					className="w-full"
-					status={
-						navigation.state === 'submitting' &&
-						navigation.formAction === formAction &&
-						navigation.formMethod === 'POST'
-							? 'pending'
-							: actionData?.status ?? 'idle'
-					}
-					type="submit"
-					disabled={navigation.state !== 'idle'}
-				>
-					Reset password
-				</StatusButton>
-			</Form>
+					<StatusButton
+						className="w-full"
+						status={isPending ? 'pending' : actionData?.status ?? 'idle'}
+						type="submit"
+						disabled={isPending}
+					>
+						Reset password
+					</StatusButton>
+				</Form>
+			</div>
 		</div>
 	)
 }

@@ -20,7 +20,7 @@ import { prisma } from '~/utils/db.server.ts'
 import {
 	getNoteImgSrc,
 	invariantResponse,
-	useIsSubmitting,
+	useIsPending,
 } from '~/utils/misc.tsx'
 import { redirectWithToast } from '~/utils/toast.server.ts'
 import { useOptionalUser } from '~/utils/user.ts'
@@ -144,7 +144,7 @@ export default function NoteRoute() {
 
 export function DeleteNote({ id }: { id: string }) {
 	const actionData = useActionData<typeof action>()
-	const isSubmitting = useIsSubmitting()
+	const isPending = useIsPending()
 	const [form] = useForm({
 		id: 'delete-note',
 		lastSubmission: actionData?.submission,
@@ -162,8 +162,8 @@ export function DeleteNote({ id }: { id: string }) {
 				name="intent"
 				value="delete-note"
 				variant="destructive"
-				status={isSubmitting ? 'pending' : actionData?.status ?? 'idle'}
-				disabled={isSubmitting}
+				status={isPending ? 'pending' : actionData?.status ?? 'idle'}
+				disabled={isPending}
 				className="w-full max-md:aspect-square max-md:px-0"
 			>
 				<Icon name="trash" className="scale-125 max-md:scale-150">

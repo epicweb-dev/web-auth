@@ -1,11 +1,9 @@
 import { redirect, type DataFunctionArgs } from '@remix-run/node'
 import { GitHubStrategy } from 'remix-auth-github'
-import { safeRedirect } from 'remix-utils'
 import {
 	SESSION_EXPIRATION_TIME,
 	authenticator,
 	getUserId,
-	sessionKey,
 } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import { combineHeaders } from '~/utils/misc.tsx'
@@ -16,14 +14,12 @@ import {
 import { sessionStorage } from '~/utils/session.server.ts'
 import { createToastHeaders, redirectWithToast } from '~/utils/toast.server.ts'
 import { verifySessionStorage } from '~/utils/verification.server.ts'
-import { twoFAVerificationType } from '../settings+/profile.two-factor.tsx'
-import { unverifiedSessionIdKey } from './login.tsx'
+import { handleNewSession } from './login.tsx'
 import {
 	githubIdKey,
 	onboardingEmailSessionKey,
 	prefilledProfileKey,
 } from './onboarding_.github.tsx'
-import { getRedirectToUrl } from './verify.tsx'
 
 const destroyRedirectTo = { 'set-cookie': destroyRedirectToHeader }
 
@@ -43,56 +39,10 @@ async function makeSession(
 			userId,
 		},
 	})
-	const verification = await prisma.verification.findUnique({
-		select: { id: true },
-		where: {
-			target_type: {
-				target: session.userId,
-				type: twoFAVerificationType,
-			},
-		},
-	})
-
-	// has 2FA? redirect to verify
-	const userHasTwoFactor = Boolean(verification)
-	if (userHasTwoFactor) {
-		const verifySession = await verifySessionStorage.getSession(
-			request.headers.get('cookie'),
-		)
-		verifySession.set(unverifiedSessionIdKey, session.id)
-		const redirectUrl = getRedirectToUrl({
-			request,
-			type: twoFAVerificationType,
-			target: session.userId,
-			redirectTo,
-		})
-		return redirect(redirectUrl.toString(), {
-			...responseInit,
-			headers: combineHeaders(
-				{
-					'set-cookie': await verifySessionStorage.commitSession(verifySession),
-				},
-				destroyRedirectTo,
-				responseInit?.headers,
-			),
-		})
-	}
-
-	// they're just logging in with an existing connection 👍
-	const cookieSession = await sessionStorage.getSession(
-		request.headers.get('cookie'),
+	return handleNewSession(
+		{ request, session, redirectTo, remember: true },
+		{ headers: combineHeaders(responseInit?.headers, destroyRedirectTo) },
 	)
-	cookieSession.set(sessionKey, session.id)
-	return redirect(safeRedirect(redirectTo), {
-		...responseInit,
-		headers: combineHeaders(
-			{
-				'set-cookie': await sessionStorage.commitSession(cookieSession),
-			},
-			destroyRedirectTo,
-			responseInit?.headers,
-		),
-	})
 }
 
 export async function loader({ request }: DataFunctionArgs) {

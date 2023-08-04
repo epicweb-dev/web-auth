@@ -14,7 +14,7 @@ import {
 import { requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import { sendEmail } from '~/utils/email.server.ts'
-import { useIsSubmitting } from '~/utils/misc.tsx'
+import { useIsPending } from '~/utils/misc.tsx'
 import { emailSchema } from '~/utils/user-validation.ts'
 import { verifySessionStorage } from '~/utils/verification.server.ts'
 
@@ -172,7 +172,7 @@ export default function ChangeEmailIndex() {
 		},
 	})
 
-	const isSubmitting = useIsSubmitting()
+	const isPending = useIsPending()
 	return (
 		<div>
 			<h1 className="text-h1">Change Email</h1>
@@ -190,7 +190,7 @@ export default function ChangeEmailIndex() {
 					<ErrorList id={form.errorId} errors={form.errors} />
 					<div>
 						<StatusButton
-							status={isSubmitting ? 'pending' : actionData?.status ?? 'idle'}
+							status={isPending ? 'pending' : actionData?.status ?? 'idle'}
 						>
 							Send Confirmation
 						</StatusButton>

@@ -11,7 +11,7 @@ import { z } from 'zod'
 import { ErrorList, Field } from '~/components/forms.tsx'
 import { Spacer } from '~/components/spacer.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
-import { useIsSubmitting } from '~/utils/misc.tsx'
+import { useIsPending } from '~/utils/misc.tsx'
 
 export const codeQueryParam = 'code'
 export const targetQueryParam = 'target'
@@ -81,7 +81,7 @@ async function validateRequest(
 export default function VerifyRoute() {
 	const data = useLoaderData<typeof loader>()
 	const [searchParams] = useSearchParams()
-	const isSubmitting = useIsSubmitting()
+	const isPending = useIsPending()
 	const actionData = useActionData<typeof action>()
 
 	const [form, fields] = useForm({
@@ -133,9 +133,9 @@ export default function VerifyRoute() {
 						/>
 						<StatusButton
 							className="w-full"
-							status={isSubmitting ? 'pending' : actionData?.status ?? 'idle'}
+							status={isPending ? 'pending' : actionData?.status ?? 'idle'}
 							type="submit"
-							disabled={isSubmitting}
+							disabled={isPending}
 						>
 							Submit
 						</StatusButton>

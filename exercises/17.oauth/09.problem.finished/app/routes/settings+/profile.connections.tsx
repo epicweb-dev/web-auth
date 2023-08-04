@@ -15,7 +15,7 @@ import {
 } from '~/components/ui/tooltip.tsx'
 import { requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
-import { invariantResponse, useIsSubmitting } from '~/utils/misc.tsx'
+import { invariantResponse, useIsPending } from '~/utils/misc.tsx'
 import { createToastHeaders } from '~/utils/toast.server.ts'
 
 export const handle = {
@@ -105,7 +105,7 @@ export async function action({ request }: DataFunctionArgs) {
 
 export default function Connections() {
 	const data = useLoaderData<typeof loader>()
-	const isGitHubSubmitting = useIsSubmitting({
+	const isGitHubSubmitting = useIsPending({
 		formAction: '/auth/github',
 		state: 'non-idle',
 	})

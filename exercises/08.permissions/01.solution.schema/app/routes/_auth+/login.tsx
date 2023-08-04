@@ -19,7 +19,7 @@ import {
 	requireAnonymous,
 	userIdKey,
 } from '~/utils/auth.server.ts'
-import { useIsSubmitting } from '~/utils/misc.tsx'
+import { useIsPending } from '~/utils/misc.tsx'
 import { sessionStorage } from '~/utils/session.server.ts'
 import { passwordSchema, usernameSchema } from '~/utils/user-validation.ts'
 import { checkboxSchema } from '~/utils/zod-extensions.ts'
@@ -89,7 +89,7 @@ export async function action({ request }: DataFunctionArgs) {
 
 export default function LoginPage() {
 	const actionData = useActionData<typeof action>()
-	const isSubmitting = useIsSubmitting()
+	const isPending = useIsPending()
 	const [searchParams] = useSearchParams()
 	const redirectTo = searchParams.get('redirectTo')
 
@@ -166,11 +166,9 @@ export default function LoginPage() {
 							<div className="flex items-center justify-between gap-6 pt-3">
 								<StatusButton
 									className="w-full"
-									status={
-										isSubmitting ? 'pending' : actionData?.status ?? 'idle'
-									}
+									status={isPending ? 'pending' : actionData?.status ?? 'idle'}
 									type="submit"
-									disabled={isSubmitting}
+									disabled={isPending}
 								>
 									Log in
 								</StatusButton>

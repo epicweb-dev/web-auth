@@ -14,7 +14,7 @@ import { ErrorList, Field } from '~/components/forms.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
 import { prisma } from '~/utils/db.server.ts'
 import { sendEmail } from '~/utils/email.server.ts'
-import { useIsSubmitting } from '~/utils/misc.tsx'
+import { useIsPending } from '~/utils/misc.tsx'
 import { emailSchema } from '~/utils/user-validation.ts'
 import { prepareVerification } from './verify.tsx'
 
@@ -103,7 +103,7 @@ export const meta: V2_MetaFunction = () => {
 
 export default function SignupRoute() {
 	const actionData = useActionData<typeof action>()
-	const isSubmitting = useIsSubmitting()
+	const isPending = useIsPending()
 	const [form, fields] = useForm({
 		id: 'signup-form',
 		constraint: getFieldsetConstraint(SignupSchema),
@@ -123,29 +123,27 @@ export default function SignupRoute() {
 					Please enter your email.
 				</p>
 			</div>
-			<Form
-				method="POST"
-				className="mx-auto mt-16 min-w-[368px] max-w-sm"
-				{...form.props}
-			>
-				<Field
-					labelProps={{
-						htmlFor: fields.email.id,
-						children: 'Email',
-					}}
-					inputProps={{ ...conform.input(fields.email), autoFocus: true }}
-					errors={fields.email.errors}
-				/>
-				<ErrorList errors={form.errors} id={form.errorId} />
-				<StatusButton
-					className="w-full"
-					status={isSubmitting ? 'pending' : actionData?.status ?? 'idle'}
-					type="submit"
-					disabled={isSubmitting}
-				>
-					Submit
-				</StatusButton>
-			</Form>
+			<div className="mx-auto mt-16 min-w-[368px] max-w-sm">
+				<Form method="POST" {...form.props}>
+					<Field
+						labelProps={{
+							htmlFor: fields.email.id,
+							children: 'Email',
+						}}
+						inputProps={{ ...conform.input(fields.email), autoFocus: true }}
+						errors={fields.email.errors}
+					/>
+					<ErrorList errors={form.errors} id={form.errorId} />
+					<StatusButton
+						className="w-full"
+						status={isPending ? 'pending' : actionData?.status ?? 'idle'}
+						type="submit"
+						disabled={isPending}
+					>
+						Submit
+					</StatusButton>
+				</Form>
+			</div>
 		</div>
 	)
 }

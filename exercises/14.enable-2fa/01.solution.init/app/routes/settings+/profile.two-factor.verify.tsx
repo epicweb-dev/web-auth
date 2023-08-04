@@ -8,7 +8,7 @@ import { Icon } from '~/components/ui/icon.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
 import { requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
-import { useIsSubmitting } from '~/utils/misc.tsx'
+import { useIsPending } from '~/utils/misc.tsx'
 import { redirectWithToast } from '~/utils/toast.server.ts'
 
 export const handle = {
@@ -73,7 +73,7 @@ export default function TwoFactorRoute() {
 	const data = useLoaderData<typeof loader>()
 	const actionData = useActionData<typeof action>()
 
-	const isSubmitting = useIsSubmitting()
+	const isPending = useIsPending()
 
 	const [form, fields] = useForm({
 		id: 'verify-form',
@@ -120,9 +120,9 @@ export default function TwoFactorRoute() {
 						/>
 						<StatusButton
 							className="w-full"
-							status={isSubmitting ? 'pending' : actionData?.status ?? 'idle'}
+							status={isPending ? 'pending' : actionData?.status ?? 'idle'}
 							type="submit"
-							disabled={isSubmitting}
+							disabled={isPending}
 						>
 							Submit
 						</StatusButton>

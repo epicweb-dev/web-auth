@@ -21,7 +21,7 @@ import {
 	getUserImgSrc,
 	invariantResponse,
 	useDoubleCheck,
-	useIsSubmitting,
+	useIsPending,
 } from '~/utils/misc.tsx'
 
 export const handle = {
@@ -114,7 +114,7 @@ export default function PhotoRoute() {
 		shouldRevalidate: 'onBlur',
 	})
 
-	const isSubmitting = useIsSubmitting()
+	const isPending = useIsPending()
 
 	const [newImageSrc, setNewImageSrc] = useState<string | null>(null)
 
@@ -155,8 +155,8 @@ export default function PhotoRoute() {
 					<div className="flex gap-4">
 						<StatusButton
 							type="submit"
-							status={isSubmitting ? 'pending' : actionData?.status ?? 'idle'}
-							disabled={isSubmitting}
+							status={isPending ? 'pending' : actionData?.status ?? 'idle'}
+							disabled={isPending}
 						>
 							Save Photo
 						</StatusButton>

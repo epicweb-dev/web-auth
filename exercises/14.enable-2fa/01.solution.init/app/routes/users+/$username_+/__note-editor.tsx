@@ -165,7 +165,7 @@ export function NoteEditor({
 	>
 }) {
 	const noteFetcher = useFetcher<typeof action>()
-	const isSubmitting = noteFetcher.state !== 'idle'
+	const isPending = noteFetcher.state !== 'idle'
 
 	const [form, fields] = useForm({
 		id: 'note-editor',
@@ -254,8 +254,8 @@ export function NoteEditor({
 				<StatusButton
 					form={form.id}
 					type="submit"
-					disabled={isSubmitting}
-					status={isSubmitting ? 'pending' : 'idle'}
+					disabled={isPending}
+					status={isPending ? 'pending' : 'idle'}
 				>
 					Submit
 				</StatusButton>

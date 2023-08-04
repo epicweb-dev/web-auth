@@ -83,6 +83,22 @@ export function combineHeaders(...headers: Array<ResponseInit['headers']>) {
 }
 
 /**
+ * Combine multiple response init objects into one (uses combineHeaders)
+ */
+export function combineResponseInits(
+	...responseInits: Array<ResponseInit | undefined>
+) {
+	let combined: ResponseInit = {}
+	for (const responseInit of responseInits) {
+		combined = {
+			...responseInit,
+			headers: combineHeaders(combined.headers, responseInit?.headers),
+		}
+	}
+	return combined
+}
+
+/**
  * Provide a condition and if that condition is falsey, this throws an error
  * with the given message.
  *
@@ -145,7 +161,7 @@ export function invariantResponse(
  * navigation.formAction will not, so don't use the default formAction if you
  * want to know if a form is submitting without specific query params.
  */
-export function useIsSubmitting({
+export function useIsPending({
 	formAction,
 	formMethod = 'POST',
 	state = formMethod === 'GET' ? 'loading' : 'submitting',
@@ -168,26 +184,26 @@ export function useIsSubmitting({
 }
 
 /**
- * This combines useSpinDelay (from https://npm.im/spin-delay) and useIsSubmitting
+ * This combines useSpinDelay (from https://npm.im/spin-delay) and useIsPending
  * from our own utilities to give you a nice way to show a loading spinner for
  * a minimum amount of time, even if the request finishes right after the delay.
  *
  * This avoids a flash of loading state regardless of how fast or slow the
  * request is.
  */
-export function useDelayedIsSubmitting({
+export function useDelayedIsPending({
 	formAction,
 	formMethod,
 	delay = 400,
 	minDuration = 300,
-}: Parameters<typeof useIsSubmitting>[0] &
+}: Parameters<typeof useIsPending>[0] &
 	Parameters<typeof useSpinDelay>[1] = {}) {
-	const isSubmitting = useIsSubmitting({ formAction, formMethod })
-	const delayedIsSubmitting = useSpinDelay(isSubmitting, {
+	const isPending = useIsPending({ formAction, formMethod })
+	const delayedIsPending = useSpinDelay(isPending, {
 		delay,
 		minDuration,
 	})
-	return delayedIsSubmitting
+	return delayedIsPending
 }
 
 function callAll<Args extends Array<unknown>>(
@@ -271,4 +287,20 @@ export function useDebounce<
 			),
 		[delay],
 	)
+}
+
+export async function downloadFile(url: string, retries: number = 0) {
+	const MAX_RETRIES = 3
+	try {
+		const response = await fetch(url)
+		if (!response.ok) {
+			throw new Error(`Failed to fetch image with status ${response.status}`)
+		}
+		const contentType = response.headers.get('content-type') ?? 'image/jpg'
+		const blob = Buffer.from(await response.arrayBuffer())
+		return { contentType, blob }
+	} catch (e) {
+		if (retries > MAX_RETRIES) throw e
+		return downloadFile(url, retries + 1)
+	}
 }

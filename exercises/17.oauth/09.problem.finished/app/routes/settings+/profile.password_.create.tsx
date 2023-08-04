@@ -9,7 +9,7 @@ import { Icon } from '~/components/ui/icon.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
 import { getPasswordHash, requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
-import { useIsSubmitting } from '~/utils/misc.tsx'
+import { useIsPending } from '~/utils/misc.tsx'
 import { passwordSchema } from '~/utils/user-validation.ts'
 
 export const handle = {
@@ -85,7 +85,7 @@ export async function action({ request }: DataFunctionArgs) {
 
 export default function CreatePasswordRoute() {
 	const actionData = useActionData<typeof action>()
-	const isSubmitting = useIsSubmitting()
+	const isPending = useIsPending()
 
 	const [form, fields] = useForm({
 		id: 'signup-form',
@@ -118,7 +118,7 @@ export default function CreatePasswordRoute() {
 				</Button>
 				<StatusButton
 					type="submit"
-					status={isSubmitting ? 'pending' : actionData?.status ?? 'idle'}
+					status={isPending ? 'pending' : actionData?.status ?? 'idle'}
 				>
 					Create Password
 				</StatusButton>

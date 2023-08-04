@@ -135,44 +135,45 @@ export default function ForgotPasswordRoute() {
 						No worries, we'll send you reset instructions.
 					</p>
 				</div>
-				<forgotPassword.Form
-					method="POST"
-					{...form.props}
-					className="mx-auto mt-16 min-w-[368px] max-w-sm"
-				>
-					<div>
-						<Field
-							labelProps={{
-								htmlFor: fields.usernameOrEmail.id,
-								children: 'Username or Email',
-							}}
-							inputProps={{
-								autoFocus: true,
-								...conform.input(fields.usernameOrEmail),
-							}}
-							errors={fields.usernameOrEmail.errors}
-						/>
-					</div>
-					<ErrorList errors={form.errors} id={form.errorId} />
+				<div className="mx-auto mt-16 min-w-[368px] max-w-sm">
+					<forgotPassword.Form method="POST" {...form.props}>
+						<div>
+							<Field
+								labelProps={{
+									htmlFor: fields.usernameOrEmail.id,
+									children: 'Username or Email',
+								}}
+								inputProps={{
+									autoFocus: true,
+									...conform.input(fields.usernameOrEmail),
+								}}
+								errors={fields.usernameOrEmail.errors}
+							/>
+						</div>
+						<ErrorList errors={form.errors} id={form.errorId} />
 
-					<div className="mt-6">
-						<StatusButton
-							className="w-full"
-							status={
-								forgotPassword.state === 'submitting'
-									? 'pending'
-									: forgotPassword.data?.status ?? 'idle'
-							}
-							type="submit"
-							disabled={forgotPassword.state !== 'idle'}
-						>
-							Recover password
-						</StatusButton>
-					</div>
-				</forgotPassword.Form>
-				<Link to="/login" className="mt-11 text-center text-body-sm font-bold">
-					Back to Login
-				</Link>
+						<div className="mt-6">
+							<StatusButton
+								className="w-full"
+								status={
+									forgotPassword.state === 'submitting'
+										? 'pending'
+										: forgotPassword.data?.status ?? 'idle'
+								}
+								type="submit"
+								disabled={forgotPassword.state !== 'idle'}
+							>
+								Recover password
+							</StatusButton>
+						</div>
+					</forgotPassword.Form>
+					<Link
+						to="/login"
+						className="mt-11 text-center text-body-sm font-bold"
+					>
+						Back to Login
+					</Link>
+				</div>
 			</div>
 		</div>
 	)

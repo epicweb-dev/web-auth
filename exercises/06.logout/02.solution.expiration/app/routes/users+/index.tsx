@@ -5,7 +5,7 @@ import { GeneralErrorBoundary } from '~/components/error-boundary.tsx'
 import { ErrorList } from '~/components/forms.tsx'
 import { SearchBar } from '~/components/search-bar.tsx'
 import { prisma } from '~/utils/db.server.ts'
-import { cn, getUserImgSrc, useDelayedIsSubmitting } from '~/utils/misc.tsx'
+import { cn, getUserImgSrc, useDelayedIsPending } from '~/utils/misc.tsx'
 
 const UserSearchResultSchema = z.object({
 	id: z.string(),
@@ -50,7 +50,7 @@ export async function loader({ request }: DataFunctionArgs) {
 
 export default function UsersRoute() {
 	const data = useLoaderData<typeof loader>()
-	const isSubmitting = useDelayedIsSubmitting({
+	const isPending = useDelayedIsPending({
 		formMethod: 'GET',
 		formAction: '/users',
 	})
@@ -71,7 +71,7 @@ export default function UsersRoute() {
 						<ul
 							className={cn(
 								'flex w-full flex-wrap items-center justify-center gap-4 delay-200',
-								{ 'opacity-50': isSubmitting },
+								{ 'opacity-50': isPending },
 							)}
 						>
 							{data.users.map(user => (

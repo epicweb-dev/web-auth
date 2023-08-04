@@ -15,6 +15,7 @@ export async function action({ request }: DataFunctionArgs) {
 		typeof rawRedirectTo === 'string'
 			? rawRedirectTo
 			: getReferrerRoute(request)
+
 	const redirectToCookie = getRedirectCookieHeader(redirectTo)
 
 	if (process.env.GITHUB_CLIENT_ID.startsWith('MOCK_')) {
