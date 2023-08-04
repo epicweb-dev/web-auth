@@ -6,7 +6,7 @@ import { StatusButton } from '~/components/ui/status-button.tsx'
 import { requireUserId } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import { twoFAVerificationType } from './profile.two-factor.tsx'
-import { twoFAVerifyVerificationType as twoFAVerifyVerificationType } from './profile.two-factor.verify.tsx'
+import { twoFAVerifyVerificationType } from './profile.two-factor.verify.tsx'
 
 export async function loader({ request }: DataFunctionArgs) {
 	const userId = await requireUserId(request)
