@@ -9,4 +9,4 @@
 /build
 
 # in deployed we don't need the data anyway, and these add up big time
-**/data.db
+*.db
