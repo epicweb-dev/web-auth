@@ -19,7 +19,6 @@ WORKDIR /myapp
 ADD . .
 
 # delete unnecessary and very large files
-# enable globstar first
 RUN bash -c 'shopt -s globstar && rm -rf ./exercises/**/{data.db,package.json}'
 
 RUN npm install --omit=dev
