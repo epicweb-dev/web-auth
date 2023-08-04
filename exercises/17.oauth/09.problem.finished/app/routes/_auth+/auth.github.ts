@@ -7,7 +7,7 @@ export async function loader() {
 }
 
 export async function action({ request }: DataFunctionArgs) {
-	if (process.env.MOCKS) {
+	if (process.env.GITHUB_CLIENT_ID.startsWith('MOCK_')) {
 		return redirect(`/auth/github/callback?code=MOCK_CODE&state=MOCK_STATE`)
 	}
 	return authenticator.authenticate(GitHubStrategy.name, request)

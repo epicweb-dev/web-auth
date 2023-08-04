@@ -36,8 +36,25 @@ const ChangePasswordForm = z
 		}
 	})
 
+async function requirePassword(userId: string) {
+	const password = await prisma.password.findUnique({
+		select: { userId: true },
+		where: { userId },
+	})
+	if (!password) {
+		throw redirect('/settings/profile/password/create')
+	}
+}
+
+export async function loader({ request }: DataFunctionArgs) {
+	const userId = await requireUserId(request)
+	await requirePassword(userId)
+	return json({})
+}
+
 export async function action({ request }: DataFunctionArgs) {
 	const userId = await requireUserId(request)
+	await requirePassword(userId)
 	const formData = await request.formData()
 	const submission = await parse(formData, {
 		async: true,

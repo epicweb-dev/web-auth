@@ -24,6 +24,7 @@ export type IconName =
 	| "pencil-1"
 	| "pencil-2"
 	| "plus"
+	| "question-mark-circled"
 	| "reset"
 	| "sun"
 	| "trash"
