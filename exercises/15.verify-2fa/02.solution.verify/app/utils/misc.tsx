@@ -155,7 +155,7 @@ export function invariantResponse(
  * Returns true if the current navigation is submitting the current route's
  * form. Defaults to the current route's form action and method POST.
  *
- * If GET, then this uses navigation.state === 'loading' instead of submitting.
+ * Defaults state to 'non-idle'
  *
  * NOTE: the default formAction will include query params, but the
  * navigation.formAction will not, so don't use the default formAction if you
@@ -164,7 +164,7 @@ export function invariantResponse(
 export function useIsPending({
 	formAction,
 	formMethod = 'POST',
-	state = formMethod === 'GET' ? 'loading' : 'submitting',
+	state = 'non-idle',
 }: {
 	formAction?: string
 	formMethod?: 'POST' | 'GET' | 'PUT' | 'PATCH' | 'DELETE'

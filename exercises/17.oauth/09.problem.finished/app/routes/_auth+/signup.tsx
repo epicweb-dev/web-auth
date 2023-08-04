@@ -104,10 +104,7 @@ export const meta: V2_MetaFunction = () => {
 export default function SignupRoute() {
 	const actionData = useActionData<typeof action>()
 	const isPending = useIsPending()
-	const isGitHubSubmitting = useIsPending({
-		formAction: '/auth/github',
-		state: 'non-idle',
-	})
+	const isGitHubSubmitting = useIsPending({ formAction: '/auth/github' })
 	const [searchParams] = useSearchParams()
 	const redirectTo = searchParams.get('redirectTo')
 

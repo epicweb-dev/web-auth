@@ -105,10 +105,7 @@ export async function action({ request }: DataFunctionArgs) {
 
 export default function Connections() {
 	const data = useLoaderData<typeof loader>()
-	const isGitHubSubmitting = useIsPending({
-		formAction: '/auth/github',
-		state: 'non-idle',
-	})
+	const isGitHubSubmitting = useIsPending({ formAction: '/auth/github' })
 
 	return (
 		<div className="max-w-md mx-auto">

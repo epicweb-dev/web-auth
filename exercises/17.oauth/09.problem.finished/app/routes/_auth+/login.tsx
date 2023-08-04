@@ -202,10 +202,7 @@ export async function action({ request }: DataFunctionArgs) {
 export default function LoginPage() {
 	const actionData = useActionData<typeof action>()
 	const isPending = useIsPending()
-	const isGitHubSubmitting = useIsPending({
-		formAction: '/auth/github',
-		state: 'non-idle',
-	})
+	const isGitHubSubmitting = useIsPending({ formAction: '/auth/github' })
 	const [searchParams] = useSearchParams()
 	const redirectTo = searchParams.get('redirectTo')
 
