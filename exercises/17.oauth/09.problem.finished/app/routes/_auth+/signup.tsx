@@ -7,7 +7,7 @@ import {
 	type DataFunctionArgs,
 	type V2_MetaFunction,
 } from '@remix-run/node'
-import { Form, useActionData } from '@remix-run/react'
+import { Form, useActionData, useSearchParams } from '@remix-run/react'
 import { z } from 'zod'
 import { GeneralErrorBoundary } from '~/components/error-boundary.tsx'
 import { ErrorList, Field } from '~/components/forms.tsx'
@@ -106,7 +106,11 @@ export default function SignupRoute() {
 	const isSubmitting = useIsSubmitting()
 	const isGitHubSubmitting = useIsSubmitting({
 		formAction: '/auth/github',
+		state: 'non-idle',
 	})
+	const [searchParams] = useSearchParams()
+	const redirectTo = searchParams.get('redirectTo') ?? '/'
+
 	const [form, fields] = useForm({
 		id: 'signup-form',
 		constraint: getFieldsetConstraint(SignupSchema),
@@ -151,6 +155,9 @@ export default function SignupRoute() {
 					action="/auth/github"
 					method="POST"
 				>
+					{redirectTo ? (
+						<input type="hidden" name="redirectTo" value={redirectTo} />
+					) : null}
 					<StatusButton
 						type="submit"
 						className="w-full"

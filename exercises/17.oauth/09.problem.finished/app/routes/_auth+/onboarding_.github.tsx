@@ -178,13 +178,13 @@ export default function SignupRoute() {
 	const [form, fields] = useForm({
 		id: 'signup-form',
 		constraint: getFieldsetConstraint(SignupFormSchema),
-		defaultValue: { redirectTo },
 		lastSubmission: actionData?.submission ?? data.submission,
 		onValidate({ formData }) {
 			return parse(formData, { schema: SignupFormSchema })
 		},
 		shouldRevalidate: 'onBlur',
 	})
+	// console.log(fields.redirectTo)
 
 	return (
 		<div className="container flex min-h-full flex-col justify-center pb-32 pt-20">
@@ -253,7 +253,10 @@ export default function SignupRoute() {
 						errors={fields.remember.errors}
 					/>
 
-					<input {...conform.input(fields.redirectTo, { type: 'hidden' })} />
+					{redirectTo ? (
+						<input type="hidden" name="redirectTo" value={redirectTo} />
+					) : null}
+
 					<ErrorList errors={form.errors} id={form.errorId} />
 
 					<div className="flex items-center justify-between gap-6">

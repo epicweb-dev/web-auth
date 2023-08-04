@@ -107,6 +107,7 @@ export default function Connections() {
 	const data = useLoaderData<typeof loader>()
 	const isGitHubSubmitting = useIsSubmitting({
 		formAction: '/auth/github',
+		state: 'non-idle',
 	})
 
 	return (

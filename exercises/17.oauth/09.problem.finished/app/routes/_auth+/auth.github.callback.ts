@@ -1,5 +1,6 @@
 import { redirect, type DataFunctionArgs } from '@remix-run/node'
 import { GitHubStrategy } from 'remix-auth-github'
+import { safeRedirect } from 'remix-utils'
 import {
 	SESSION_EXPIRATION_TIME,
 	authenticator,
@@ -7,6 +8,13 @@ import {
 	sessionKey,
 } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
+import { combineHeaders } from '~/utils/misc.tsx'
+import {
+	destroyRedirectToHeader,
+	getRedirectCookieValue,
+} from '~/utils/redirect-cookie.server.ts'
+import { sessionStorage } from '~/utils/session.server.ts'
+import { createToastHeaders, redirectWithToast } from '~/utils/toast.server.ts'
 import { verifySessionStorage } from '~/utils/verification.server.ts'
 import { twoFAVerificationType } from '../settings+/profile.two-factor.tsx'
 import { unverifiedSessionIdKey } from './login.tsx'
@@ -16,17 +24,18 @@ import {
 	prefilledProfileKey,
 } from './onboarding_.github.tsx'
 import { getRedirectToUrl } from './verify.tsx'
-import { sessionStorage } from '~/utils/session.server.ts'
-import { createToastHeaders, redirectWithToast } from '~/utils/toast.server.ts'
-import { combineHeaders } from '~/utils/misc.tsx'
-import { safeRedirect } from 'remix-utils'
+
+const destroyRedirectTo = { 'set-cookie': destroyRedirectToHeader }
 
 async function makeSession(
-	{ request, userId }: { request: Request; userId: string },
+	{
+		request,
+		userId,
+		redirectTo,
+	}: { request: Request; userId: string; redirectTo?: string | null },
 	responseInit?: ResponseInit,
 ) {
-	const reqUrl = new URL(request.url)
-	const redirectTo = reqUrl.searchParams.get('redirectTo') ?? '/'
+	redirectTo ??= '/'
 	const session = await prisma.session.create({
 		select: { id: true, expirationDate: true, userId: true },
 		data: {
@@ -63,6 +72,7 @@ async function makeSession(
 				{
 					'set-cookie': await verifySessionStorage.commitSession(verifySession),
 				},
+				destroyRedirectTo,
 				responseInit?.headers,
 			),
 		})
@@ -79,13 +89,16 @@ async function makeSession(
 			{
 				'set-cookie': await sessionStorage.commitSession(cookieSession),
 			},
+			destroyRedirectTo,
 			responseInit?.headers,
 		),
 	})
 }
 
 export async function loader({ request }: DataFunctionArgs) {
+	await new Promise(resolve => setTimeout(resolve, 1000))
 	const reqUrl = new URL(request.url)
+	const redirectTo = getRedirectCookieValue(request)
 	if (
 		process.env.GITHUB_CLIENT_ID.startsWith('MOCK_') &&
 		reqUrl.searchParams.get('state') === 'MOCK_STATE'
@@ -112,11 +125,15 @@ export async function loader({ request }: DataFunctionArgs) {
 
 	if (!authResult.success) {
 		console.error(authResult.error)
-		return redirectWithToast('/login', {
-			title: 'Auth Failed',
-			description: 'There was an error authenticating with GitHub.',
-			type: 'error',
-		})
+		return redirectWithToast(
+			'/login',
+			{
+				title: 'Auth Failed',
+				description: 'There was an error authenticating with GitHub.',
+				type: 'error',
+			},
+			{ headers: destroyRedirectTo },
+		)
 	}
 
 	const { data: profile } = authResult
@@ -130,15 +147,23 @@ export async function loader({ request }: DataFunctionArgs) {
 
 	if (existingConnection && userId) {
 		if (existingConnection.userId === userId) {
-			return redirectWithToast('/settings/profile/connections', {
-				title: 'Already Connected',
-				description: `Your "${profile.username}" GitHub account is already connected.`,
-			})
+			return redirectWithToast(
+				'/settings/profile/connections',
+				{
+					title: 'Already Connected',
+					description: `Your "${profile.username}" GitHub account is already connected.`,
+				},
+				{ headers: destroyRedirectTo },
+			)
 		} else {
-			return redirectWithToast('/settings/profile/connections', {
-				title: 'Already Connected',
-				description: `The "${profile.username}" GitHub account is already connected to another account.`,
-			})
+			return redirectWithToast(
+				'/settings/profile/connections',
+				{
+					title: 'Already Connected',
+					description: `The "${profile.username}" GitHub account is already connected to another account.`,
+				},
+				{ headers: destroyRedirectTo },
+			)
 		}
 	}
 
@@ -147,10 +172,14 @@ export async function loader({ request }: DataFunctionArgs) {
 		await prisma.gitHubConnection.create({
 			data: { providerId: profile.id, userId },
 		})
-		return redirectWithToast('/settings/profile/connections', {
-			title: 'Connected',
-			description: `Your "${profile.username}" GitHub account has been connected.`,
-		})
+		return redirectWithToast(
+			'/settings/profile/connections',
+			{
+				title: 'Connected',
+				description: `Your "${profile.username}" GitHub account has been connected.`,
+			},
+			{ headers: destroyRedirectTo },
+		)
 	}
 
 	// Connection exists already? Make a new session
@@ -186,9 +215,16 @@ export async function loader({ request }: DataFunctionArgs) {
 	verifySession.set(onboardingEmailSessionKey, profile.email)
 	verifySession.set(prefilledProfileKey, profile)
 	verifySession.set(githubIdKey, profile.id)
-	throw redirect('/onboarding/github', {
-		headers: {
-			'Set-Cookie': await verifySessionStorage.commitSession(verifySession),
-		},
+	const onboardingRedirect = [
+		'/onboarding/github',
+		redirectTo ? new URLSearchParams({ redirectTo }) : null,
+	]
+		.filter(Boolean)
+		.join('?')
+	throw redirect(onboardingRedirect, {
+		headers: combineHeaders(
+			{ 'set-cookie': await verifySessionStorage.commitSession(verifySession) },
+			destroyRedirectTo,
+		),
 	})
 }

@@ -192,9 +192,10 @@ export default function LoginPage() {
 	const isSubmitting = useIsSubmitting()
 	const isGitHubSubmitting = useIsSubmitting({
 		formAction: '/auth/github',
+		state: 'non-idle',
 	})
 	const [searchParams] = useSearchParams()
-	const redirectTo = searchParams.get('redirectTo')
+	const redirectTo = searchParams.get('redirectTo') ?? '/'
 
 	const [form, fields] = useForm({
 		id: 'login-form',
@@ -287,6 +288,9 @@ export default function LoginPage() {
 							action="/auth/github"
 							method="POST"
 						>
+							{redirectTo ? (
+								<input type="hidden" name="redirectTo" value={redirectTo} />
+							) : null}
 							<StatusButton
 								type="submit"
 								className="w-full"

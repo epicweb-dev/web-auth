@@ -148,14 +148,20 @@ export function invariantResponse(
 export function useIsSubmitting({
 	formAction,
 	formMethod = 'POST',
+	state = formMethod === 'GET' ? 'loading' : 'submitting',
 }: {
 	formAction?: string
 	formMethod?: 'POST' | 'GET' | 'PUT' | 'PATCH' | 'DELETE'
+	state?: 'submitting' | 'loading' | 'non-idle'
 } = {}) {
 	const contextualFormAction = useFormAction()
 	const navigation = useNavigation()
+	const isPendingState =
+		state === 'non-idle'
+			? navigation.state !== 'idle'
+			: navigation.state === state
 	return (
-		navigation.state === (formMethod === 'GET' ? 'loading' : 'submitting') &&
+		isPendingState &&
 		navigation.formAction === (formAction ?? contextualFormAction) &&
 		navigation.formMethod === formMethod
 	)
