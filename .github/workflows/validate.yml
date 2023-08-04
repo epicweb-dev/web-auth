@@ -45,6 +45,12 @@ jobs:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
 
+      # we do this in the dockerfile too, but we'll do it here
+      # just so using the remote builder is faster.
+      # Still want it in the dockerfile so we can run locally with the same thing.
+      - name: 💣 Delete big files
+        run: rm -rf ./exercises/**/{data.db,package.json}
+
       # move Dockerfile to root
       - name: 🚚 Move Files
         run: |
