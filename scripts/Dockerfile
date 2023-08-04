@@ -18,6 +18,9 @@ WORKDIR /myapp
 
 ADD . .
 
-RUN node setup.js
+# delete unnecessary and very large files
+RUN rm -rf ./exercises/**/{data.db,package.json}
+
+RUN npm install --omit=dev
 
 CMD ["node", "./scripts/start.js"]
