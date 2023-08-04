@@ -96,7 +96,6 @@ async function makeSession(
 }
 
 export async function loader({ request }: DataFunctionArgs) {
-	await new Promise(resolve => setTimeout(resolve, 1000))
 	const reqUrl = new URL(request.url)
 	const redirectTo = getRedirectCookieValue(request)
 	if (
