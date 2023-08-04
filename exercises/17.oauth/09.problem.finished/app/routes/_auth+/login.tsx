@@ -250,7 +250,9 @@ export default function LoginPage() {
 								</div>
 							</div>
 
-							<input {...conform.input(fields.redirectTo)} type="hidden" />
+							<input
+								{...conform.input(fields.redirectTo, { type: 'hidden' })}
+							/>
 							<ErrorList
 								errors={[...form.errors, data.formError]}
 								id={form.errorId}

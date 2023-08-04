@@ -19,11 +19,14 @@ import { getRedirectToUrl } from './verify.tsx'
 import { commitSession, getSession } from '~/utils/session.server.ts'
 import { createToastHeaders, redirectWithToast } from '~/utils/toast.server.ts'
 import { combineHeaders } from '~/utils/misc.tsx'
+import { safeRedirect } from 'remix-utils'
 
 async function makeSession(
 	{ request, userId }: { request: Request; userId: string },
 	responseInit?: ResponseInit,
 ) {
+	const reqUrl = new URL(request.url)
+	const redirectTo = reqUrl.searchParams.get('redirectTo') ?? '/'
 	const session = await prisma.session.create({
 		select: { id: true, expirationDate: true, userId: true },
 		data: {
@@ -48,12 +51,11 @@ async function makeSession(
 			request.headers.get('cookie'),
 		)
 		verifySession.set(unverifiedSessionIdKey, session.id)
-		const reqUrl = new URL(request.url)
 		const redirectUrl = getRedirectToUrl({
 			request,
 			type: twoFAVerificationType,
 			target: session.userId,
-			redirectTo: reqUrl.searchParams.get('redirectTo') ?? '/',
+			redirectTo,
 		})
 		return redirect(redirectUrl.toString(), {
 			...responseInit,
@@ -69,7 +71,7 @@ async function makeSession(
 	// they're just logging in with an existing connection 👍
 	const cookieSession = await getSession(request.headers.get('cookie'))
 	cookieSession.set(sessionKey, session.id)
-	return redirect('/', {
+	return redirect(safeRedirect(redirectTo), {
 		...responseInit,
 		headers: combineHeaders(
 			{
