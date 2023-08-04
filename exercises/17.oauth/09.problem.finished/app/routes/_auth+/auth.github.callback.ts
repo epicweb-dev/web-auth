@@ -16,7 +16,7 @@ import {
 	prefilledProfileKey,
 } from './onboarding_.github.tsx'
 import { getRedirectToUrl } from './verify.tsx'
-import { commitSession, getSession } from '~/utils/session.server.ts'
+import { sessionStorage } from '~/utils/session.server.ts'
 import { createToastHeaders, redirectWithToast } from '~/utils/toast.server.ts'
 import { combineHeaders } from '~/utils/misc.tsx'
 import { safeRedirect } from 'remix-utils'
@@ -69,13 +69,15 @@ async function makeSession(
 	}
 
 	// they're just logging in with an existing connection 👍
-	const cookieSession = await getSession(request.headers.get('cookie'))
+	const cookieSession = await sessionStorage.getSession(
+		request.headers.get('cookie'),
+	)
 	cookieSession.set(sessionKey, session.id)
 	return redirect(safeRedirect(redirectTo), {
 		...responseInit,
 		headers: combineHeaders(
 			{
-				'set-cookie': await commitSession(cookieSession),
+				'set-cookie': await sessionStorage.commitSession(cookieSession),
 			},
 			responseInit?.headers,
 		),
@@ -88,11 +90,16 @@ export async function loader({ request }: DataFunctionArgs) {
 		process.env.GITHUB_CLIENT_ID.startsWith('MOCK_') &&
 		reqUrl.searchParams.get('state') === 'MOCK_STATE'
 	) {
-		const cookieSession = await getSession(request.headers.get('cookie'))
+		const cookieSession = await sessionStorage.getSession(
+			request.headers.get('cookie'),
+		)
 		const state = cookieSession.get('oauth2:state') ?? 'MOCK_STATE'
 		cookieSession.set('oauth2:state', state)
 		reqUrl.searchParams.set('state', state)
-		request.headers.set('cookie', await commitSession(cookieSession))
+		request.headers.set(
+			'cookie',
+			await sessionStorage.commitSession(cookieSession),
+		)
 		request = new Request(reqUrl.toString(), request)
 	}
 

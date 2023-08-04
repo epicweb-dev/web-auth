@@ -28,7 +28,7 @@ import {
 } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import { getErrorMessage, invariant, useIsSubmitting } from '~/utils/misc.tsx'
-import { commitSession, getSession } from '~/utils/session.server.ts'
+import { sessionStorage } from '~/utils/session.server.ts'
 import { passwordSchema, usernameSchema } from '~/utils/user-validation.ts'
 import { verifySessionStorage } from '~/utils/verification.server.ts'
 import { checkboxSchema } from '~/utils/zod-extensions.ts'
@@ -43,7 +43,9 @@ export async function handleVerification({
 	submission,
 }: VerifyFunctionArgs) {
 	invariant(submission.value, 'Submission should have a value by this point')
-	const cookieSession = await getSession(request.headers.get('cookie'))
+	const cookieSession = await sessionStorage.getSession(
+		request.headers.get('cookie'),
+	)
 	const verifySession = await verifySessionStorage.getSession(
 		request.headers.get('cookie'),
 	)
@@ -54,7 +56,10 @@ export async function handleVerification({
 	cookieSession.set(verifiedTimeKey, Date.now())
 
 	const headers = new Headers()
-	headers.append('set-cookie', await commitSession(cookieSession))
+	headers.append(
+		'set-cookie',
+		await sessionStorage.commitSession(cookieSession),
+	)
 	headers.append(
 		'set-cookie',
 		await verifySessionStorage.destroySession(verifySession),
@@ -64,7 +69,9 @@ export async function handleVerification({
 }
 
 export async function shouldRequestTwoFA(request: Request) {
-	const cookieSession = await getSession(request.headers.get('cookie'))
+	const cookieSession = await sessionStorage.getSession(
+		request.headers.get('cookie'),
+	)
 	const verifySession = await verifySessionStorage.getSession(
 		request.headers.get('cookie'),
 	)
@@ -91,13 +98,15 @@ const LoginFormSchema = z.object({
 
 export async function loader({ request }: DataFunctionArgs) {
 	await requireAnonymous(request)
-	const cookieSession = await getSession(request.headers.get('cookie'))
+	const cookieSession = await sessionStorage.getSession(
+		request.headers.get('cookie'),
+	)
 	const formError = cookieSession.get(authenticator.sessionErrorKey)
 	return json(
 		{ formError: formError ? getErrorMessage(formError) : null },
 		{
 			headers: {
-				'set-cookie': await commitSession(cookieSession),
+				'set-cookie': await sessionStorage.commitSession(cookieSession),
 			},
 		},
 	)
@@ -162,12 +171,14 @@ export async function action({ request }: DataFunctionArgs) {
 			},
 		})
 	} else {
-		const cookieSession = await getSession(request.headers.get('cookie'))
+		const cookieSession = await sessionStorage.getSession(
+			request.headers.get('cookie'),
+		)
 		cookieSession.set(sessionKey, session.id)
 
 		return redirect(safeRedirect(redirectTo), {
 			headers: {
-				'set-cookie': await commitSession(cookieSession, {
+				'set-cookie': await sessionStorage.commitSession(cookieSession, {
 					expires: remember ? session.expirationDate : undefined,
 				}),
 			},

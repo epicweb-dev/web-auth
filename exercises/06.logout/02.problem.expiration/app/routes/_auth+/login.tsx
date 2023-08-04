@@ -15,7 +15,7 @@ import { Spacer } from '~/components/spacer.tsx'
 import { StatusButton } from '~/components/ui/status-button.tsx'
 import { prisma } from '~/utils/db.server.ts'
 import { useIsSubmitting } from '~/utils/misc.tsx'
-import { commitSession, getSession } from '~/utils/session.server.ts'
+import { sessionStorage } from '~/utils/session.server.ts'
 import { passwordSchema, usernameSchema } from '~/utils/user-validation.ts'
 import { checkboxSchema } from '~/utils/zod-extensions.ts'
 
@@ -75,7 +75,9 @@ export async function action({ request }: DataFunctionArgs) {
 
 	const { user } = submission.value
 
-	const cookieSession = await getSession(request.headers.get('cookie'))
+	const cookieSession = await sessionStorage.getSession(
+		request.headers.get('cookie'),
+	)
 	cookieSession.set('userId', user.id)
 
 	return redirect('/', {
@@ -83,7 +85,7 @@ export async function action({ request }: DataFunctionArgs) {
 			// 🐨 add an expires option to this commitSession call and set it to
 			// a date 30 days in the future if they checked the remember checkbox
 			// or undefined if they did not.
-			'set-cookie': await commitSession(cookieSession),
+			'set-cookie': await sessionStorage.commitSession(cookieSession),
 		},
 	})
 }

@@ -20,13 +20,13 @@ Here are a couple snippets to help you with the session API:
 
 ```ts
 // get the session from the request
-const session = await getSession(request.headers.get('cookie'))
+const session = await sessionStorage.getSession(request.headers.get('cookie'))
 
 // set a value in the session
 session.set('someName', someValue)
 
 // get the 'set-cookie' header:
-const setCookieHeaderValue = await commitSession(session)
+const setCookieHeaderValue = await sessionStorage.commitSession(session)
 ```
 
 You'll know you have it working when you check the network response in the

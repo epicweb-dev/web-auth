@@ -16,7 +16,7 @@ import { StatusButton } from '~/components/ui/status-button.tsx'
 import { login, requireAnonymous, sessionKey } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import { useIsSubmitting } from '~/utils/misc.tsx'
-import { commitSession, getSession } from '~/utils/session.server.ts'
+import { sessionStorage } from '~/utils/session.server.ts'
 import { passwordSchema, usernameSchema } from '~/utils/user-validation.ts'
 import { verifySessionStorage } from '~/utils/verification.server.ts'
 import { checkboxSchema } from '~/utils/zod-extensions.ts'
@@ -96,12 +96,14 @@ export async function action({ request }: DataFunctionArgs) {
 			},
 		})
 	} else {
-		const cookieSession = await getSession(request.headers.get('cookie'))
+		const cookieSession = await sessionStorage.getSession(
+			request.headers.get('cookie'),
+		)
 		cookieSession.set(sessionKey, session.id)
 
 		return redirect(safeRedirect(redirectTo), {
 			headers: {
-				'set-cookie': await commitSession(cookieSession, {
+				'set-cookie': await sessionStorage.commitSession(cookieSession, {
 					expires: remember ? session.expirationDate : undefined,
 				}),
 			},

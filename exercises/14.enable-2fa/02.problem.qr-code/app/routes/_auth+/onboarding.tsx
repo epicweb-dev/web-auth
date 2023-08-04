@@ -20,7 +20,7 @@ import { StatusButton } from '~/components/ui/status-button.tsx'
 import { requireAnonymous, sessionKey, signup } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import { invariant, useIsSubmitting } from '~/utils/misc.tsx'
-import { commitSession, getSession } from '~/utils/session.server.ts'
+import { sessionStorage } from '~/utils/session.server.ts'
 import {
 	nameSchema,
 	passwordSchema,
@@ -103,7 +103,9 @@ export async function action({ request }: DataFunctionArgs) {
 
 	const { session, remember, redirectTo } = submission.value
 
-	const cookieSession = await getSession(request.headers.get('cookie'))
+	const cookieSession = await sessionStorage.getSession(
+		request.headers.get('cookie'),
+	)
 	cookieSession.set(sessionKey, session.id)
 	const verifySession = await verifySessionStorage.getSession(
 		request.headers.get('cookie'),
@@ -111,7 +113,7 @@ export async function action({ request }: DataFunctionArgs) {
 	const headers = new Headers()
 	headers.append(
 		'set-cookie',
-		await commitSession(cookieSession, {
+		await sessionStorage.commitSession(cookieSession, {
 			expires: remember ? session.expirationDate : undefined,
 		}),
 	)

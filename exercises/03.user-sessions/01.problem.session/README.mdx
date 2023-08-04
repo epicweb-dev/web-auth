@@ -17,16 +17,7 @@ clashing with the toast messages session.
 
 (If you need a reminder, check <InlineFile file="app/utils/toast.server.ts" />).
 
-With that, you can add this to export all the bits of the sessionStorage so we
-can use them throughout the app:
-
-```ts filename=app/utils/session.server.ts start=14
-export const { getSession, commitSession, destroySession } = sessionStorage
-```
-
-We're exporting this differently from the `toastSessionStorage` because we'll
-be using these utilities a lot more often and it's what most people think of
-when they think about sessions.
+Make sure you export the `sessionStorage` object from this module.
 
 There's not a great way to test that you've got this done correctly until the
 next step, so you <Link to="?preview=diff">may check the diff</Link> to

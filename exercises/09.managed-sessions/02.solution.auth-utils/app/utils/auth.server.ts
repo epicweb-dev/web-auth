@@ -1,7 +1,7 @@
 import { type Password, type User } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 import { prisma } from '~/utils/db.server.ts'
-import { commitSession, getSession } from './session.server.ts'
+import { sessionStorage } from './session.server.ts'
 import { redirect } from '@remix-run/node'
 
 export const SESSION_EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 30
@@ -9,7 +9,9 @@ export const SESSION_EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 30
 export const userIdKey = 'sessionId'
 
 export async function getUserId(request: Request) {
-	const cookieSession = await getSession(request.headers.get('cookie'))
+	const cookieSession = await sessionStorage.getSession(
+		request.headers.get('cookie'),
+	)
 	const sessionId = cookieSession.get(userIdKey)
 	if (!sessionId) return null
 	const session = await prisma.session.findUnique({
@@ -21,7 +23,7 @@ export async function getUserId(request: Request) {
 		cookieSession.unset(userIdKey)
 		throw redirect('/', {
 			headers: {
-				'set-cookie': await commitSession(cookieSession),
+				'set-cookie': await sessionStorage.commitSession(cookieSession),
 			},
 		})
 	}
@@ -111,12 +113,16 @@ export async function signup({
 }
 
 export async function logout(request: Request) {
-	const cookieSession = await getSession(request.headers.get('cookie'))
+	const cookieSession = await sessionStorage.getSession(
+		request.headers.get('cookie'),
+	)
 	const sessionId = cookieSession.get(userIdKey)
 	await prisma.session.delete({ where: { id: sessionId } })
 	cookieSession.unset(userIdKey)
 	throw redirect('/', {
-		headers: { 'set-cookie': await commitSession(cookieSession) },
+		headers: {
+			'set-cookie': await sessionStorage.commitSession(cookieSession),
+		},
 	})
 }
 

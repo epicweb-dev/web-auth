@@ -20,7 +20,7 @@ import { StatusButton } from '~/components/ui/status-button.tsx'
 import { requireAnonymous, sessionKey, signup } from '~/utils/auth.server.ts'
 import { prisma } from '~/utils/db.server.ts'
 import { useIsSubmitting } from '~/utils/misc.tsx'
-import { commitSession, getSession } from '~/utils/session.server.ts'
+import { sessionStorage } from '~/utils/session.server.ts'
 import {
 	nameSchema,
 	passwordSchema,
@@ -101,7 +101,9 @@ export async function action({ request }: DataFunctionArgs) {
 
 	const { session, remember, redirectTo } = submission.value
 
-	const cookieSession = await getSession(request.headers.get('cookie'))
+	const cookieSession = await sessionStorage.getSession(
+		request.headers.get('cookie'),
+	)
 	cookieSession.set(sessionKey, session.id)
 	// 🦉 you're going to need to set two cookies, one to get the user logged in
 	// and the other to destroy the verifySession. You can do this using the
@@ -115,7 +117,7 @@ export async function action({ request }: DataFunctionArgs) {
 	return redirect(safeRedirect(redirectTo), {
 		// 🐨 replace this object with the headers object you created above
 		headers: {
-			'set-cookie': await commitSession(cookieSession, {
+			'set-cookie': await sessionStorage.commitSession(cookieSession, {
 				expires: remember ? session.expirationDate : undefined,
 			}),
 		},

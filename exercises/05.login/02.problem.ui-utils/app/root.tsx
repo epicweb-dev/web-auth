@@ -37,7 +37,7 @@ import tailwindStylesheetUrl from './styles/tailwind.css'
 import { prisma } from './utils/db.server.ts'
 import { getEnv } from './utils/env.server.ts'
 import { getUserImgSrc, invariantResponse } from './utils/misc.tsx'
-import { getSession } from './utils/session.server.ts'
+import { sessionStorage } from './utils/session.server.ts'
 import { getTheme, setTheme, type Theme } from './utils/theme.server.ts'
 import { getToast, type Toast } from './utils/toast.server.ts'
 
@@ -54,7 +54,9 @@ export const links: LinksFunction = () => {
 
 export async function loader({ request }: DataFunctionArgs) {
 	const { toast, headers: toastHeaders } = await getToast(request)
-	const cookieSession = await getSession(request.headers.get('cookie'))
+	const cookieSession = await sessionStorage.getSession(
+		request.headers.get('cookie'),
+	)
 	const userId = cookieSession.get('userId')
 	const user = userId
 		? await prisma.user.findUnique({

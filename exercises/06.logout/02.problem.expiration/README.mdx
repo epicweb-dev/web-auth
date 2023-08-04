@@ -19,7 +19,7 @@ Then we can use that in our login and signup routes to set the expiration time
 if the user has checked "remember me."
 
 ```ts
-await commitSession(cookieSession, {
+await sessionStorage.commitSession(cookieSession, {
 	// Cookies with no expiration are cleared when the tab/window closes
 	expires: remember
 		? new Date(Date.now() + SESSION_EXPIRATION_TIME)

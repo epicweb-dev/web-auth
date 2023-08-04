@@ -14,7 +14,7 @@ import {
 	invariantResponse,
 	useDoubleCheck,
 } from '~/utils/misc.tsx'
-import { getSession } from '~/utils/session.server.ts'
+import { sessionStorage } from '~/utils/session.server.ts'
 import { nameSchema, usernameSchema } from '~/utils/user-validation.ts'
 
 const ProfileFormSchema = z.object({
@@ -238,7 +238,9 @@ function UpdateProfile() {
 }
 
 async function signOutOfSessionsAction({ request, userId }: ProfileActionArgs) {
-	const cookieSession = await getSession(request.headers.get('cookie'))
+	const cookieSession = await sessionStorage.getSession(
+		request.headers.get('cookie'),
+	)
 	const sessionId = cookieSession.get(sessionKey)
 	invariantResponse(
 		sessionId,

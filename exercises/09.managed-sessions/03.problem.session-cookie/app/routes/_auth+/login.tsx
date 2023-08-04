@@ -20,7 +20,7 @@ import {
 	userIdKey,
 } from '~/utils/auth.server.ts'
 import { useIsSubmitting } from '~/utils/misc.tsx'
-import { commitSession, getSession } from '~/utils/session.server.ts'
+import { sessionStorage } from '~/utils/session.server.ts'
 import { passwordSchema, usernameSchema } from '~/utils/user-validation.ts'
 import { checkboxSchema } from '~/utils/zod-extensions.ts'
 
@@ -76,13 +76,15 @@ export async function action({ request }: DataFunctionArgs) {
 	// 🐨 this is a session, not a user
 	const { user, remember, redirectTo } = submission.value
 
-	const cookieSession = await getSession(request.headers.get('cookie'))
+	const cookieSession = await sessionStorage.getSession(
+		request.headers.get('cookie'),
+	)
 	// 🐨 this is the sessionKey and a session, not userIdKey and user
 	cookieSession.set(userIdKey, user.id)
 
 	return redirect(safeRedirect(redirectTo), {
 		headers: {
-			'set-cookie': await commitSession(cookieSession, {
+			'set-cookie': await sessionStorage.commitSession(cookieSession, {
 				// 🐨 the expiration date is now available on the session and doesn't
 				// need to be computed here.
 				expires: remember
