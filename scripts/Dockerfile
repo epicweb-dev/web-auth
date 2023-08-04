@@ -20,8 +20,7 @@ ADD . .
 
 # delete unnecessary and very large files
 # enable globstar first
-RUN shopt -s globstar
-RUN rm -rf ./exercises/**/{data.db,package.json}
+RUN bash -c 'shopt -s globstar && rm -rf ./exercises/**/{data.db,package.json}'
 
 RUN npm install --omit=dev
 
