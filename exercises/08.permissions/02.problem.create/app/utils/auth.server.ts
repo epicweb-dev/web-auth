@@ -78,6 +78,7 @@ export async function signup({
 			email: email.toLowerCase(),
 			username: username.toLowerCase(),
 			name,
+			// 🐨 connect this new user with the role named "user"
 			password: {
 				create: {
 					hash: hashedPassword,

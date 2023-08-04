@@ -1,5 +1,6 @@
 {
   "typescript.preferences.autoImportFileExcludePatterns": [
+    "@radix-ui/*",
     "@remix-run/server-runtime",
     "@remix-run/router",
     "react-router-dom",

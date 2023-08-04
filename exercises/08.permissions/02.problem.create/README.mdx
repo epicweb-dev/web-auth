@@ -15,3 +15,9 @@ Once you've finished updating the seed script, run it with:
 ```sh nonumber
 npx prisma db seed
 ```
+
+But before we wrap this up, you'll want to make sure we create all new users
+with the `user` role, otherwise new users won't have the right permissions!
+
+We do that in <InlineFile file="app/utils/auth.server.ts" />, so get that
+updated too please.
