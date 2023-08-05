@@ -3,7 +3,6 @@ FROM node:18-bookworm-slim as base
 RUN apt-get update && apt-get install -y git
 
 ENV KCDSHOP_CONTEXT_CWD="/myapp/workshop-content"
-ENV KCDSHOP_LOG_MEMORY="true"
 ENV KCDSHOP_DEPLOYED="true"
 ENV FLY="true"
 ENV PORT="8080"
