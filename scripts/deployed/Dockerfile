@@ -14,8 +14,8 @@ ADD . .
 
 RUN npm install --omit=dev
 
-CMD if [ ! -f "${KCDSHOP_CONTEXT_CWD}/package.json" ]; then \
-    git clone https://github.com/epicweb-dev/web-auth ${KCDSHOP_CONTEXT_CWD}; \
-    fi && \
+CMD node ./setup-swap.js && \
+    rm -rf ${KCDSHOP_CONTEXT_CWD} && \
+    git clone https://github.com/epicweb-dev/web-auth ${KCDSHOP_CONTEXT_CWD} && \
     cd ${KCDSHOP_CONTEXT_CWD} && \
     npx kcdshop start
