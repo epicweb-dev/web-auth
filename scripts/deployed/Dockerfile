@@ -4,6 +4,7 @@ RUN apt-get update && apt-get install -y git
 
 ENV KCDSHOP_CONTEXT_CWD="/myapp/workshop-content"
 ENV KCDSHOP_DEPLOYED="true"
+ENV KCDSHOP_DISABLE_WATCHER="true"
 ENV FLY="true"
 ENV PORT="8080"
 ENV NODE_ENV="production"
