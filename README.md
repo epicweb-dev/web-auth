@@ -11,8 +11,6 @@
   </p>
 </div>
 
-<hr />
-
 <div align="center">
   <a
     alt="Epic Web logo with the words Deployed Version"
