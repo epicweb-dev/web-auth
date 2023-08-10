@@ -1,1 +1,46 @@
 # Verification
+
+When a user wants to sign up for an account on your application, and you want to
+make sure they provide some way to contact them, it's a good idea to verify they
+actually are the owner of the contact information. It would be a problem if I
+signed up for [𝕏](https://x.com) with the email address of joe@whitehouse.gov,
+and then used that to impersonate the president.
+
+Verification also helps you to reduce the number of spam accounts made on your
+site, since you can require that a user verify their email address before they
+can use it.
+
+Finally, it reduces the number of typos that users make when entering their
+contact information. If you require that a user verify their email address
+before they can use it, then you (and they) can be sure that they entered it
+correctly.
+
+But how you go about verifying the user's information is important. You need to
+make sure the only way to verify the information is if the user _actually_ has
+access to it. This means you want to use a mechanism where making good or many
+guesses is difficult, and where the user can't be tricked into giving away the
+verification information.
+
+## Verification Codes
+
+There are a few different approaches to verification, each with their own
+advantages and disadvantages. But most verification approaches involve sending
+the user a message with a code, and then asking them to enter that code into
+your application. For the code itself, you have options, but most prefer to send
+a short code that the user could easily enter in manually if they have to.
+Normally a six digit number is sufficient.
+
+However, because this code is so short, there are only 999999 possible codes.
+Which may seem like a lot, but for a brute-force attack it's not at all. For
+this reason, it's important that you limit the number of guesses a user can make
+in a given time period to make it unfeasible to guess the code. This is called
+[rate limiting](https://www.cloudflare.com/learning/bots/what-is-rate-limiting/),
+and it's important to do this for all verification codes.
+
+<callout-info>
+	In fact, rate limiting is an important part of any public API, especially for
+	authentication (login, sign up, and verification). However, it is outside the
+	scope of this workshop.
+</callout-info>
+
+TODO: finish writing this
