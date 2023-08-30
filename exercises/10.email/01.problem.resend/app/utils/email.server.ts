@@ -16,7 +16,7 @@ export async function sendEmail(options: {
 	// 🐨 the body should be JSON.stringify(email)
 	// 🐨 the headers should include:
 	//   Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-	//   'Content-Type': 'application/json'
+	//   'content-type': 'application/json'
 	// 🐨 await the response.json() and store it in a variable called data
 	// 🐨 if the response.ok is truthy, then return {status: 'success'}
 	// 🐨 otherwise, return {status: 'error', error: getErrorMessage(data)}

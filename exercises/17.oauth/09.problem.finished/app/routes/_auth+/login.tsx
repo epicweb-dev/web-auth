@@ -7,6 +7,8 @@ import {
 	type MetaFunction,
 } from '@remix-run/node'
 import { Form, Link, useActionData, useSearchParams } from '@remix-run/react'
+import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
+import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { safeRedirect } from 'remix-utils/safe-redirect'
 import { z } from 'zod'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
@@ -19,7 +21,9 @@ import {
 	requireAnonymous,
 	sessionKey,
 } from '#app/utils/auth.server.ts'
+import { validateCSRF } from '#app/utils/csrf.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
+import { checkHoneypot } from '#app/utils/honeypot.server.ts'
 import {
 	combineResponseInits,
 	invariant,
@@ -28,7 +32,6 @@ import {
 import { sessionStorage } from '#app/utils/session.server.ts'
 import { passwordSchema, usernameSchema } from '#app/utils/user-validation.ts'
 import { verifySessionStorage } from '#app/utils/verification.server.ts'
-import { checkboxSchema } from '#app/utils/zod-extensions.ts'
 import { twoFAVerificationType } from '../settings+/profile.two-factor.tsx'
 import { getRedirectToUrl, type VerifyFunctionArgs } from './verify.tsx'
 
@@ -156,7 +159,7 @@ const LoginFormSchema = z.object({
 	username: usernameSchema,
 	password: passwordSchema,
 	redirectTo: z.string().optional(),
-	remember: checkboxSchema(),
+	remember: z.boolean().optional(),
 })
 
 export async function loader({ request }: DataFunctionArgs) {
@@ -167,6 +170,8 @@ export async function loader({ request }: DataFunctionArgs) {
 export async function action({ request }: DataFunctionArgs) {
 	await requireAnonymous(request)
 	const formData = await request.formData()
+	await validateCSRF(formData, request.headers)
+	checkHoneypot(formData)
 	const submission = await parse(formData, {
 		schema: intent =>
 			LoginFormSchema.transform(async (data, ctx) => {
@@ -197,7 +202,7 @@ export async function action({ request }: DataFunctionArgs) {
 		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 
-	const { session, remember, redirectTo } = submission.value
+	const { session, remember = false, redirectTo } = submission.value
 
 	return handleNewSession({ request, session, remember, redirectTo })
 }
@@ -234,7 +239,8 @@ export default function LoginPage() {
 				<div>
 					<div className="mx-auto w-full max-w-md px-8">
 						<Form method="POST" {...form.props}>
-							<input type="hidden" name="form" value={form.id} />
+							<AuthenticityTokenInput />
+							<HoneypotInputs />
 							<Field
 								labelProps={{ children: 'Username' }}
 								inputProps={{

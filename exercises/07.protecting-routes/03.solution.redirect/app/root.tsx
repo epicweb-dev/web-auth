@@ -22,6 +22,8 @@ import {
 	type MetaFunction,
 } from '@remix-run/react'
 import { useEffect } from 'react'
+import { AuthenticityTokenProvider } from 'remix-utils/csrf/react'
+import { HoneypotProvider } from 'remix-utils/honeypot/react'
 import { Toaster, toast as showToast } from 'sonner'
 import { z } from 'zod'
 import faviconAssetUrl from './assets/favicon.svg'
@@ -35,9 +37,15 @@ import { KCDShop } from './kcdshop.tsx'
 import fontStylestylesheetUrl from './styles/font.css'
 import tailwindStylesheetUrl from './styles/tailwind.css'
 import { getUserId } from './utils/auth.server.ts'
+import { csrf } from './utils/csrf.server.ts'
 import { prisma } from './utils/db.server.ts'
 import { getEnv } from './utils/env.server.ts'
-import { getUserImgSrc, invariantResponse } from './utils/misc.tsx'
+import { honeypot } from './utils/honeypot.server.ts'
+import {
+	combineHeaders,
+	getUserImgSrc,
+	invariantResponse,
+} from './utils/misc.tsx'
 import { getTheme, setTheme, type Theme } from './utils/theme.server.ts'
 import { getToast, type Toast } from './utils/toast.server.ts'
 import { useOptionalUser } from './utils/user.ts'
@@ -54,6 +62,8 @@ export const links: LinksFunction = () => {
 }
 
 export async function loader({ request }: DataFunctionArgs) {
+	const [csrfToken, csrfCookieHeader] = await csrf.commitToken()
+	const honeyProps = honeypot.getInputProps()
 	const { toast, headers: toastHeaders } = await getToast(request)
 	const userId = await getUserId(request)
 	const user = userId
@@ -74,8 +84,12 @@ export async function loader({ request }: DataFunctionArgs) {
 			theme: getTheme(request),
 			toast,
 			ENV: getEnv(),
+			csrfToken,
+			honeyProps,
 		},
-		{ headers: toastHeaders },
+		{
+			headers: combineHeaders({ 'set-cookie': csrfCookieHeader }, toastHeaders),
+		},
 	)
 }
 
@@ -141,7 +155,7 @@ function Document({
 	)
 }
 
-export default function App() {
+function App() {
 	const data = useLoaderData<typeof loader>()
 	const theme = useTheme()
 	const user = useOptionalUser()
@@ -150,13 +164,13 @@ export default function App() {
 	return (
 		<Document theme={theme} env={data.ENV}>
 			<header className="container mx-auto py-6">
-				<nav className="flex items-center justify-between">
+				<nav className="flex items-center justify-between gap-6">
 					<Link to="/">
 						<div className="font-light">epic</div>
 						<div className="font-bold">notes</div>
 					</Link>
 					{isOnSearchPage ? null : (
-						<div className="ml-auto max-w-sm flex-1 pr-10">
+						<div className="ml-auto max-w-sm flex-1">
 							<SearchBar status="idle" />
 						</div>
 					)}
@@ -205,6 +219,17 @@ export default function App() {
 			<Spacer size="3xs" />
 			{data.toast ? <ShowToast toast={data.toast} /> : null}
 		</Document>
+	)
+}
+
+export default function AppWithProviders() {
+	const data = useLoaderData<typeof loader>()
+	return (
+		<HoneypotProvider {...data.honeyProps}>
+			<AuthenticityTokenProvider token={data.csrfToken}>
+				<App />
+			</AuthenticityTokenProvider>
+		</HoneypotProvider>
 	)
 }
 

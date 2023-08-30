@@ -44,7 +44,7 @@ export async function sendEmail({
 		body: JSON.stringify(email),
 		headers: {
 			Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-			'Content-Type': 'application/json',
+			'content-type': 'application/json',
 		},
 	})
 	const data = await response.json()

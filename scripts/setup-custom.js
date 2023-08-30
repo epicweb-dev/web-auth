@@ -1,5 +1,5 @@
-import fs from 'fs'
-import path from 'path'
+import fs from 'node:fs'
+import path from 'node:path'
 import { spawn } from 'child_process'
 import fsExtra from 'fs-extra'
 import { $ } from 'execa'

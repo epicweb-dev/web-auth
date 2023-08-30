@@ -7,6 +7,8 @@ import {
 	type MetaFunction,
 } from '@remix-run/node'
 import { Form, useActionData, useSearchParams } from '@remix-run/react'
+import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
+import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { safeRedirect } from 'remix-utils/safe-redirect'
 import { z } from 'zod'
 import { CheckboxField, ErrorList, Field } from '#app/components/forms.tsx'
@@ -18,7 +20,9 @@ import {
 	signup,
 	userIdKey,
 } from '#app/utils/auth.server.ts'
+import { validateCSRF } from '#app/utils/csrf.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
+import { checkHoneypot } from '#app/utils/honeypot.server.ts'
 import { useIsPending } from '#app/utils/misc.tsx'
 import { sessionStorage } from '#app/utils/session.server.ts'
 import {
@@ -27,7 +31,6 @@ import {
 	passwordSchema,
 	usernameSchema,
 } from '#app/utils/user-validation.ts'
-import { checkboxSchema } from '#app/utils/zod-extensions.ts'
 
 const SignupFormSchema = z
 	.object({
@@ -36,10 +39,11 @@ const SignupFormSchema = z
 		email: emailSchema,
 		password: passwordSchema,
 		confirmPassword: passwordSchema,
-		agreeToTermsOfServiceAndPrivacyPolicy: checkboxSchema(
-			'You must agree to the terms of service and privacy policy',
-		),
-		remember: checkboxSchema(),
+		agreeToTermsOfServiceAndPrivacyPolicy: z.boolean({
+			required_error:
+				'You must agree to the terms of service and privacy policy',
+		}),
+		remember: z.boolean().optional(),
 		redirectTo: z.string().optional(),
 	})
 	.superRefine(({ confirmPassword, password }, ctx) => {
@@ -60,6 +64,8 @@ export async function loader({ request }: DataFunctionArgs) {
 export async function action({ request }: DataFunctionArgs) {
 	await requireAnonymous(request)
 	const formData = await request.formData()
+	await validateCSRF(formData, request.headers)
+	checkHoneypot(formData)
 	const submission = await parse(formData, {
 		schema: SignupFormSchema.superRefine(async (data, ctx) => {
 			const existingUser = await prisma.user.findUnique({
@@ -142,6 +148,8 @@ export default function SignupRoute() {
 					className="mx-auto min-w-[368px] max-w-sm"
 					{...form.props}
 				>
+					<AuthenticityTokenInput />
+					<HoneypotInputs />
 					<Field
 						labelProps={{ htmlFor: fields.email.id, children: 'Email' }}
 						inputProps={{

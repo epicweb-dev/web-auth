@@ -28,7 +28,6 @@ import { invariant, useIsPending } from '#app/utils/misc.tsx'
 import { sessionStorage } from '#app/utils/session.server.ts'
 import { nameSchema, usernameSchema } from '#app/utils/user-validation.ts'
 import { verifySessionStorage } from '#app/utils/verification.server.ts'
-import { checkboxSchema } from '#app/utils/zod-extensions.ts'
 import { type VerifyFunctionArgs } from './verify.tsx'
 
 export const onboardingEmailSessionKey = 'onboardingEmail'
@@ -39,10 +38,10 @@ const SignupFormSchema = z.object({
 	imageUrl: z.string().optional(),
 	username: usernameSchema,
 	name: nameSchema,
-	agreeToTermsOfServiceAndPrivacyPolicy: checkboxSchema(
-		'You must agree to the terms of service and privacy policy',
-	),
-	remember: checkboxSchema(),
+	agreeToTermsOfServiceAndPrivacyPolicy: z.boolean({
+		required_error: 'You must agree to the terms of service and privacy policy',
+	}),
+	remember: z.boolean().optional(),
 	redirectTo: z.string().optional(),
 })
 
@@ -113,7 +112,7 @@ export async function action({ request }: DataFunctionArgs) {
 			const session = await signupWithGitHub({
 				...data,
 				email,
-				gitHubId: gitHubId,
+				gitHubId,
 			})
 			return { ...data, session }
 		}),

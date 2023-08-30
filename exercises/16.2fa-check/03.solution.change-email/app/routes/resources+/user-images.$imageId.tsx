@@ -13,10 +13,10 @@ export async function loader({ params }: DataFunctionArgs) {
 
 	return new Response(image.blob, {
 		headers: {
-			'Content-Type': image.contentType,
-			'Content-Length': Buffer.byteLength(image.blob).toString(),
-			'Content-Disposition': `inline; filename="${params.imageId}"`,
-			'Cache-Control': 'public, max-age=31536000, immutable',
+			'content-type': image.contentType,
+			'content-length': Buffer.byteLength(image.blob).toString(),
+			'content-disposition': `inline; filename="${params.imageId}"`,
+			'cache-control': 'public, max-age=31536000, immutable',
 		},
 	})
 }

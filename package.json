@@ -42,9 +42,6 @@
   ],
   "eslintConfig": {
     "root": true,
-    "ecmaFeatures": {
-      "modules": true
-    },
     "parserOptions": {
       "ecmaVersion": 2023,
       "sourceType": "module"

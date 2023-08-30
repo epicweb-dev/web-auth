@@ -22,6 +22,8 @@ import {
 	type MetaFunction,
 } from '@remix-run/react'
 import { useEffect } from 'react'
+import { AuthenticityTokenProvider } from 'remix-utils/csrf/react'
+import { HoneypotProvider } from 'remix-utils/honeypot/react'
 import { Toaster, toast as showToast } from 'sonner'
 import { z } from 'zod'
 import faviconAssetUrl from './assets/favicon.svg'
@@ -34,7 +36,9 @@ import { Icon, href as iconHref } from './components/ui/icon.tsx'
 import { KCDShop } from './kcdshop.tsx'
 import fontStylestylesheetUrl from './styles/font.css'
 import tailwindStylesheetUrl from './styles/tailwind.css'
+import { csrf } from './utils/csrf.server.ts'
 import { getEnv } from './utils/env.server.ts'
+import { honeypot } from './utils/honeypot.server.ts'
 import { invariantResponse } from './utils/misc.tsx'
 import { getTheme, setTheme, type Theme } from './utils/theme.server.ts'
 
@@ -50,16 +54,27 @@ export const links: LinksFunction = () => {
 }
 
 export async function loader({ request }: DataFunctionArgs) {
+	const [csrfToken, csrfCookieHeader] = await csrf.commitToken()
+	const honeyProps = honeypot.getInputProps()
 	// 🐨 get the cookie header from the request
 	// 🐨 get the toastCookieSession using the toastSessionStorage.getSession
 	// 🐨 get the 'toast' from the toastCookieSession
-	return json({
-		username: os.userInfo().username,
-		theme: getTheme(request),
-		// 🐨 set this to the toast you got from the toastCookieSession:
-		toast: null,
-		ENV: getEnv(),
-	})
+	return json(
+		{
+			username: os.userInfo().username,
+			theme: getTheme(request),
+			// 🐨 set this to the toast you got from the toastCookieSession:
+			toast: null,
+			ENV: getEnv(),
+			csrfToken,
+			honeyProps,
+		},
+		{
+			headers: {
+				'set-cookie': csrfCookieHeader,
+			},
+		},
+	)
 }
 
 const ThemeFormSchema = z.object({
@@ -124,7 +139,7 @@ function Document({
 	)
 }
 
-export default function App() {
+function App() {
 	const data = useLoaderData<typeof loader>()
 	const theme = useTheme()
 	const matches = useMatches()
@@ -132,13 +147,13 @@ export default function App() {
 	return (
 		<Document theme={theme} env={data.ENV}>
 			<header className="container mx-auto py-6">
-				<nav className="flex items-center justify-between">
+				<nav className="flex items-center justify-between gap-6">
 					<Link to="/">
 						<div className="font-light">epic</div>
 						<div className="font-bold">notes</div>
 					</Link>
 					{isOnSearchPage ? null : (
-						<div className="ml-auto max-w-sm flex-1 pr-10">
+						<div className="ml-auto max-w-sm flex-1">
 							<SearchBar status="idle" />
 						</div>
 					)}
@@ -167,6 +182,17 @@ export default function App() {
 			<Spacer size="3xs" />
 			{data.toast ? <ShowToast toast={data.toast} /> : null}
 		</Document>
+	)
+}
+
+export default function AppWithProviders() {
+	const data = useLoaderData<typeof loader>()
+	return (
+		<HoneypotProvider {...data.honeyProps}>
+			<AuthenticityTokenProvider token={data.csrfToken}>
+				<App />
+			</AuthenticityTokenProvider>
+		</HoneypotProvider>
 	)
 }
 

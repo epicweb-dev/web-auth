@@ -1,9 +1,9 @@
 // This should run by node without any dependencies
 // because you may need to run it without deps.
 
-import fs from 'fs'
-import path from 'path'
-import { fileURLToPath } from 'url'
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 function exists(dir) {
 	try {
