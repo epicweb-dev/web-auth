@@ -17,11 +17,11 @@ import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { validateCSRF } from '#app/utils/csrf.server.ts'
 import { checkHoneypot } from '#app/utils/honeypot.server.ts'
 import { useIsPending } from '#app/utils/misc.tsx'
-import { passwordSchema, usernameSchema } from '#app/utils/user-validation.ts'
+import { PasswordSchema, UsernameSchema } from '#app/utils/user-validation.ts'
 
 const LoginFormSchema = z.object({
-	username: usernameSchema,
-	password: passwordSchema,
+	username: UsernameSchema,
+	password: PasswordSchema,
 })
 
 export async function action({ request }: DataFunctionArgs) {

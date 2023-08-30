@@ -15,7 +15,7 @@ import { CheckboxField, ErrorList, Field } from '#app/components/forms.tsx'
 import { Spacer } from '#app/components/spacer.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import {
-	SESSION_EXPIRATION_TIME,
+	getSessionExpirationDate,
 	login,
 	userIdKey,
 } from '#app/utils/auth.server.ts'
@@ -23,11 +23,11 @@ import { validateCSRF } from '#app/utils/csrf.server.ts'
 import { checkHoneypot } from '#app/utils/honeypot.server.ts'
 import { useIsPending } from '#app/utils/misc.tsx'
 import { sessionStorage } from '#app/utils/session.server.ts'
-import { passwordSchema, usernameSchema } from '#app/utils/user-validation.ts'
+import { PasswordSchema, UsernameSchema } from '#app/utils/user-validation.ts'
 
 const LoginFormSchema = z.object({
-	username: usernameSchema,
-	password: passwordSchema,
+	username: UsernameSchema,
+	password: PasswordSchema,
 	remember: z.boolean().optional(),
 })
 
@@ -79,9 +79,7 @@ export async function action({ request }: DataFunctionArgs) {
 	return redirect('/', {
 		headers: {
 			'set-cookie': await sessionStorage.commitSession(cookieSession, {
-				expires: remember
-					? new Date(Date.now() + SESSION_EXPIRATION_TIME)
-					: undefined,
+				expires: remember ? getSessionExpirationDate() : undefined,
 			}),
 		},
 	})

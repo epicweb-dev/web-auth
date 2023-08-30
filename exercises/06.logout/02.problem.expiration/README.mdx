@@ -13,7 +13,8 @@ expiration when we commit the session in the login and signup routes.
 🐨 To promote reusability, let's create a variable in a new
 file <InlineFile file="app/utils/auth.server.ts" /> called
 `SESSION_EXPIRATION_TIME` that's set to 30 days in milliseconds which is
-`1000 * 60 * 60 * 24 * 30`.
+`1000 * 60 * 60 * 24 * 30`. You can then make a `getSessionExpirationDate` which
+returns a new date that is `Date.now() + SESSION_EXPIRATION_TIME`.
 
 Then we can use that in our login and signup routes to set the expiration time
 if the user has checked "remember me."
@@ -21,9 +22,7 @@ if the user has checked "remember me."
 ```ts
 await sessionStorage.commitSession(cookieSession, {
 	// Cookies with no expiration are cleared when the tab/window closes
-	expires: remember
-		? new Date(Date.now() + SESSION_EXPIRATION_TIME)
-		: undefined,
+	expires: remember ? getSessionExpirationDate() : undefined,
 })
 ```
 

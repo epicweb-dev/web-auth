@@ -10,7 +10,7 @@ import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { getPasswordHash, requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { useIsPending } from '#app/utils/misc.tsx'
-import { passwordSchema } from '#app/utils/user-validation.ts'
+import { PasswordSchema } from '#app/utils/user-validation.ts'
 
 export const handle = {
 	breadcrumb: <Icon name="dots-horizontal">Password</Icon>,
@@ -18,8 +18,8 @@ export const handle = {
 
 const CreatePasswordForm = z
 	.object({
-		newPassword: passwordSchema,
-		confirmNewPassword: passwordSchema,
+		newPassword: PasswordSchema,
+		confirmNewPassword: PasswordSchema,
 	})
 	.superRefine(({ confirmNewPassword, newPassword }, ctx) => {
 		if (confirmNewPassword !== newPassword) {

@@ -18,11 +18,11 @@ import { validateCSRF } from '#app/utils/csrf.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { sendEmail } from '#app/utils/email.server.ts'
 import { checkHoneypot } from '#app/utils/honeypot.server.ts'
-import { emailSchema, usernameSchema } from '#app/utils/user-validation.ts'
+import { EmailSchema, UsernameSchema } from '#app/utils/user-validation.ts'
 import { prepareVerification } from './verify.tsx'
 
 const ForgotPasswordSchema = z.object({
-	usernameOrEmail: z.union([emailSchema, usernameSchema]),
+	usernameOrEmail: z.union([EmailSchema, UsernameSchema]),
 })
 
 export async function action({ request }: DataFunctionArgs) {

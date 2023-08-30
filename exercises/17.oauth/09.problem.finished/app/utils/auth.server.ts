@@ -1,49 +1,26 @@
-import { type GitHubConnection, type Password, type User } from '@prisma/client'
+import { type Connection, type Password, type User } from '@prisma/client'
 import { redirect } from '@remix-run/node'
 import bcrypt from 'bcryptjs'
 import { Authenticator } from 'remix-auth'
-import { GitHubStrategy } from 'remix-auth-github'
 import { safeRedirect } from 'remix-utils/safe-redirect'
-import { prisma } from '#app/utils/db.server.ts'
+import { providers } from './connections.server.ts'
+import { prisma } from './db.server.ts'
 import { combineHeaders, downloadFile } from './misc.tsx'
+import { type ProviderUser } from './providers/provider.ts'
 import { sessionStorage } from './session.server.ts'
+import { ProviderName } from './connections.tsx'
 
 export const SESSION_EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 30
+export const getSessionExpirationDate = () =>
+	new Date(Date.now() + SESSION_EXPIRATION_TIME)
 
 export const sessionKey = 'sessionId'
 
-export const authenticator = new Authenticator<{
-	id: string
-	email: string
-	username: string
-	name: string
-	imageUrl: string
-}>(sessionStorage)
+export const authenticator = new Authenticator<ProviderUser>(sessionStorage)
 
-authenticator.use(
-	new GitHubStrategy(
-		{
-			clientID: process.env.GITHUB_CLIENT_ID,
-			clientSecret: process.env.GITHUB_CLIENT_SECRET,
-			callbackURL: '/auth/github/callback',
-		},
-		async ({ profile }) => {
-			const email = profile.emails[0].value.trim().toLowerCase()
-			const rawUsername = profile.displayName
-			const regex = /[^a-zA-Z0-9_]/g
-			const username = rawUsername.replace(regex, '_').toLowerCase()
-			const imageUrl = profile.photos[0].value
-			return {
-				email,
-				id: profile.id,
-				username,
-				name: profile.name.givenName,
-				imageUrl,
-			}
-		},
-	),
-	GitHubStrategy.name,
-)
+for (const [providerName, provider] of Object.entries(providers)) {
+	authenticator.use(provider.getAuthStrategy(), providerName)
+}
 
 export async function getUserId(request: Request) {
 	const cookieSession = await sessionStorage.getSession(
@@ -106,7 +83,7 @@ export async function login({
 	const session = await prisma.session.create({
 		select: { id: true, expirationDate: true, userId: true },
 		data: {
-			expirationDate: new Date(Date.now() + SESSION_EXPIRATION_TIME),
+			expirationDate: getSessionExpirationDate(),
 			userId: user.id,
 		},
 	})
@@ -148,7 +125,7 @@ export async function signup({
 
 	const session = await prisma.session.create({
 		data: {
-			expirationDate: new Date(Date.now() + SESSION_EXPIRATION_TIME),
+			expirationDate: getSessionExpirationDate(),
 			user: {
 				create: {
 					email: email.toLowerCase(),
@@ -169,28 +146,30 @@ export async function signup({
 	return session
 }
 
-export async function signupWithGitHub({
+export async function signupWithConnection({
 	email,
 	username,
 	name,
-	gitHubId,
+	providerId,
+	providerName,
 	imageUrl,
 }: {
 	email: User['email']
 	username: User['username']
 	name: User['name']
-	gitHubId: GitHubConnection['providerId']
+	providerId: Connection['providerId']
+	providerName: ProviderName
 	imageUrl?: string
 }) {
 	const session = await prisma.session.create({
 		data: {
-			expirationDate: new Date(Date.now() + SESSION_EXPIRATION_TIME),
+			expirationDate: getSessionExpirationDate(),
 			user: {
 				create: {
 					email: email.toLowerCase(),
 					username: username.toLowerCase(),
 					name,
-					gitHubConnections: { create: { providerId: gitHubId } },
+					connections: { create: { providerId, providerName } },
 					image: imageUrl
 						? { create: await downloadFile(imageUrl) }
 						: undefined,

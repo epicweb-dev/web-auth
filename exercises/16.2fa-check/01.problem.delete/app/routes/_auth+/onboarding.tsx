@@ -26,9 +26,9 @@ import { checkHoneypot } from '#app/utils/honeypot.server.ts'
 import { invariant, useIsPending } from '#app/utils/misc.tsx'
 import { sessionStorage } from '#app/utils/session.server.ts'
 import {
-	nameSchema,
-	passwordSchema,
-	usernameSchema,
+	NameSchema,
+	PasswordSchema,
+	UsernameSchema,
 } from '#app/utils/user-validation.ts'
 import { verifySessionStorage } from '#app/utils/verification.server.ts'
 import { type VerifyFunctionArgs } from './verify.tsx'
@@ -37,10 +37,10 @@ const onboardingEmailSessionKey = 'onboardingEmail'
 
 const SignupFormSchema = z
 	.object({
-		username: usernameSchema,
-		name: nameSchema,
-		password: passwordSchema,
-		confirmPassword: passwordSchema,
+		username: UsernameSchema,
+		name: NameSchema,
+		password: PasswordSchema,
+		confirmPassword: PasswordSchema,
 		agreeToTermsOfServiceAndPrivacyPolicy: z.boolean({
 			required_error:
 				'You must agree to the terms of service and privacy policy',

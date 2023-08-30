@@ -18,7 +18,7 @@ import {
 } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { invariant, useIsPending } from '#app/utils/misc.tsx'
-import { passwordSchema } from '#app/utils/user-validation.ts'
+import { PasswordSchema } from '#app/utils/user-validation.ts'
 import { verifySessionStorage } from '#app/utils/verification.server.ts'
 import { type VerifyFunctionArgs } from './verify.tsx'
 
@@ -54,8 +54,8 @@ export async function handleVerification({
 
 const ResetPasswordSchema = z
 	.object({
-		password: passwordSchema,
-		confirmPassword: passwordSchema,
+		password: PasswordSchema,
+		confirmPassword: PasswordSchema,
 	})
 	.refine(({ confirmPassword, password }) => password === confirmPassword, {
 		message: 'The passwords did not match',

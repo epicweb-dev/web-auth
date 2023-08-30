@@ -5,6 +5,8 @@ import { prisma } from '#app/utils/db.server.ts'
 import { sessionStorage } from './session.server.ts'
 
 export const SESSION_EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 30
+export const getSessionExpirationDate = () =>
+	new Date(Date.now() + SESSION_EXPIRATION_TIME)
 
 // 🐨 this variable should be sessionKey instead of userIdKey
 // make sure that gets updated everywhere.
@@ -73,7 +75,7 @@ export async function login({
 	const session = await prisma.session.create({
 		select: { id: true, expirationDate: true },
 		data: {
-			expirationDate: new Date(Date.now() + SESSION_EXPIRATION_TIME),
+			expirationDate: getSessionExpirationDate(),
 			userId: user.id,
 		},
 	})
@@ -95,7 +97,7 @@ export async function signup({
 
 	const session = await prisma.session.create({
 		data: {
-			expirationDate: new Date(Date.now() + SESSION_EXPIRATION_TIME),
+			expirationDate: getSessionExpirationDate(),
 			user: {
 				create: {
 					email: email.toLowerCase(),

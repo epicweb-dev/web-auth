@@ -4,6 +4,7 @@ import {
 	type SerializeFrom,
 } from '@remix-run/node'
 import { Form, useFetcher, useLoaderData } from '@remix-run/react'
+import { useState } from 'react'
 import { z } from 'zod'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
@@ -14,6 +15,7 @@ import {
 	TooltipTrigger,
 } from '#app/components/ui/tooltip.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
+import { GITHUB_PROVIDER_NAME } from '#app/utils/connections.tsx'
 import { prisma } from '#app/utils/db.server.ts'
 import { invariantResponse, useIsPending } from '#app/utils/misc.tsx'
 import { createToastHeaders } from '#app/utils/toast.server.ts'
@@ -22,57 +24,68 @@ export const handle = {
 	breadcrumb: <Icon name="link-2">Connections</Icon>,
 }
 
-const GitHubUserSchema = z.object({
-	login: z.string(),
-})
-
 async function userCanDeleteConnections(userId: string) {
 	const user = await prisma.user.findUnique({
 		select: {
 			password: { select: { userId: true } },
-			_count: { select: { gitHubConnections: true } },
+			_count: { select: { connections: true } },
 		},
 		where: { id: userId },
 	})
 	// user can delete their connections if they have a password
 	if (user?.password) return true
 	// users have to have more than one remaining connection to delete one
-	return Boolean(
-		user?._count.gitHubConnections && user?._count.gitHubConnections > 1,
+	return Boolean(user?._count.connections && user?._count.connections > 1)
+}
+
+const GitHubUserSchema = z.object({ login: z.string() })
+
+async function resolveGitHubConnectionData(connection: {
+	id: string
+	providerName: string
+	providerId: string
+	createdAt: Date
+}) {
+	const response = await fetch(
+		`https://api.github.com/user/${connection.providerId}`,
+		{ headers: { Authorization: `token ${process.env.GITHUB_TOKEN}` } },
 	)
+	const rawJson = await response.json()
+	const result = GitHubUserSchema.safeParse(rawJson)
+	return {
+		id: connection.id,
+		displayName: result.success ? result.data.login : 'Unknown',
+		link: result.success ? `https://github.com/${result.data.login}` : null,
+		createdAtFormatted: connection.createdAt.toLocaleString(),
+	}
 }
 
 export async function loader({ request }: DataFunctionArgs) {
 	const userId = await requireUserId(request)
-	const rawGitHubConnections = await prisma.gitHubConnection.findMany({
-		select: { id: true, providerId: true, createdAt: true },
+	const rawConnections = await prisma.connection.findMany({
+		select: { id: true, providerName: true, providerId: true, createdAt: true },
 		where: { userId },
 	})
-	const githubConnections: Array<{
+	const connections: Array<{
 		id: string
-		username: string
+		displayName: string
+		link?: string | null
 		createdAtFormatted: string
 	}> = []
-	for (const connection of rawGitHubConnections) {
-		const response = await fetch(
-			`https://api.github.com/user/${connection.providerId}`,
-			{
-				headers: {
-					Authorization: `token ${process.env.GITHUB_TOKEN}`,
-				},
-			},
-		)
-		const rawJson = await response.json()
-		const result = GitHubUserSchema.safeParse(rawJson)
-		githubConnections.push({
-			id: connection.id,
-			username: result.success ? result.data.login : 'Unknown',
-			createdAtFormatted: connection.createdAt.toLocaleString(),
-		})
+	for (const connection of rawConnections) {
+		if (connection.providerName === GITHUB_PROVIDER_NAME) {
+			connections.push(await resolveGitHubConnectionData(connection))
+		} else {
+			connections.push({
+				id: connection.id,
+				displayName: 'Unknown',
+				createdAtFormatted: connection.createdAt.toLocaleString(),
+			})
+		}
 	}
 
 	return json({
-		githubConnections,
+		connections,
 		canDeleteConnections: await userCanDeleteConnections(userId),
 	})
 }
@@ -90,7 +103,7 @@ export async function action({ request }: DataFunctionArgs) {
 	)
 	const connectionId = formData.get('connectionId')
 	invariantResponse(typeof connectionId === 'string', 'Invalid connectionId')
-	await prisma.gitHubConnection.delete({
+	await prisma.connection.delete({
 		where: {
 			id: connectionId,
 			userId: userId,
@@ -108,12 +121,12 @@ export default function Connections() {
 	const isGitHubSubmitting = useIsPending({ formAction: '/auth/github' })
 
 	return (
-		<div className="max-w-md mx-auto">
-			{data.githubConnections.length ? (
-				<div className="flex gap-2 flex-col">
+		<div className="mx-auto max-w-md">
+			{data.connections.length ? (
+				<div className="flex flex-col gap-2">
 					<p>Here are your current connections:</p>
 					<ul className="flex flex-col gap-4">
-						{data.githubConnections.map(c => (
+						{data.connections.map(c => (
 							<li key={c.id}>
 								<Connection
 									connection={c}
@@ -147,19 +160,21 @@ function Connection({
 	connection,
 	canDelete,
 }: {
-	connection: SerializeFrom<typeof loader>['githubConnections'][number]
+	connection: SerializeFrom<typeof loader>['connections'][number]
 	canDelete: boolean
 }) {
 	const deleteFetcher = useFetcher<typeof action>()
+	const [infoOpen, setInfoOpen] = useState(false)
 	return (
-		<div className="flex gap-2 justify-between">
+		<div className="flex justify-between gap-2">
 			<Icon name="github-logo">
-				<a
-					href={`https://github.com/${connection.username}`}
-					className="underline"
-				>
-					{connection.username}
-				</a>{' '}
+				{connection.link ? (
+					<a href={connection.link} className="underline">
+						{connection.displayName}
+					</a>
+				) : (
+					connection.displayName
+				)}{' '}
 				({connection.createdAtFormatted})
 			</Icon>
 			{canDelete ? (
@@ -188,8 +203,8 @@ function Connection({
 				</deleteFetcher.Form>
 			) : (
 				<TooltipProvider>
-					<Tooltip>
-						<TooltipTrigger>
+					<Tooltip open={infoOpen} onOpenChange={setInfoOpen}>
+						<TooltipTrigger onClick={() => setInfoOpen(true)}>
 							<Icon name="question-mark-circled"></Icon>
 						</TooltipTrigger>
 						<TooltipContent>

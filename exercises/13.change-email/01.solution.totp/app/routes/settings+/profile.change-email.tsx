@@ -15,7 +15,7 @@ import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { sendEmail } from '#app/utils/email.server.ts'
 import { useIsPending } from '#app/utils/misc.tsx'
-import { emailSchema } from '#app/utils/user-validation.ts'
+import { EmailSchema } from '#app/utils/user-validation.ts'
 import { verifySessionStorage } from '#app/utils/verification.server.ts'
 
 export const handle = {
@@ -33,7 +33,7 @@ export async function handleVerification({
 }
 
 const ChangeEmailSchema = z.object({
-	email: emailSchema,
+	email: EmailSchema,
 })
 
 export async function loader({ request }: DataFunctionArgs) {

@@ -299,6 +299,18 @@
       "path": "exercises/16.2fa-check/03.solution.change-email"
     },
     {
+      "path": "exercises/17.oauth/01.problem.flow"
+    },
+    {
+      "path": "exercises/17.oauth/01.solution.flow"
+    },
+    {
+      "path": "exercises/17.oauth/02.problem.mock"
+    },
+    {
+      "path": "exercises/17.oauth/02.solution.mock"
+    },
+    {
       "path": "exercises/17.oauth/09.problem.finished"
     }
   ]

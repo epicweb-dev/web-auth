@@ -15,12 +15,12 @@ import {
 	useDoubleCheck,
 } from '#app/utils/misc.tsx'
 import { sessionStorage } from '#app/utils/session.server.ts'
-import { nameSchema, usernameSchema } from '#app/utils/user-validation.ts'
+import { NameSchema, UsernameSchema } from '#app/utils/user-validation.ts'
 import { twoFAVerificationType } from './profile.two-factor.tsx'
 
 const ProfileFormSchema = z.object({
-	name: nameSchema.optional(),
-	username: usernameSchema,
+	name: NameSchema.optional(),
+	username: UsernameSchema,
 })
 
 export async function loader({ request }: DataFunctionArgs) {

@@ -15,15 +15,15 @@ import {
 	useDoubleCheck,
 } from '#app/utils/misc.tsx'
 import {
-	emailSchema,
-	nameSchema,
-	usernameSchema,
+	EmailSchema,
+	NameSchema,
+	UsernameSchema,
 } from '#app/utils/user-validation.ts'
 
 const ProfileFormSchema = z.object({
-	name: nameSchema.optional(),
-	username: usernameSchema,
-	email: emailSchema,
+	name: NameSchema.optional(),
+	username: UsernameSchema,
+	email: EmailSchema,
 })
 
 export async function loader({ request }: DataFunctionArgs) {

@@ -7,7 +7,7 @@ import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { ErrorList, Field } from '#app/components/forms.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { useIsPending } from '#app/utils/misc.tsx'
-import { passwordSchema } from '#app/utils/user-validation.ts'
+import { PasswordSchema } from '#app/utils/user-validation.ts'
 import { type VerifyFunctionArgs } from './verify.tsx'
 
 export async function handleVerification({
@@ -28,8 +28,8 @@ export async function handleVerification({
 
 const ResetPasswordSchema = z
 	.object({
-		password: passwordSchema,
-		confirmPassword: passwordSchema,
+		password: PasswordSchema,
+		confirmPassword: PasswordSchema,
 	})
 	.refine(({ confirmPassword, password }) => password === confirmPassword, {
 		message: 'The passwords did not match',

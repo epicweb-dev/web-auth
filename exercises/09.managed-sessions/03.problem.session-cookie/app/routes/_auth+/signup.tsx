@@ -15,7 +15,7 @@ import { CheckboxField, ErrorList, Field } from '#app/components/forms.tsx'
 import { Spacer } from '#app/components/spacer.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import {
-	SESSION_EXPIRATION_TIME,
+	getSessionExpirationDate,
 	requireAnonymous,
 	signup,
 	userIdKey,
@@ -26,19 +26,19 @@ import { checkHoneypot } from '#app/utils/honeypot.server.ts'
 import { useIsPending } from '#app/utils/misc.tsx'
 import { sessionStorage } from '#app/utils/session.server.ts'
 import {
-	emailSchema,
-	nameSchema,
-	passwordSchema,
-	usernameSchema,
+	EmailSchema,
+	NameSchema,
+	PasswordSchema,
+	UsernameSchema,
 } from '#app/utils/user-validation.ts'
 
 const SignupFormSchema = z
 	.object({
-		username: usernameSchema,
-		name: nameSchema,
-		email: emailSchema,
-		password: passwordSchema,
-		confirmPassword: passwordSchema,
+		username: UsernameSchema,
+		name: NameSchema,
+		email: EmailSchema,
+		password: PasswordSchema,
+		confirmPassword: PasswordSchema,
 		agreeToTermsOfServiceAndPrivacyPolicy: z.boolean({
 			required_error:
 				'You must agree to the terms of service and privacy policy',
@@ -111,9 +111,7 @@ export async function action({ request }: DataFunctionArgs) {
 			'set-cookie': await sessionStorage.commitSession(cookieSession, {
 				// 🐨 the expiration date is now available on the session and doesn't
 				// need to be computed here.
-				expires: remember
-					? new Date(Date.now() + SESSION_EXPIRATION_TIME)
-					: undefined,
+				expires: remember ? getSessionExpirationDate() : undefined,
 			}),
 		},
 	})

@@ -26,7 +26,7 @@ import { prisma } from '#app/utils/db.server.ts'
 import { checkHoneypot } from '#app/utils/honeypot.server.ts'
 import { invariant, useIsPending } from '#app/utils/misc.tsx'
 import { sessionStorage } from '#app/utils/session.server.ts'
-import { passwordSchema, usernameSchema } from '#app/utils/user-validation.ts'
+import { PasswordSchema, UsernameSchema } from '#app/utils/user-validation.ts'
 import { verifySessionStorage } from '#app/utils/verification.server.ts'
 import { twoFAVerificationType } from '../settings+/profile.two-factor.tsx'
 import { getRedirectToUrl, type VerifyFunctionArgs } from './verify.tsx'
@@ -86,8 +86,8 @@ export async function shouldRequestTwoFA(request: Request) {
 }
 
 const LoginFormSchema = z.object({
-	username: usernameSchema,
-	password: passwordSchema,
+	username: UsernameSchema,
+	password: PasswordSchema,
 	redirectTo: z.string().optional(),
 	remember: z.boolean().optional(),
 })

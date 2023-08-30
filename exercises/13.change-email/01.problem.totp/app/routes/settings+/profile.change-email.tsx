@@ -12,7 +12,7 @@ import { requireUserId } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { sendEmail } from '#app/utils/email.server.ts'
 import { useIsPending } from '#app/utils/misc.tsx'
-import { emailSchema } from '#app/utils/user-validation.ts'
+import { EmailSchema } from '#app/utils/user-validation.ts'
 
 export const handle = {
 	breadcrumb: <Icon name="envelope-closed">Change Email</Icon>,
@@ -30,7 +30,7 @@ export async function handleVerification({
 }
 
 const ChangeEmailSchema = z.object({
-	email: emailSchema,
+	email: EmailSchema,
 })
 
 export async function loader({ request }: DataFunctionArgs) {

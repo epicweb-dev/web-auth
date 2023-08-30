@@ -5,6 +5,8 @@ import { prisma } from '#app/utils/db.server.ts'
 import { sessionStorage } from './session.server.ts'
 
 export const SESSION_EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 30
+export const getSessionExpirationDate = () =>
+	new Date(Date.now() + SESSION_EXPIRATION_TIME)
 
 // 🐨 update this from 'userId' to 'sessionId'
 // but don't change the variable name just yet. We'll do that in the next step
