@@ -1,3 +1,4 @@
+import os from 'node:os'
 import { useForm } from '@conform-to/react'
 import { parse } from '@conform-to/zod'
 import { cssBundleHref } from '@remix-run/css-bundle'
@@ -20,9 +21,8 @@ import {
 	useFetchers,
 	useLoaderData,
 	useMatches,
-	type V2_MetaFunction,
+	type MetaFunction,
 } from '@remix-run/react'
-import os from 'node:os'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Toaster, toast as showToast } from 'sonner'
 import { z } from 'zod'
@@ -385,7 +385,7 @@ function ShowToast({ toast }: { toast: Toast }) {
 	return null
 }
 
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
 	return [
 		{ title: 'Epic Notes' },
 		{ name: 'description', content: `Your own captain's log` },

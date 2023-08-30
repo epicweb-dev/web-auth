@@ -4,7 +4,7 @@ import {
 	json,
 	redirect,
 	type DataFunctionArgs,
-	type V2_MetaFunction,
+	type MetaFunction,
 } from '@remix-run/node'
 import {
 	Form,
@@ -12,23 +12,23 @@ import {
 	useLoaderData,
 	useSearchParams,
 } from '@remix-run/react'
-import { safeRedirect } from 'remix-utils'
+import { safeRedirect } from 'remix-utils/safe-redirect'
 import { z } from 'zod'
-import { CheckboxField, ErrorList, Field } from '~/components/forms.tsx'
-import { Spacer } from '~/components/spacer.tsx'
-import { StatusButton } from '~/components/ui/status-button.tsx'
+import { CheckboxField, ErrorList, Field } from '#app/components/forms.tsx'
+import { Spacer } from '#app/components/spacer.tsx'
+import { StatusButton } from '#app/components/ui/status-button.tsx'
 import {
 	authenticator,
 	requireAnonymous,
 	sessionKey,
 	signupWithGitHub,
-} from '~/utils/auth.server.ts'
-import { prisma } from '~/utils/db.server.ts'
-import { invariant, useIsPending } from '~/utils/misc.tsx'
-import { sessionStorage } from '~/utils/session.server.ts'
-import { nameSchema, usernameSchema } from '~/utils/user-validation.ts'
-import { verifySessionStorage } from '~/utils/verification.server.ts'
-import { checkboxSchema } from '~/utils/zod-extensions.ts'
+} from '#app/utils/auth.server.ts'
+import { prisma } from '#app/utils/db.server.ts'
+import { invariant, useIsPending } from '#app/utils/misc.tsx'
+import { sessionStorage } from '#app/utils/session.server.ts'
+import { nameSchema, usernameSchema } from '#app/utils/user-validation.ts'
+import { verifySessionStorage } from '#app/utils/verification.server.ts'
+import { checkboxSchema } from '#app/utils/zod-extensions.ts'
 import { type VerifyFunctionArgs } from './verify.tsx'
 
 export const onboardingEmailSessionKey = 'onboardingEmail'
@@ -80,7 +80,7 @@ export async function loader({ request }: DataFunctionArgs) {
 		status: 'idle',
 		submission: {
 			intent: '',
-			payload: (prefilledProfile ?? {}) as {},
+			payload: (prefilledProfile ?? {}) as Record<string, unknown>,
 			error: {
 				'': typeof formError === 'string' ? [formError] : [],
 			},
@@ -164,7 +164,7 @@ export async function handleVerification({
 	})
 }
 
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
 	return [{ title: 'Setup Epic Notes Account' }]
 }
 

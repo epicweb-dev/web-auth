@@ -1,18 +1,14 @@
 import { conform, useForm } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
-import {
-	json,
-	type DataFunctionArgs,
-	type V2_MetaFunction,
-} from '@remix-run/node'
+import { json, type DataFunctionArgs, type MetaFunction } from '@remix-run/node'
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
 import { z } from 'zod'
-import { GeneralErrorBoundary } from '~/components/error-boundary.tsx'
-import { ErrorList, Field } from '~/components/forms.tsx'
-import { StatusButton } from '~/components/ui/status-button.tsx'
-import { passwordSchema } from '~/utils/user-validation.ts'
+import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
+import { ErrorList, Field } from '#app/components/forms.tsx'
+import { StatusButton } from '#app/components/ui/status-button.tsx'
+import { useIsPending } from '#app/utils/misc.tsx'
+import { passwordSchema } from '#app/utils/user-validation.ts'
 import { type VerifyFunctionArgs } from './verify.tsx'
-import { useIsPending } from '~/utils/misc.tsx'
 
 export async function handleVerification({
 	request,
@@ -49,7 +45,6 @@ export async function action({ request }: DataFunctionArgs) {
 	const formData = await request.formData()
 	const submission = parse(formData, {
 		schema: ResetPasswordSchema,
-		acceptMultipleErrors: () => true,
 	})
 	if (submission.intent !== 'submit') {
 		return json({ status: 'idle', submission } as const)
@@ -61,7 +56,7 @@ export async function action({ request }: DataFunctionArgs) {
 	throw new Error('This has not yet been implemented')
 }
 
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
 	return [{ title: 'Reset Password | Epic Notes' }]
 }
 

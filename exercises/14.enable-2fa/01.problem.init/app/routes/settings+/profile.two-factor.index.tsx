@@ -1,8 +1,8 @@
 import { json, redirect, type DataFunctionArgs } from '@remix-run/node'
 import { Link, useFetcher, useLoaderData } from '@remix-run/react'
-import { Icon } from '~/components/ui/icon.tsx'
-import { StatusButton } from '~/components/ui/status-button.tsx'
-import { requireUserId } from '~/utils/auth.server.ts'
+import { Icon } from '#app/components/ui/icon.tsx'
+import { StatusButton } from '#app/components/ui/status-button.tsx'
+import { requireUserId } from '#app/utils/auth.server.ts'
 
 export async function loader({ request }: DataFunctionArgs) {
 	await requireUserId(request)

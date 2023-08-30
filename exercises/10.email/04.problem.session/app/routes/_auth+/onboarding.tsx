@@ -4,7 +4,7 @@ import {
 	json,
 	redirect,
 	type DataFunctionArgs,
-	type V2_MetaFunction,
+	type MetaFunction,
 } from '@remix-run/node'
 import {
 	Form,
@@ -12,21 +12,21 @@ import {
 	useLoaderData,
 	useSearchParams,
 } from '@remix-run/react'
-import { safeRedirect } from 'remix-utils'
+import { safeRedirect } from 'remix-utils/safe-redirect'
 import { z } from 'zod'
-import { CheckboxField, ErrorList, Field } from '~/components/forms.tsx'
-import { Spacer } from '~/components/spacer.tsx'
-import { StatusButton } from '~/components/ui/status-button.tsx'
-import { requireAnonymous, sessionKey, signup } from '~/utils/auth.server.ts'
-import { prisma } from '~/utils/db.server.ts'
-import { useIsPending } from '~/utils/misc.tsx'
-import { sessionStorage } from '~/utils/session.server.ts'
+import { CheckboxField, ErrorList, Field } from '#app/components/forms.tsx'
+import { Spacer } from '#app/components/spacer.tsx'
+import { StatusButton } from '#app/components/ui/status-button.tsx'
+import { requireAnonymous, sessionKey, signup } from '#app/utils/auth.server.ts'
+import { prisma } from '#app/utils/db.server.ts'
+import { useIsPending } from '#app/utils/misc.tsx'
+import { sessionStorage } from '#app/utils/session.server.ts'
 import {
 	nameSchema,
 	passwordSchema,
 	usernameSchema,
-} from '~/utils/user-validation.ts'
-import { checkboxSchema } from '~/utils/zod-extensions.ts'
+} from '#app/utils/user-validation.ts'
+import { checkboxSchema } from '#app/utils/zod-extensions.ts'
 
 export const onboardingEmailSessionKey = 'onboardingEmail'
 
@@ -124,7 +124,7 @@ export async function action({ request }: DataFunctionArgs) {
 	})
 }
 
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
 	return [{ title: 'Setup Epic Notes Account' }]
 }
 

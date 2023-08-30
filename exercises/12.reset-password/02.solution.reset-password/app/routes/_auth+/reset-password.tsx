@@ -4,22 +4,22 @@ import {
 	json,
 	redirect,
 	type DataFunctionArgs,
-	type V2_MetaFunction,
+	type MetaFunction,
 } from '@remix-run/node'
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
 import { z } from 'zod'
-import { GeneralErrorBoundary } from '~/components/error-boundary.tsx'
-import { ErrorList, Field } from '~/components/forms.tsx'
-import { StatusButton } from '~/components/ui/status-button.tsx'
+import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
+import { ErrorList, Field } from '#app/components/forms.tsx'
+import { StatusButton } from '#app/components/ui/status-button.tsx'
 import {
 	logout,
 	requireAnonymous,
 	resetUserPassword,
-} from '~/utils/auth.server.ts'
-import { prisma } from '~/utils/db.server.ts'
-import { invariant, useIsPending } from '~/utils/misc.tsx'
-import { passwordSchema } from '~/utils/user-validation.ts'
-import { verifySessionStorage } from '~/utils/verification.server.ts'
+} from '#app/utils/auth.server.ts'
+import { prisma } from '#app/utils/db.server.ts'
+import { invariant, useIsPending } from '#app/utils/misc.tsx'
+import { passwordSchema } from '#app/utils/user-validation.ts'
+import { verifySessionStorage } from '#app/utils/verification.server.ts'
 import { type VerifyFunctionArgs } from './verify.tsx'
 
 const resetPasswordUsernameSessionKey = 'resetPasswordUsername'
@@ -37,7 +37,7 @@ export async function handleVerification({
 	// we don't want to say the user is not found if the email is not found
 	// because that would allow an attacker to check if an email is registered
 	if (!user) {
-		submission.error.code = 'Invalid code'
+		submission.error.code = ['Invalid code']
 		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 
@@ -86,7 +86,6 @@ export async function action({ request }: DataFunctionArgs) {
 	const formData = await request.formData()
 	const submission = parse(formData, {
 		schema: ResetPasswordSchema,
-		acceptMultipleErrors: () => true,
 	})
 	if (submission.intent !== 'submit') {
 		return json({ status: 'idle', submission } as const)
@@ -111,7 +110,7 @@ export async function action({ request }: DataFunctionArgs) {
 	)
 }
 
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
 	return [{ title: 'Reset Password | Epic Notes' }]
 }
 

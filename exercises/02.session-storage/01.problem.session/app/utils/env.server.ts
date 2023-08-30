@@ -2,8 +2,8 @@ import { z } from 'zod'
 
 const schema = z.object({
 	NODE_ENV: z.enum(['production', 'development', 'test'] as const),
-	DATABASE_URL: z.string(),
-	// 🐨 add a `SESSION_SECRET` string environment variable here
+	SESSION_SECRET: z.string(),
+	HONEYPOT_SECRET: z.string(),
 })
 
 declare global {

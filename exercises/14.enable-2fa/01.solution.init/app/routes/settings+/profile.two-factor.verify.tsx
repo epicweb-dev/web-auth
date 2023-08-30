@@ -3,13 +3,13 @@ import { getFieldsetConstraint, parse } from '@conform-to/zod'
 import { json, redirect, type DataFunctionArgs } from '@remix-run/node'
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
 import { z } from 'zod'
-import { Field } from '~/components/forms.tsx'
-import { Icon } from '~/components/ui/icon.tsx'
-import { StatusButton } from '~/components/ui/status-button.tsx'
-import { requireUserId } from '~/utils/auth.server.ts'
-import { prisma } from '~/utils/db.server.ts'
-import { useIsPending } from '~/utils/misc.tsx'
-import { redirectWithToast } from '~/utils/toast.server.ts'
+import { Field } from '#app/components/forms.tsx'
+import { Icon } from '#app/components/ui/icon.tsx'
+import { StatusButton } from '#app/components/ui/status-button.tsx'
+import { requireUserId } from '#app/utils/auth.server.ts'
+import { prisma } from '#app/utils/db.server.ts'
+import { useIsPending } from '#app/utils/misc.tsx'
+import { redirectWithToast } from '#app/utils/toast.server.ts'
 
 export const handle = {
 	breadcrumb: <Icon name="check">Verify</Icon>,
@@ -49,7 +49,7 @@ export async function action({ request }: DataFunctionArgs) {
 					return
 				}
 			}),
-		acceptMultipleErrors: () => true,
+
 		async: true,
 	})
 

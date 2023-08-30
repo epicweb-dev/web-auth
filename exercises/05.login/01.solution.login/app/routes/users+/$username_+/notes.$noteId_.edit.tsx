@@ -1,7 +1,7 @@
 import { json, type DataFunctionArgs } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
-import { prisma } from '~/utils/db.server.ts'
-import { invariantResponse } from '~/utils/misc.tsx'
+import { prisma } from '#app/utils/db.server.ts'
+import { invariantResponse } from '#app/utils/misc.tsx'
 import { NoteEditor, action } from './__note-editor.tsx'
 
 export { action }

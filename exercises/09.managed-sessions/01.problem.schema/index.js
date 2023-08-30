@@ -1,6 +1,16 @@
 import 'dotenv/config'
-import closeWithGrace from 'close-with-grace'
+import { installGlobals } from '@remix-run/node'
 import chalk from 'chalk'
+import closeWithGrace from 'close-with-grace'
+
+installGlobals()
+
+if (
+	process.env.NODE_ENV !== 'production' ||
+	process.env.PLAYWRIGHT_TEST_BASE_URL
+) {
+	process.env.TESTING = 'true'
+}
 
 closeWithGrace(async ({ err }) => {
 	if (err) {

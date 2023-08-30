@@ -1,3 +1,4 @@
+import os from 'node:os'
 import { useForm } from '@conform-to/react'
 import { parse } from '@conform-to/zod'
 import { cssBundleHref } from '@remix-run/css-bundle'
@@ -16,9 +17,8 @@ import {
 	ScrollRestoration,
 	useLoaderData,
 	useMatches,
-	type V2_MetaFunction,
+	type MetaFunction,
 } from '@remix-run/react'
-import os from 'node:os'
 import { z } from 'zod'
 import faviconAssetUrl from './assets/favicon.svg'
 import { GeneralErrorBoundary } from './components/error-boundary.tsx'
@@ -203,7 +203,7 @@ function ThemeSwitch({ userPreference }: { userPreference?: Theme }) {
 	)
 }
 
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
 	return [
 		{ title: 'Epic Notes' },
 		{ name: 'description', content: `Your own captain's log` },

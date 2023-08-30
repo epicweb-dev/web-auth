@@ -1,7 +1,7 @@
 import { json, type DataFunctionArgs } from '@remix-run/node'
-import { GeneralErrorBoundary } from '~/components/error-boundary.tsx'
-import { Spacer } from '~/components/spacer.tsx'
-import { requireUserWithRole } from '~/utils/permissions.ts'
+import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
+import { Spacer } from '#app/components/spacer.tsx'
+import { requireUserWithRole } from '#app/utils/permissions.ts'
 
 export async function loader({ request }: DataFunctionArgs) {
 	await requireUserWithRole(request, 'admin')

@@ -3,22 +3,22 @@ import { getFieldsetConstraint, parse } from '@conform-to/zod'
 import { json, redirect, type DataFunctionArgs } from '@remix-run/node'
 import { Link, useFetcher, useLoaderData } from '@remix-run/react'
 import { z } from 'zod'
-import { ErrorList, Field } from '~/components/forms.tsx'
-import { Button } from '~/components/ui/button.tsx'
-import { Icon } from '~/components/ui/icon.tsx'
-import { StatusButton } from '~/components/ui/status-button.tsx'
-import { requireUserId } from '~/utils/auth.server.ts'
-import { prisma } from '~/utils/db.server.ts'
+import { ErrorList, Field } from '#app/components/forms.tsx'
+import { Button } from '#app/components/ui/button.tsx'
+import { Icon } from '#app/components/ui/icon.tsx'
+import { StatusButton } from '#app/components/ui/status-button.tsx'
+import { requireUserId } from '#app/utils/auth.server.ts'
+import { prisma } from '#app/utils/db.server.ts'
 import {
 	getUserImgSrc,
 	invariantResponse,
 	useDoubleCheck,
-} from '~/utils/misc.tsx'
+} from '#app/utils/misc.tsx'
 import {
 	emailSchema,
 	nameSchema,
 	usernameSchema,
-} from '~/utils/user-validation.ts'
+} from '#app/utils/user-validation.ts'
 
 const ProfileFormSchema = z.object({
 	name: nameSchema.optional(),

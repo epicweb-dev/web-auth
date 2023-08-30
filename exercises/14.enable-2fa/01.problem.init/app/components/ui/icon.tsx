@@ -1,5 +1,5 @@
 import { type SVGProps } from 'react'
-import { cn } from '~/utils/misc.tsx'
+import { cn } from '#app/utils/misc.tsx'
 import href from './icons/sprite.svg'
 
 import { type IconName } from '@/icon-name'

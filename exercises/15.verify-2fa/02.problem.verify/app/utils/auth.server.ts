@@ -1,8 +1,8 @@
 import { type Password, type User } from '@prisma/client'
 import { redirect } from '@remix-run/node'
 import bcrypt from 'bcryptjs'
-import { safeRedirect } from 'remix-utils'
-import { prisma } from '~/utils/db.server.ts'
+import { safeRedirect } from 'remix-utils/safe-redirect'
+import { prisma } from '#app/utils/db.server.ts'
 import { combineHeaders } from './misc.tsx'
 import { sessionStorage } from './session.server.ts'
 

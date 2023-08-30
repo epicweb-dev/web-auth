@@ -4,16 +4,19 @@ import {
 	SESSION_EXPIRATION_TIME,
 	authenticator,
 	getUserId,
-} from '~/utils/auth.server.ts'
-import { prisma } from '~/utils/db.server.ts'
-import { combineHeaders } from '~/utils/misc.tsx'
+} from '#app/utils/auth.server.ts'
+import { prisma } from '#app/utils/db.server.ts'
+import { combineHeaders } from '#app/utils/misc.tsx'
 import {
 	destroyRedirectToHeader,
 	getRedirectCookieValue,
-} from '~/utils/redirect-cookie.server.ts'
-import { sessionStorage } from '~/utils/session.server.ts'
-import { createToastHeaders, redirectWithToast } from '~/utils/toast.server.ts'
-import { verifySessionStorage } from '~/utils/verification.server.ts'
+} from '#app/utils/redirect-cookie.server.ts'
+import { sessionStorage } from '#app/utils/session.server.ts'
+import {
+	createToastHeaders,
+	redirectWithToast,
+} from '#app/utils/toast.server.ts'
+import { verifySessionStorage } from '#app/utils/verification.server.ts'
 import { handleNewSession } from './login.tsx'
 import {
 	githubIdKey,

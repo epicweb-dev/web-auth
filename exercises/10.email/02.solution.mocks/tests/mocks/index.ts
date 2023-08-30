@@ -1,35 +1,33 @@
-import { rest } from 'msw'
-import { setupServer } from 'msw/node'
 import closeWithGrace from 'close-with-grace'
-import { faker } from '@faker-js/faker'
+import { passthrough, http } from 'msw'
+import { setupServer } from 'msw/node'
+import { handlers as resendHandlers } from './resend.ts'
 
-const handlers = [
-	process.env.REMIX_DEV_HTTP_ORIGIN
-		? rest.post(`${process.env.REMIX_DEV_HTTP_ORIGIN}ping`, req =>
-				req.passthrough(),
-		  )
+const miscHandlers = [
+	process.env.REMIX_DEV_ORIGIN
+		? http.post(`${process.env.REMIX_DEV_ORIGIN}ping`, passthrough)
 		: null,
-
-	rest.post(`https://api.resend.com/emails`, async (req, res, ctx) => {
-		const body = await req.json()
-		console.info('🔶 mocked email contents:', body)
-
-		return res(
-			ctx.json({
-				id: faker.string.uuid(),
-				from: body.from,
-				to: body.to,
-				created_at: new Date().toISOString(),
-			}),
-		)
-	}),
 ].filter(Boolean)
 
-const server = setupServer(...handlers)
+export const server = setupServer(...miscHandlers, ...resendHandlers)
 
-server.listen({ onUnhandledRequest: 'warn' })
-console.info('🔶 Mock server installed')
-
-closeWithGrace(() => {
-	server.close()
+server.listen({
+	onUnhandledRequest(request, print) {
+		if (
+			request.url.includes(process.cwd()) ||
+			request.url.includes('node_modules') ||
+			request.url.startsWith('node:')
+		) {
+			return
+		}
+		print.warning()
+	},
 })
+
+if (process.env.NODE_ENV !== 'test') {
+	console.info('🔶 Mock server installed')
+
+	closeWithGrace(() => {
+		server.close()
+	})
+}

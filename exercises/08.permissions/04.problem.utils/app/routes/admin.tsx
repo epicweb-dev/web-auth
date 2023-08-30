@@ -1,6 +1,6 @@
 import { json } from '@remix-run/node'
-import { GeneralErrorBoundary } from '~/components/error-boundary.tsx'
-import { Spacer } from '~/components/spacer.tsx'
+import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
+import { Spacer } from '#app/components/spacer.tsx'
 
 export async function loader() {
 	// 🐨 lock down this route to only users with the "admin" role with the

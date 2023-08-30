@@ -1,6 +1,6 @@
 import { json, type DataFunctionArgs } from '@remix-run/node'
-import { prisma } from '~/utils/db.server.ts'
-import { getDomainUrl } from '~/utils/misc.tsx'
+import { prisma } from '#app/utils/db.server.ts'
+import { getDomainUrl } from '#app/utils/misc.tsx'
 
 export async function loader({ request }: DataFunctionArgs) {
 	const userId = 'some_user_id' // 🐨 get the user with your requireUserId util

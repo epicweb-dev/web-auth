@@ -9,12 +9,12 @@ import {
 	useSearchParams,
 } from '@remix-run/react'
 import { z } from 'zod'
-import { ErrorList, Field } from '~/components/forms.tsx'
-import { Spacer } from '~/components/spacer.tsx'
-import { StatusButton } from '~/components/ui/status-button.tsx'
-import { handleVerification as handleChangeEmailVerification } from '~/routes/settings+/profile.change-email.tsx'
-import { prisma } from '~/utils/db.server.ts'
-import { getDomainUrl, useIsPending } from '~/utils/misc.tsx'
+import { ErrorList, Field } from '#app/components/forms.tsx'
+import { Spacer } from '#app/components/spacer.tsx'
+import { StatusButton } from '#app/components/ui/status-button.tsx'
+import { handleVerification as handleChangeEmailVerification } from '#app/routes/settings+/profile.change-email.tsx'
+import { prisma } from '#app/utils/db.server.ts'
+import { getDomainUrl, useIsPending } from '#app/utils/misc.tsx'
 import { type twoFAVerifyVerificationType } from '../settings+/profile.two-factor.verify.tsx'
 import { handleVerification as handleOnboardingVerification } from './onboarding.tsx'
 import { handleVerification as handleResetPasswordVerification } from './reset-password.tsx'
@@ -43,8 +43,8 @@ export async function loader({ request }: DataFunctionArgs) {
 			status: 'idle',
 			submission: {
 				intent: '',
-				payload: Object.fromEntries(params),
-				error: {},
+				payload: Object.fromEntries(params) as Record<string, unknown>,
+				error: {} as Record<string, Array<string>>,
 			},
 		} as const)
 	}
@@ -161,7 +161,7 @@ async function validateRequest(
 					return
 				}
 			}),
-		acceptMultipleErrors: () => true,
+
 		async: true,
 	})
 

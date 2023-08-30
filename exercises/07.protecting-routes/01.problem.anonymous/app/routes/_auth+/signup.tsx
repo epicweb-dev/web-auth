@@ -4,28 +4,28 @@ import {
 	json,
 	redirect,
 	type DataFunctionArgs,
-	type V2_MetaFunction,
+	type MetaFunction,
 } from '@remix-run/node'
 import { Form, useActionData } from '@remix-run/react'
 import { z } from 'zod'
-import { CheckboxField, ErrorList, Field } from '~/components/forms.tsx'
-import { Spacer } from '~/components/spacer.tsx'
-import { StatusButton } from '~/components/ui/status-button.tsx'
+import { CheckboxField, ErrorList, Field } from '#app/components/forms.tsx'
+import { Spacer } from '#app/components/spacer.tsx'
+import { StatusButton } from '#app/components/ui/status-button.tsx'
 import {
 	SESSION_EXPIRATION_TIME,
 	signup,
 	userIdKey,
-} from '~/utils/auth.server.ts'
-import { prisma } from '~/utils/db.server.ts'
-import { useIsPending } from '~/utils/misc.tsx'
-import { sessionStorage } from '~/utils/session.server.ts'
+} from '#app/utils/auth.server.ts'
+import { prisma } from '#app/utils/db.server.ts'
+import { useIsPending } from '#app/utils/misc.tsx'
+import { sessionStorage } from '#app/utils/session.server.ts'
 import {
 	emailSchema,
 	nameSchema,
 	passwordSchema,
 	usernameSchema,
-} from '~/utils/user-validation.ts'
-import { checkboxSchema } from '~/utils/zod-extensions.ts'
+} from '#app/utils/user-validation.ts'
+import { checkboxSchema } from '#app/utils/zod-extensions.ts'
 
 const SignupFormSchema = z
 	.object({
@@ -101,7 +101,7 @@ export async function action({ request }: DataFunctionArgs) {
 	})
 }
 
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
 	return [{ title: 'Setup Epic Notes Account' }]
 }
 

@@ -1,8 +1,8 @@
 import { redirect, type DataFunctionArgs } from '@remix-run/node'
 import { GitHubStrategy } from 'remix-auth-github'
-import { authenticator } from '~/utils/auth.server.ts'
-import { getReferrerRoute } from '~/utils/misc.tsx'
-import { getRedirectCookieHeader } from '~/utils/redirect-cookie.server.ts'
+import { authenticator } from '#app/utils/auth.server.ts'
+import { getReferrerRoute } from '#app/utils/misc.tsx'
+import { getRedirectCookieHeader } from '#app/utils/redirect-cookie.server.ts'
 
 export async function loader() {
 	return redirect('/login')

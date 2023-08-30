@@ -4,19 +4,19 @@ import * as E from '@react-email/components'
 import { json, redirect, type DataFunctionArgs } from '@remix-run/node'
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
 import { z } from 'zod'
-import { ErrorList, Field } from '~/components/forms.tsx'
-import { Icon } from '~/components/ui/icon.tsx'
-import { StatusButton } from '~/components/ui/status-button.tsx'
+import { ErrorList, Field } from '#app/components/forms.tsx'
+import { Icon } from '#app/components/ui/icon.tsx'
+import { StatusButton } from '#app/components/ui/status-button.tsx'
 import {
 	prepareVerification,
 	type VerifyFunctionArgs,
-} from '~/routes/_auth+/verify.tsx'
-import { requireUserId } from '~/utils/auth.server.ts'
-import { prisma } from '~/utils/db.server.ts'
-import { sendEmail } from '~/utils/email.server.ts'
-import { useIsPending } from '~/utils/misc.tsx'
-import { emailSchema } from '~/utils/user-validation.ts'
-import { verifySessionStorage } from '~/utils/verification.server.ts'
+} from '#app/routes/_auth+/verify.tsx'
+import { requireUserId } from '#app/utils/auth.server.ts'
+import { prisma } from '#app/utils/db.server.ts'
+import { sendEmail } from '#app/utils/email.server.ts'
+import { useIsPending } from '#app/utils/misc.tsx'
+import { emailSchema } from '#app/utils/user-validation.ts'
+import { verifySessionStorage } from '#app/utils/verification.server.ts'
 
 export const handle = {
 	breadcrumb: <Icon name="envelope-closed">Change Email</Icon>,
@@ -28,7 +28,7 @@ export async function handleVerification({
 	request,
 	submission,
 }: VerifyFunctionArgs) {
-	submission.error[''] = `We'll implement this soon`
+	submission.error[''] = [`We'll implement this soon`]
 	return json({ status: 'error', submission } as const, { status: 500 })
 }
 
@@ -66,7 +66,6 @@ export async function action({ request }: DataFunctionArgs) {
 			}
 		}),
 		async: true,
-		acceptMultipleErrors: () => true,
 	})
 
 	if (submission.intent !== 'submit') {
@@ -99,7 +98,7 @@ export async function action({ request }: DataFunctionArgs) {
 			},
 		})
 	} else {
-		submission.error[''] = response.error.message
+		submission.error[''] = [response.error.message]
 		return json({ status: 'error', submission } as const, { status: 500 })
 	}
 }

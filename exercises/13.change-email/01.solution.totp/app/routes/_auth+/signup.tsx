@@ -5,17 +5,17 @@ import {
 	json,
 	redirect,
 	type DataFunctionArgs,
-	type V2_MetaFunction,
+	type MetaFunction,
 } from '@remix-run/node'
 import { Form, useActionData } from '@remix-run/react'
 import { z } from 'zod'
-import { GeneralErrorBoundary } from '~/components/error-boundary.tsx'
-import { ErrorList, Field } from '~/components/forms.tsx'
-import { StatusButton } from '~/components/ui/status-button.tsx'
-import { prisma } from '~/utils/db.server.ts'
-import { sendEmail } from '~/utils/email.server.ts'
-import { useIsPending } from '~/utils/misc.tsx'
-import { emailSchema } from '~/utils/user-validation.ts'
+import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
+import { ErrorList, Field } from '#app/components/forms.tsx'
+import { StatusButton } from '#app/components/ui/status-button.tsx'
+import { prisma } from '#app/utils/db.server.ts'
+import { sendEmail } from '#app/utils/email.server.ts'
+import { useIsPending } from '#app/utils/misc.tsx'
+import { emailSchema } from '#app/utils/user-validation.ts'
 import { prepareVerification } from './verify.tsx'
 
 const SignupSchema = z.object({
@@ -39,7 +39,7 @@ export async function action({ request }: DataFunctionArgs) {
 				return
 			}
 		}),
-		acceptMultipleErrors: () => true,
+
 		async: true,
 	})
 	if (submission.intent !== 'submit') {
@@ -65,7 +65,7 @@ export async function action({ request }: DataFunctionArgs) {
 	if (response.status === 'success') {
 		return redirect(redirectTo.toString())
 	} else {
-		submission.error[''] = response.error.message
+		submission.error[''] = [response.error.message]
 		return json({ status: 'error', submission } as const, { status: 500 })
 	}
 }
@@ -97,7 +97,7 @@ export function SignupEmail({
 	)
 }
 
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
 	return [{ title: 'Sign Up | Epic Notes' }]
 }
 

@@ -1,5 +1,5 @@
 import { type DataFunctionArgs, redirect } from '@remix-run/node'
-import { sessionStorage } from '~/utils/session.server.ts'
+import { sessionStorage } from '#app/utils/session.server.ts'
 
 export async function loader() {
 	return redirect('/')

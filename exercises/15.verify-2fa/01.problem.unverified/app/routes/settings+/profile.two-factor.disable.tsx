@@ -1,10 +1,10 @@
 import { json, type DataFunctionArgs } from '@remix-run/node'
 import { useFetcher } from '@remix-run/react'
-import { Icon } from '~/components/ui/icon.tsx'
-import { StatusButton } from '~/components/ui/status-button.tsx'
-import { requireUserId } from '~/utils/auth.server.ts'
-import { useDoubleCheck } from '~/utils/misc.tsx'
-import { redirectWithToast } from '~/utils/toast.server.ts'
+import { Icon } from '#app/components/ui/icon.tsx'
+import { StatusButton } from '#app/components/ui/status-button.tsx'
+import { requireUserId } from '#app/utils/auth.server.ts'
+import { useDoubleCheck } from '#app/utils/misc.tsx'
+import { redirectWithToast } from '#app/utils/toast.server.ts'
 
 export const handle = {
 	breadcrumb: <Icon name="lock-open-1">Disable</Icon>,
