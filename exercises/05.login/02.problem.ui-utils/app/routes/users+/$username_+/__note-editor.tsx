@@ -62,9 +62,8 @@ export async function action({ request, params }: DataFunctionArgs) {
 	)
 
 	await validateCSRF(formData, request.headers)
-	
 
-const submission = await parse(formData, {
+	const submission = await parse(formData, {
 		schema: NoteEditorSchema.superRefine(async (data, ctx) => {
 			if (!data.id) return
 
@@ -192,7 +191,7 @@ export function NoteEditor({
 				{...form.props}
 				encType="multipart/form-data"
 			>
-<AuthenticityTokenInput />
+				<AuthenticityTokenInput />
 				{/*
 					This hidden submit button is here to ensure that when the user hits
 					"enter" on an input field, the primary form function is submitted
