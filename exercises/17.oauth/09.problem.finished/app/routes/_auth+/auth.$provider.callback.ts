@@ -63,25 +63,17 @@ export async function loader({ request, params }: DataFunctionArgs) {
 	const userId = await getUserId(request)
 
 	if (existingConnection && userId) {
-		if (existingConnection.userId === userId) {
-			return redirectWithToast(
-				'/settings/profile/connections',
-				{
-					title: 'Already Connected',
-					description: `Your "${profile.username}" ${label} account is already connected.`,
-				},
-				{ headers: destroyRedirectTo },
-			)
-		} else {
-			return redirectWithToast(
-				'/settings/profile/connections',
-				{
-					title: 'Already Connected',
-					description: `The "${profile.username}" ${label} account is already connected to another account.`,
-				},
-				{ headers: destroyRedirectTo },
-			)
-		}
+		return redirectWithToast(
+			'/settings/profile/connections',
+			{
+				title: 'Already Connected',
+				description:
+					existingConnection.userId === userId
+						? `Your "${profile.username}" ${label} account is already connected.`
+						: `The "${profile.username}" ${label} account is already connected to another account.`,
+			},
+			{ headers: destroyRedirectTo },
+		)
 	}
 
 	// If we're already logged in, then link the account

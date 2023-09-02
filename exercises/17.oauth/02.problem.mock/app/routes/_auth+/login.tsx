@@ -21,6 +21,7 @@ import {
 	requireAnonymous,
 	sessionKey,
 } from '#app/utils/auth.server.ts'
+import { ProviderConnectionForm } from '#app/utils/connections.tsx'
 import { validateCSRF } from '#app/utils/csrf.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { checkHoneypot } from '#app/utils/honeypot.server.ts'
@@ -30,7 +31,6 @@ import { PasswordSchema, UsernameSchema } from '#app/utils/user-validation.ts'
 import { verifySessionStorage } from '#app/utils/verification.server.ts'
 import { twoFAVerificationType } from '../settings+/profile.two-factor.tsx'
 import { getRedirectToUrl, type VerifyFunctionArgs } from './verify.tsx'
-import { Button } from '#app/components/ui/button.tsx'
 
 const verifiedTimeKey = 'verified-time'
 const unverifiedSessionIdKey = 'unverified-session-id'
@@ -262,15 +262,7 @@ export default function LoginPage() {
 								</StatusButton>
 							</div>
 						</Form>
-						<Form
-							className="mt-5 flex items-center justify-center gap-2 border-t-2 border-border pt-3"
-							action="/auth/github"
-							method="POST"
-						>
-							<Button type="submit" className="w-full">
-								Login with GitHub
-							</Button>
-						</Form>
+						<ProviderConnectionForm type="Login" providerName="github" />
 						<div className="flex items-center justify-center gap-2 pt-6">
 							<span className="text-muted-foreground">New here?</span>
 							<Link

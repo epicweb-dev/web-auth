@@ -1,7 +1,7 @@
+import { type DataFunctionArgs } from '@remix-run/node'
 import { authenticator } from '#app/utils/auth.server.ts'
 import { sessionStorage } from '#app/utils/session.server.ts'
 import { redirectWithToast } from '#app/utils/toast.server.ts'
-import { type DataFunctionArgs } from '@remix-run/node'
 
 export async function loader({ request }: DataFunctionArgs) {
 	const providerName = 'github'

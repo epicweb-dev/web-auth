@@ -14,7 +14,15 @@ export const getSessionExpirationDate = () =>
 
 export const sessionKey = 'sessionId'
 
-export const authenticator = new Authenticator(sessionStorage)
+type ProviderUser = {
+	id: string
+	email: string
+	username?: string
+	name?: string
+	imageUrl?: string
+}
+
+export const authenticator = new Authenticator<ProviderUser>(sessionStorage)
 
 authenticator.use(
 	new GitHubStrategy(
@@ -24,7 +32,16 @@ authenticator.use(
 			callbackURL: '/auth/github/callback',
 		},
 		async ({ profile }) => {
-			return profile.id
+			const email = profile.emails[0].value.trim().toLowerCase()
+			const username = profile.displayName
+			const imageUrl = profile.photos[0].value
+			return {
+				email,
+				id: profile.id,
+				username,
+				name: profile.name.givenName,
+				imageUrl,
+			}
 		},
 	),
 	'github',

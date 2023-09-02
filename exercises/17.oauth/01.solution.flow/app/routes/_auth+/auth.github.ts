@@ -1,5 +1,5 @@
-import { authenticator } from '#app/utils/auth.server.ts'
 import { redirect, type DataFunctionArgs } from '@remix-run/node'
+import { authenticator } from '#app/utils/auth.server.ts'
 
 export async function loader() {
 	return redirect('/login')

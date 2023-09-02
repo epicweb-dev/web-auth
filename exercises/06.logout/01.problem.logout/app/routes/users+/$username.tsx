@@ -1,5 +1,7 @@
 import { json, type DataFunctionArgs } from '@remix-run/node'
 import { Form, Link, useLoaderData, type MetaFunction } from '@remix-run/react'
+// 💰 you're gonna need this:
+// import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { Spacer } from '#app/components/spacer.tsx'
 import { Button } from '#app/components/ui/button.tsx'
@@ -63,6 +65,7 @@ export default function ProfileRoute() {
 					{isLoggedInUser ? (
 						// 🐨 add a method of POST and an action of "/logout" to this form
 						<Form className="mt-3">
+							{/* 🐨 render the AuthenticityTokenInput from remix-utils */}
 							<Button type="submit" variant="link" size="pill">
 								<Icon name="exit" className="scale-125 max-md:scale-150">
 									Logout

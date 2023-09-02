@@ -46,7 +46,7 @@ import {
 	AlertDialogTitle,
 } from './components/ui/alert-dialog.tsx'
 import { Button } from './components/ui/button.tsx'
-import { Icon, href as iconHref } from './components/ui/icon.tsx'
+import { Icon } from './components/ui/icon.tsx'
 import { KCDShop } from './kcdshop.tsx'
 import fontStylestylesheetUrl from './styles/font.css'
 import tailwindStylesheetUrl from './styles/tailwind.css'
@@ -66,8 +66,6 @@ import { useOptionalUser } from './utils/user.ts'
 
 export const links: LinksFunction = () => {
 	return [
-		// Preload svg sprite as a resource to avoid render blocking
-		{ rel: 'preload', href: iconHref, as: 'image' },
 		{ rel: 'icon', type: 'image/svg+xml', href: faviconAssetUrl },
 		{ rel: 'stylesheet', href: fontStylestylesheetUrl },
 		{ rel: 'stylesheet', href: tailwindStylesheetUrl },
@@ -76,7 +74,7 @@ export const links: LinksFunction = () => {
 }
 
 export async function loader({ request }: DataFunctionArgs) {
-	const [csrfToken, csrfCookieHeader] = await csrf.commitToken()
+	const [csrfToken, csrfCookieHeader] = await csrf.commitToken(request)
 	const honeyProps = honeypot.getInputProps()
 	const { toast, headers: toastHeaders } = await getToast(request)
 	const cookieSession = await sessionStorage.getSession(
@@ -115,7 +113,10 @@ export async function loader({ request }: DataFunctionArgs) {
 			honeyProps,
 		},
 		{
-			headers: combineHeaders({ 'set-cookie': csrfCookieHeader }, toastHeaders),
+			headers: combineHeaders(
+				csrfCookieHeader ? { 'set-cookie': csrfCookieHeader } : null,
+				toastHeaders,
+			),
 		},
 	)
 }

@@ -86,6 +86,7 @@ export async function action({ request, params }: DataFunctionArgs) {
 	const toastCookieSession = await toastSessionStorage.getSession(
 		request.headers.get('cookie'),
 	)
+	// 🐨 change this to "flash"
 	toastCookieSession.set('toast', {
 		type: 'success',
 		title: 'Note deleted',

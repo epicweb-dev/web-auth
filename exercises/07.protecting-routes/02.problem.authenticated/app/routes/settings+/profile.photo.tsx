@@ -9,12 +9,14 @@ import {
 } from '@remix-run/node'
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
 import { useState } from 'react'
+import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { ServerOnly } from 'remix-utils/server-only'
 import { z } from 'zod'
 import { ErrorList } from '#app/components/forms.tsx'
 import { Button } from '#app/components/ui/button.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
+import { validateCSRF } from '#app/utils/csrf.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import {
 	getUserImgSrc,
@@ -57,6 +59,9 @@ export async function action({ request }: DataFunctionArgs) {
 		request,
 		unstable_createMemoryUploadHandler({ maxPartSize: MAX_SIZE }),
 	)
+
+	await validateCSRF(formData, request.headers)
+
 	const intent = formData.get('intent')
 	if (intent === 'delete') {
 		await prisma.userImage.deleteMany({ where: { userId } })
@@ -126,6 +131,7 @@ export default function PhotoRoute() {
 				onReset={() => setNewImageSrc(null)}
 				{...form.props}
 			>
+				<AuthenticityTokenInput />
 				<img
 					src={
 						newImageSrc ?? (data.user ? getUserImgSrc(data.user.image?.id) : '')

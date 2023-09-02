@@ -21,6 +21,7 @@ import {
 	requireAnonymous,
 	sessionKey,
 } from '#app/utils/auth.server.ts'
+import { ProviderConnectionForm } from '#app/utils/connections.tsx'
 import { validateCSRF } from '#app/utils/csrf.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { checkHoneypot } from '#app/utils/honeypot.server.ts'
@@ -210,7 +211,6 @@ export async function action({ request }: DataFunctionArgs) {
 export default function LoginPage() {
 	const actionData = useActionData<typeof action>()
 	const isPending = useIsPending()
-	const isGitHubSubmitting = useIsPending({ formAction: '/auth/github' })
 	const [searchParams] = useSearchParams()
 	const redirectTo = searchParams.get('redirectTo')
 
@@ -296,24 +296,7 @@ export default function LoginPage() {
 								</StatusButton>
 							</div>
 						</Form>
-						<Form
-							className="mt-5 flex items-center justify-center gap-2 border-t-2 border-border pt-3"
-							action="/auth/github"
-							method="POST"
-						>
-							<input
-								type="hidden"
-								name="redirectTo"
-								value={redirectTo ?? '/'}
-							/>
-							<StatusButton
-								type="submit"
-								className="w-full"
-								status={isGitHubSubmitting ? 'pending' : 'idle'}
-							>
-								Login with GitHub
-							</StatusButton>
-						</Form>
+						<ProviderConnectionForm type="Login" providerName="github" />
 						<div className="flex items-center justify-center gap-2 pt-6">
 							<span className="text-muted-foreground">New here?</span>
 							<Link

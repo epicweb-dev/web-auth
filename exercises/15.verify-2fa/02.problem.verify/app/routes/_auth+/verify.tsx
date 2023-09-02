@@ -8,12 +8,14 @@ import {
 	useLoaderData,
 	useSearchParams,
 } from '@remix-run/react'
+import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { z } from 'zod'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { ErrorList, Field } from '#app/components/forms.tsx'
 import { Spacer } from '#app/components/spacer.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { handleVerification as handleChangeEmailVerification } from '#app/routes/settings+/profile.change-email.tsx'
+import { validateCSRF } from '#app/utils/csrf.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { getDomainUrl, useIsPending } from '#app/utils/misc.tsx'
 import { type twoFAVerifyVerificationType } from '../settings+/profile.two-factor.verify.tsx'
@@ -53,7 +55,9 @@ export async function loader({ request }: DataFunctionArgs) {
 }
 
 export async function action({ request }: DataFunctionArgs) {
-	return validateRequest(request, await request.formData())
+	const formData = await request.formData()
+	await validateCSRF(formData, request.headers)
+	return validateRequest(request, formData)
 }
 
 export function getRedirectToUrl({
@@ -257,6 +261,7 @@ export default function VerifyRoute() {
 				</div>
 				<div className="flex w-full gap-2">
 					<Form method="POST" {...form.props} className="flex-1">
+						<AuthenticityTokenInput />
 						<Field
 							labelProps={{
 								htmlFor: fields[codeQueryParam].id,

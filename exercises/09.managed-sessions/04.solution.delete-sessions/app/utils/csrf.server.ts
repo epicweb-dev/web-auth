@@ -1,6 +1,5 @@
 import { createCookie } from '@remix-run/node'
 import { CSRF, CSRFError } from 'remix-utils/csrf/server'
-import { singleton } from './singleton.server.ts'
 
 const cookie = createCookie('csrf', {
 	path: '/',
@@ -10,10 +9,7 @@ const cookie = createCookie('csrf', {
 	secrets: process.env.SESSION_SECRET.split(','),
 })
 
-export const csrf = singleton(
-	'csrf',
-	() => new CSRF({ cookie, formDataKey: 'csrf' }),
-)
+export const csrf = new CSRF({ cookie })
 
 export async function validateCSRF(formData: FormData, headers: Headers) {
 	try {

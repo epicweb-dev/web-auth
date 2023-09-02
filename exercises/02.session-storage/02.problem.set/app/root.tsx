@@ -32,7 +32,7 @@ import { ErrorList } from './components/forms.tsx'
 import { SearchBar } from './components/search-bar.tsx'
 import { Spacer } from './components/spacer.tsx'
 import { Button } from './components/ui/button.tsx'
-import { Icon, href as iconHref } from './components/ui/icon.tsx'
+import { Icon } from './components/ui/icon.tsx'
 import { KCDShop } from './kcdshop.tsx'
 import fontStylestylesheetUrl from './styles/font.css'
 import tailwindStylesheetUrl from './styles/tailwind.css'
@@ -44,8 +44,6 @@ import { getTheme, setTheme, type Theme } from './utils/theme.server.ts'
 
 export const links: LinksFunction = () => {
 	return [
-		// Preload svg sprite as a resource to avoid render blocking
-		{ rel: 'preload', href: iconHref, as: 'image' },
 		{ rel: 'icon', type: 'image/svg+xml', href: faviconAssetUrl },
 		{ rel: 'stylesheet', href: fontStylestylesheetUrl },
 		{ rel: 'stylesheet', href: tailwindStylesheetUrl },
@@ -54,7 +52,7 @@ export const links: LinksFunction = () => {
 }
 
 export async function loader({ request }: DataFunctionArgs) {
-	const [csrfToken, csrfCookieHeader] = await csrf.commitToken()
+	const [csrfToken, csrfCookieHeader] = await csrf.commitToken(request)
 	const honeyProps = honeypot.getInputProps()
 	// 🐨 get the cookie header from the request
 	// 🐨 get the toastCookieSession using the toastSessionStorage.getSession
@@ -70,9 +68,7 @@ export async function loader({ request }: DataFunctionArgs) {
 			honeyProps,
 		},
 		{
-			headers: {
-				'set-cookie': csrfCookieHeader,
-			},
+			headers: csrfCookieHeader ? { 'set-cookie': csrfCookieHeader } : {},
 		},
 	)
 }
