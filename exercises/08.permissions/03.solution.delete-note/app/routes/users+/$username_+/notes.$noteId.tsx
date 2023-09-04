@@ -121,7 +121,7 @@ export async function action({ request }: DataFunctionArgs) {
 
 	await prisma.note.delete({ where: { id: note.id } })
 
-	return redirectWithToast(`/users/${note.owner.username}/notes`, {
+	throw await redirectWithToast(`/users/${note.owner.username}/notes`, {
 		type: 'success',
 		title: 'Success',
 		description: 'Your note has been deleted.',

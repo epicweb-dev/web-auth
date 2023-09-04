@@ -65,7 +65,7 @@ export async function action({ request }: DataFunctionArgs) {
 
 	// we'll need to update the verification type here...
 
-	return redirectWithToast('/settings/profile/two-factor', {
+	throw await redirectWithToast('/settings/profile/two-factor', {
 		type: 'success',
 		title: 'Enabled',
 		description: 'Two-factor authentication has been enabled.',

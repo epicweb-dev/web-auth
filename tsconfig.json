@@ -317,7 +317,19 @@
       "path": "exercises/17.oauth/03.solution.database"
     },
     {
-      "path": "exercises/17.oauth/09.problem.finished"
+      "path": "exercises/18.provider-errors/01.problem.auth-error"
+    },
+    {
+      "path": "exercises/18.provider-errors/01.solution.auth-error"
+    },
+    {
+      "path": "exercises/18.provider-errors/02.problem.connection-error"
+    },
+    {
+      "path": "exercises/18.provider-errors/02.solution.connection-error"
+    },
+    {
+      "path": "exercises/20.fin/09.problem.finished"
     }
   ]
 }

@@ -11,7 +11,7 @@ export async function loader({ request }: DataFunctionArgs) {
 
 	console.log({ data })
 
-	return redirectWithToast('/login', {
+	throw await redirectWithToast('/login', {
 		title: 'Auth Success',
 		description: `You have successfully authenticated with GitHub.`,
 		type: 'success',

@@ -59,7 +59,7 @@ export async function handleVerification({
 		react: <EmailChangeNoticeEmail userId={user.id} />,
 	})
 
-	return redirectWithToast(
+	throw await redirectWithToast(
 		'/settings/profile',
 		{
 			title: 'Email Changed',

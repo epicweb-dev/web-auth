@@ -21,7 +21,7 @@ export async function action({ request }: DataFunctionArgs) {
 	await requireUserId(request)
 	const formData = await request.formData()
 	await validateCSRF(formData, request.headers)
-	return redirectWithToast('/settings/profile/two-factor', {
+	throw await redirectWithToast('/settings/profile/two-factor', {
 		title: '2FA Disabled (jk)',
 		description: 'This has not yet been implemented',
 	})
