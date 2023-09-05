@@ -78,8 +78,6 @@ export async function action({ request, params }: DataFunctionArgs) {
 		status: 403,
 	})
 
-	invariantResponse(params.noteId, 'noteId param is required')
-
 	const formData = await parseMultipartFormData(
 		request,
 		createMemoryUploadHandler({ maxPartSize: MAX_UPLOAD_SIZE }),

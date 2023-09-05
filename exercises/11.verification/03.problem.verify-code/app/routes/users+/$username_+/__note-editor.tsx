@@ -77,7 +77,6 @@ export async function action({ request, params }: DataFunctionArgs) {
 	invariantResponse(user.username === params.username, 'Not authorized', {
 		status: 403,
 	})
-	invariantResponse(params.noteId, 'noteId param is required')
 
 	const formData = await parseMultipartFormData(
 		request,

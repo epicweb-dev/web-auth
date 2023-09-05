@@ -31,7 +31,7 @@ import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { Textarea } from '#app/components/ui/textarea.tsx'
 import { validateCSRF } from '#app/utils/csrf.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
-import { cn, getNoteImgSrc, invariantResponse } from '#app/utils/misc.tsx'
+import { cn, getNoteImgSrc } from '#app/utils/misc.tsx'
 
 const titleMinLength = 1
 const titleMaxLength = 100
@@ -72,8 +72,6 @@ const NoteEditorSchema = z.object({
 })
 
 export async function action({ request, params }: DataFunctionArgs) {
-	invariantResponse(params.noteId, 'noteId param is required')
-
 	const formData = await parseMultipartFormData(
 		request,
 		createMemoryUploadHandler({ maxPartSize: MAX_UPLOAD_SIZE }),
