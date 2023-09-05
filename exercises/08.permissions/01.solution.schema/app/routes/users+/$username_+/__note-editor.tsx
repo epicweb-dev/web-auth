@@ -29,10 +29,10 @@ import { Icon } from '#app/components/ui/icon.tsx'
 import { Label } from '#app/components/ui/label.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { Textarea } from '#app/components/ui/textarea.tsx'
-import { requireUserId } from '#app/utils/auth.server.ts'
+import { requireUser } from '#app/utils/auth.server.ts'
 import { validateCSRF } from '#app/utils/csrf.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
-import { cn, getNoteImgSrc } from '#app/utils/misc.tsx'
+import { cn, getNoteImgSrc, invariantResponse } from '#app/utils/misc.tsx'
 
 const titleMinLength = 1
 const titleMaxLength = 100
@@ -43,56 +43,78 @@ const MAX_UPLOAD_SIZE = 1024 * 1024 * 3 // 3MB
 
 const ImageFieldsetSchema = z.object({
 	id: z.string().optional(),
-	file: z.instanceof(File).refine(file => {
-		return file.size <= MAX_UPLOAD_SIZE
-	}, 'File size must be less than 3MB'),
+	file: z
+		.instanceof(File)
+		.optional()
+		.refine(file => {
+			return !file || file.size <= MAX_UPLOAD_SIZE
+		}, 'File size must be less than 3MB'),
 	altText: z.string().optional(),
 })
 
+type ImageFieldset = z.infer<typeof ImageFieldsetSchema>
+
+function imageHasFile(
+	image: ImageFieldset,
+): image is ImageFieldset & { file: NonNullable<ImageFieldset['file']> } {
+	return Boolean(image.file?.size && image.file?.size > 0)
+}
+
+function imageHasId(
+	image: ImageFieldset,
+): image is ImageFieldset & { id: NonNullable<ImageFieldset['id']> } {
+	return image.id != null
+}
+
 const NoteEditorSchema = z.object({
-	id: z.string().optional(),
 	title: z.string().min(titleMinLength).max(titleMaxLength),
 	content: z.string().min(contentMinLength).max(contentMaxLength),
 	images: z.array(ImageFieldsetSchema).max(5).optional(),
 })
 
-export async function action({ request }: DataFunctionArgs) {
-	const userId = await requireUserId(request)
+export async function action({ request, params }: DataFunctionArgs) {
+	const user = await requireUser(request)
+	invariantResponse(user.username === params.username, 'Not authorized', {
+		status: 403,
+	})
+
+	invariantResponse(params.noteId, 'noteId param is required')
 
 	const formData = await parseMultipartFormData(
 		request,
 		createMemoryUploadHandler({ maxPartSize: MAX_UPLOAD_SIZE }),
 	)
-
 	await validateCSRF(formData, request.headers)
 
 	const submission = await parse(formData, {
-		schema: NoteEditorSchema.superRefine(async (data, ctx) => {
-			if (!data.id) return
-
-			const note = await prisma.note.findUnique({
-				select: { id: true },
-				where: { id: data.id, ownerId: userId },
-			})
-			if (!note) {
-				ctx.addIssue({
-					code: 'custom',
-					message: 'Note not found',
-				})
-			}
-		}).transform(async ({ images = [], ...data }) => {
+		schema: NoteEditorSchema.transform(async ({ images = [], ...data }) => {
 			return {
 				...data,
-				images: await Promise.all(
-					images.map(async image => ({
-						id: image.id,
-						altText: image.altText,
-						contentType: image.file.type,
-						blob:
-							image.file.size > 0
-								? Buffer.from(await image.file.arrayBuffer())
-								: null,
-					})),
+				imageUpdates: await Promise.all(
+					images.filter(imageHasId).map(async i => {
+						if (imageHasFile(i)) {
+							return {
+								id: i.id,
+								altText: i.altText,
+								contentType: i.file.type,
+								blob: Buffer.from(await i.file.arrayBuffer()),
+							}
+						} else {
+							return { id: i.id, altText: i.altText }
+						}
+					}),
+				),
+				newImages: await Promise.all(
+					images
+						.filter(imageHasFile)
+						.filter(i => !i.id)
+						.map(async image => {
+							return {
+								altText: image.altText,
+								contentType: image.file.type,
+								blob: Buffer.from(await image.file.arrayBuffer()),
+							}
+						}),
 				),
 			}
 		}),
@@ -107,56 +129,26 @@ export async function action({ request }: DataFunctionArgs) {
 		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 
-	const { id: noteId, title, content, images = [] } = submission.value
+	const { title, content, imageUpdates = [], newImages = [] } = submission.value
 
-	const updatedNote = await prisma.$transaction(async $prisma => {
-		const note = await $prisma.note.upsert({
-			select: { id: true, owner: { select: { username: true } } },
-			where: { id: noteId ?? '__new_note__' },
-			create: {
-				ownerId: userId,
-				title,
-				content,
+	await prisma.note.update({
+		select: { id: true },
+		where: { id: params.noteId },
+		data: {
+			title,
+			content,
+			images: {
+				deleteMany: { id: { notIn: imageUpdates.map(i => i.id) } },
+				updateMany: imageUpdates.map(updates => ({
+					where: { id: updates.id },
+					data: { ...updates, id: updates.blob ? cuid() : updates.id },
+				})),
+				create: newImages,
 			},
-			update: {
-				title,
-				content,
-				images: {
-					deleteMany: { id: { notIn: images.map(i => i.id).filter(Boolean) } },
-				},
-			},
-		})
-
-		for (const image of images) {
-			const { blob } = image
-			if (blob) {
-				await $prisma.noteImage.upsert({
-					select: { id: true },
-					where: { id: image.id ?? '__new_image__' },
-					create: { ...image, blob, noteId: note.id },
-					update: {
-						...image,
-						blob,
-						// update the id since it is used for caching
-						id: cuid(),
-						noteId: note.id,
-					},
-				})
-			} else if (image.id) {
-				await $prisma.noteImage.update({
-					select: { id: true },
-					where: { id: image.id },
-					data: { altText: image.altText },
-				})
-			}
-		}
-
-		return note
+		},
 	})
 
-	return redirect(
-		`/users/${updatedNote.owner.username}/notes/${updatedNote.id}`,
-	)
+	return redirect(`/users/${params.username}/notes/${params.noteId}`)
 }
 
 export function NoteEditor({

@@ -17,7 +17,7 @@ import { ErrorList } from '#app/components/forms.tsx'
 import { Button } from '#app/components/ui/button.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
-import { getUserId, requireUserId } from '#app/utils/auth.server.ts'
+import { getUserId, requireUser } from '#app/utils/auth.server.ts'
 import { validateCSRF } from '#app/utils/csrf.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import {
@@ -81,7 +81,7 @@ const DeleteFormSchema = z.object({
 })
 
 export async function action({ request }: DataFunctionArgs) {
-	const userId = await requireUserId(request)
+	const user = await requireUser(request)
 	const formData = await request.formData()
 	await validateCSRF(formData, request.headers)
 	const submission = parse(formData, {
@@ -106,10 +106,10 @@ export async function action({ request }: DataFunctionArgs) {
 	const permission = await prisma.permission.findFirst({
 		select: { id: true },
 		where: {
-			roles: { some: { users: { some: { id: userId } } } },
+			roles: { some: { users: { some: { id: user.id } } } },
 			entity: 'note',
 			action: 'delete',
-			access: note.ownerId === userId ? 'own' : 'any',
+			access: note.ownerId === user.id ? 'own' : 'any',
 		},
 	})
 

@@ -25,7 +25,7 @@ export async function loader({ params }: DataFunctionArgs) {
 		},
 	})
 	invariantResponse(note, 'Not found', { status: 404 })
-	return json({ note: note })
+	return json({ note })
 }
 
 export default function NoteEdit() {

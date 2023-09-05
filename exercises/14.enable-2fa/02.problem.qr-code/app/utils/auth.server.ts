@@ -3,7 +3,7 @@ import { redirect } from '@remix-run/node'
 import bcrypt from 'bcryptjs'
 import { safeRedirect } from 'remix-utils/safe-redirect'
 import { prisma } from '#app/utils/db.server.ts'
-import { combineHeaders } from './misc.tsx'
+import { combineResponseInits } from './misc.tsx'
 import { sessionStorage } from './session.server.ts'
 
 export const SESSION_EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 30
@@ -59,6 +59,18 @@ export async function requireAnonymous(request: Request) {
 	if (userId) {
 		throw redirect('/')
 	}
+}
+
+export async function requireUser(request: Request) {
+	const userId = await requireUserId(request)
+	const user = await prisma.user.findUnique({
+		select: { id: true, username: true },
+		where: { id: userId },
+	})
+	if (!user) {
+		throw await logout({ request })
+	}
+	return user
 }
 
 export async function login({
@@ -152,13 +164,14 @@ export async function logout(
 	const sessionId = cookieSession.get(sessionKey)
 	await prisma.session.delete({ where: { id: sessionId } })
 	cookieSession.unset(sessionKey)
-	throw redirect(safeRedirect(redirectTo), {
-		...responseInit,
-		headers: combineHeaders(
-			{ 'set-cookie': await sessionStorage.commitSession(cookieSession) },
-			responseInit?.headers,
-		),
-	})
+	throw redirect(
+		safeRedirect(redirectTo),
+		combineResponseInits(responseInit, {
+			headers: {
+				'set-cookie': await sessionStorage.commitSession(cookieSession),
+			},
+		}),
+	)
 }
 
 export async function getPasswordHash(password: string) {

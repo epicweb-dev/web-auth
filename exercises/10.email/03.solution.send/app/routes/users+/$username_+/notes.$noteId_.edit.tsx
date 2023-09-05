@@ -1,6 +1,6 @@
 import { json, type DataFunctionArgs } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
-import { requireUserId } from '#app/utils/auth.server.ts'
+import { requireUser } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { invariantResponse } from '#app/utils/misc.tsx'
 import { NoteEditor, action } from './__note-editor.tsx'
@@ -8,7 +8,11 @@ import { NoteEditor, action } from './__note-editor.tsx'
 export { action }
 
 export async function loader({ params, request }: DataFunctionArgs) {
-	const userId = await requireUserId(request)
+	const user = await requireUser(request)
+	invariantResponse(user.username === params.username, 'Not authorized', {
+		status: 403,
+	})
+
 	const note = await prisma.note.findFirst({
 		select: {
 			id: true,
@@ -23,11 +27,11 @@ export async function loader({ params, request }: DataFunctionArgs) {
 		},
 		where: {
 			id: params.noteId,
-			ownerId: userId,
+			ownerId: user.id,
 		},
 	})
 	invariantResponse(note, 'Not found', { status: 404 })
-	return json({ note: note })
+	return json({ note })
 }
 
 export default function NoteEdit() {

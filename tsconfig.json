@@ -131,10 +131,16 @@
       "path": "exercises/07.protecting-routes/02.solution.authenticated"
     },
     {
-      "path": "exercises/07.protecting-routes/03.problem.redirect"
+      "path": "exercises/07.protecting-routes/03.problem.authorized"
     },
     {
-      "path": "exercises/07.protecting-routes/03.solution.redirect"
+      "path": "exercises/07.protecting-routes/03.solution.authorized"
+    },
+    {
+      "path": "exercises/07.protecting-routes/04.problem.redirect"
+    },
+    {
+      "path": "exercises/07.protecting-routes/04.solution.redirect"
     },
     {
       "path": "exercises/08.permissions/01.problem.schema"

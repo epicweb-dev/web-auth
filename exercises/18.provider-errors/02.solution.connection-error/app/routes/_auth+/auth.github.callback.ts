@@ -1,5 +1,6 @@
 import { type DataFunctionArgs } from '@remix-run/node'
-import { authenticator } from '#app/utils/auth.server.ts'
+import { authenticator, getUserId } from '#app/utils/auth.server.ts'
+import { prisma } from '#app/utils/db.server.ts'
 import { sessionStorage } from '#app/utils/session.server.ts'
 import { redirectWithToast } from '#app/utils/toast.server.ts'
 
@@ -39,9 +40,6 @@ export async function loader({ request }: DataFunctionArgs) {
 
 	const { data: profile } = authResult
 
-	// return
-	const { data: profile } = authResult
-
 	const existingConnection = await prisma.connection.findUnique({
 		select: { userId: true },
 		where: { providerId: profile.id },
@@ -50,17 +48,13 @@ export async function loader({ request }: DataFunctionArgs) {
 	const userId = await getUserId(request)
 
 	if (existingConnection && userId) {
-		throw await redirectWithToast(
-			'/settings/profile/connections',
-			{
-				title: 'Already Connected',
-				description:
-					existingConnection.userId === userId
-						? `Your "${profile.username}" ${label} account is already connected.`
-						: `The "${profile.username}" ${label} account is already connected to another account.`,
-			},
-			{ headers: destroyRedirectTo },
-		)
+		throw await redirectWithToast('/settings/profile/connections', {
+			title: 'Already Connected',
+			description:
+				existingConnection.userId === userId
+					? `Your "${profile.username}" GitHub account is already connected.`
+					: `The "${profile.username}" GitHub account is already connected to another account.`,
+		})
 	}
 
 	throw await redirectWithToast('/login', {

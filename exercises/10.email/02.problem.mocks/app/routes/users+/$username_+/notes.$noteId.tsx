@@ -17,7 +17,7 @@ import { ErrorList } from '#app/components/forms.tsx'
 import { Button } from '#app/components/ui/button.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
-import { requireUserId } from '#app/utils/auth.server.ts'
+import { requireUser } from '#app/utils/auth.server.ts'
 import { validateCSRF } from '#app/utils/csrf.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import {
@@ -68,7 +68,7 @@ const DeleteFormSchema = z.object({
 })
 
 export async function action({ request }: DataFunctionArgs) {
-	const userId = await requireUserId(request)
+	const user = await requireUser(request)
 	const formData = await request.formData()
 	await validateCSRF(formData, request.headers)
 	const submission = parse(formData, {
@@ -89,7 +89,7 @@ export async function action({ request }: DataFunctionArgs) {
 	})
 	invariantResponse(note, 'Not found', { status: 404 })
 
-	const isOwner = note.ownerId === userId
+	const isOwner = note.ownerId === user.id
 	await requireUserWithPermission(
 		request,
 		isOwner ? `delete:note:own` : `delete:note:any`,

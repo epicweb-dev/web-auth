@@ -17,7 +17,6 @@ import { ErrorList } from '#app/components/forms.tsx'
 import { Button } from '#app/components/ui/button.tsx'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
-import { requireUserId } from '#app/utils/auth.server.ts'
 import { validateCSRF } from '#app/utils/csrf.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import {
@@ -63,8 +62,7 @@ const DeleteFormSchema = z.object({
 	noteId: z.string(),
 })
 
-export async function action({ request }: DataFunctionArgs) {
-	const userId = await requireUserId(request)
+export async function action({ request, params }: DataFunctionArgs) {
 	const formData = await request.formData()
 	await validateCSRF(formData, request.headers)
 	const submission = parse(formData, {
@@ -81,7 +79,7 @@ export async function action({ request }: DataFunctionArgs) {
 
 	const note = await prisma.note.findFirst({
 		select: { id: true, owner: { select: { username: true } } },
-		where: { id: noteId, ownerId: userId },
+		where: { id: noteId, owner: { username: params.username } },
 	})
 	invariantResponse(note, 'Not found', { status: 404 })
 

@@ -63,7 +63,6 @@ const DeleteFormSchema = z.object({
 })
 
 export async function action({ request, params }: DataFunctionArgs) {
-	// 🐨 get the user with your requireUserId util
 	const formData = await request.formData()
 	await validateCSRF(formData, request.headers)
 	const submission = parse(formData, {
@@ -80,7 +79,6 @@ export async function action({ request, params }: DataFunctionArgs) {
 
 	const note = await prisma.note.findFirst({
 		select: { id: true, owner: { select: { username: true } } },
-		// 🐨 change this to use the ownerId
 		where: { id: noteId, owner: { username: params.username } },
 	})
 	invariantResponse(note, 'Not found', { status: 404 })
