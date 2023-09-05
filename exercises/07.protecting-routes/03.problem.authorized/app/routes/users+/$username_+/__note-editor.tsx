@@ -66,6 +66,7 @@ function imageHasId(
 }
 
 const NoteEditorSchema = z.object({
+	id: z.string().optional(),
 	title: z.string().min(titleMinLength).max(titleMaxLength),
 	content: z.string().min(contentMinLength).max(contentMaxLength),
 	images: z.array(ImageFieldsetSchema).max(5).optional(),
@@ -125,12 +126,25 @@ export async function action({ request, params }: DataFunctionArgs) {
 		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 
-	const { title, content, imageUpdates = [], newImages = [] } = submission.value
+	const {
+		id: noteId,
+		title,
+		content,
+		imageUpdates = [],
+		newImages = [],
+	} = submission.value
 
-	await prisma.note.update({
-		select: { id: true },
-		where: { id: params.noteId },
-		data: {
+	const updatedNote = await prisma.note.upsert({
+		select: { id: true, owner: { select: { username: true } } },
+		where: { id: noteId ?? '__new_note__' },
+		create: {
+			// 🐨 change this to ownerId: user.id,
+			owner: { connect: { username: params.username } },
+			title,
+			content,
+			images: { create: newImages },
+		},
+		update: {
 			title,
 			content,
 			images: {
@@ -144,7 +158,9 @@ export async function action({ request, params }: DataFunctionArgs) {
 		},
 	})
 
-	return redirect(`/users/${params.username}/notes/${params.noteId}`)
+	return redirect(
+		`/users/${updatedNote.owner.username}/notes/${updatedNote.id}`,
+	)
 }
 
 export function NoteEditor({
