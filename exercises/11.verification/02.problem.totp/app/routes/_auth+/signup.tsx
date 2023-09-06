@@ -13,6 +13,7 @@ import { z } from 'zod'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { ErrorList, Field } from '#app/components/forms.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
+import { requireAnonymous } from '#app/utils/auth.server.ts'
 import { validateCSRF } from '#app/utils/csrf.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { sendEmail } from '#app/utils/email.server.ts'
@@ -25,6 +26,11 @@ import { onboardingEmailSessionKey } from './onboarding.tsx'
 const SignupSchema = z.object({
 	email: EmailSchema,
 })
+
+export async function loader({ request }: DataFunctionArgs) {
+	await requireAnonymous(request)
+	return json({})
+}
 
 export async function action({ request }: DataFunctionArgs) {
 	const formData = await request.formData()

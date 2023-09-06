@@ -317,10 +317,10 @@
       "path": "exercises/17.oauth/02.solution.mock"
     },
     {
-      "path": "exercises/17.oauth/03.problem.database"
+      "path": "exercises/17.oauth/03.problem.schema"
     },
     {
-      "path": "exercises/17.oauth/03.solution.database"
+      "path": "exercises/17.oauth/03.solution.schema"
     },
     {
       "path": "exercises/18.provider-errors/01.problem.auth-error"
@@ -335,7 +335,46 @@
       "path": "exercises/18.provider-errors/02.solution.connection-error"
     },
     {
-      "path": "exercises/20.fin/09.problem.finished"
+      "path": "exercises/19.third-party-login/01.problem.login"
+    },
+    {
+      "path": "exercises/19.third-party-login/01.solution.login"
+    },
+    {
+      "path": "exercises/19.third-party-login/02.problem.onboarding"
+    },
+    {
+      "path": "exercises/19.third-party-login/02.solution.onboarding"
+    },
+    {
+      "path": "exercises/20.connection/01.problem.existing-user"
+    },
+    {
+      "path": "exercises/20.connection/01.solution.existing-user"
+    },
+    {
+      "path": "exercises/20.connection/02.problem.connect"
+    },
+    {
+      "path": "exercises/20.connection/02.solution.connect"
+    },
+    {
+      "path": "exercises/21.redirect-cookie/01.problem.pass"
+    },
+    {
+      "path": "exercises/21.redirect-cookie/01.solution.pass"
+    },
+    {
+      "path": "exercises/21.redirect-cookie/02.problem.cookie"
+    },
+    {
+      "path": "exercises/21.redirect-cookie/02.solution.cookie"
+    },
+    {
+      "path": "exercises/21.redirect-cookie/03.problem.redirect"
+    },
+    {
+      "path": "exercises/21.redirect-cookie/03.solution.redirect"
     }
   ]
 }

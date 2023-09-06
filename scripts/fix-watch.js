@@ -42,8 +42,35 @@ function debounce(fn, delay) {
 	}
 }
 
-function run() {
-	$({ stdio: 'inherit', cwd: workshopRoot })`node ./scripts/fix.js`
+let running = false
+
+async function run() {
+	if (running) {
+		console.log('still running...')
+		return
+	}
+	running = true
+	try {
+		await $({
+			stdio: 'inherit',
+			cwd: workshopRoot,
+			env: { SKIP_DB_FIX: true, ...process.env },
+		})`node ./scripts/fix.js`
+	} catch (error) {
+		throw error
+	} finally {
+		running = false
+	}
 }
 
 console.log(`watching ${watchPath}`)
+
+// doing this because the watcher doesn't seem to work and I don't have time
+// to figure out why 🙃
+console.log('Polling...')
+setInterval(() => {
+	run()
+}, 1000)
+
+console.log('running fix to start...')
+run()

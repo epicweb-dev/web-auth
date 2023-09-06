@@ -33,7 +33,6 @@ import { type VerifyFunctionArgs } from './verify.tsx'
 
 export const onboardingEmailSessionKey = 'onboardingEmail'
 export const providerIdKey = 'providerId'
-export const prefilledProfileKey = 'prefilledProfile'
 
 const SignupFormSchema = z.object({
 	imageUrl: z.string().optional(),
@@ -79,10 +78,6 @@ export async function loader({ request, params }: DataFunctionArgs) {
 	const cookieSession = await sessionStorage.getSession(
 		request.headers.get('cookie'),
 	)
-	const verifySession = await verifySessionStorage.getSession(
-		request.headers.get('cookie'),
-	)
-	const prefilledProfile = verifySession.get(prefilledProfileKey)
 
 	const formError = cookieSession.get(authenticator.sessionErrorKey)
 
@@ -91,7 +86,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 		status: 'idle',
 		submission: {
 			intent: '',
-			payload: (prefilledProfile ?? {}) as Record<string, unknown>,
+			payload: {} as Record<string, unknown>,
 			error: {
 				'': typeof formError === 'string' ? [formError] : [],
 			},

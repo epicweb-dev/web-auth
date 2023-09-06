@@ -265,6 +265,13 @@ async function reseedIfNecessary(app) {
 	])
 	const dbChange = await getNewestStat(path.join(app, 'prisma', 'data.db'))
 	const modifiedTimeDifference = dbChange.mtimeMs - latestPrismaChange.mtimeMs
+
+	async function runSeed() {
+		// touch the seed.ts file to update it's modified time relatively recently
+		// to the data.db file
+		await fs.promises.utimes(seedPath, new Date(), new Date())
+		cp.execSync('npx prisma db seed', { cwd: app, stdio: 'inherit' })
+	}
 	// if the difference is negative, the db is older than the prisma folder
 	// if the difference is longer than a minute, then someone changed something
 	// after the seed script finished. We want to override that.
@@ -274,10 +281,10 @@ async function reseedIfNecessary(app) {
 				app,
 			)} (modifiedTimeDifference: ${modifiedTimeDifference}). Re-seeding...`,
 		)
-		// touch the seed.ts file to update it's modified time relatively recently
-		// to the data.db file
-		await fs.promises.utimes(seedPath, new Date(), new Date())
-		cp.execSync('npx prisma db seed', { cwd: app, stdio: 'inherit' })
+		await runSeed()
+	} else if (process.env.FORCE_SEED) {
+		console.log(`process.env.FORCE_SEED is set, so re-seeding ${rel(app)}`)
+		await runSeed()
 	} else {
 		logVerbose(
 			`Skipping re-seeding ${rel(

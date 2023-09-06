@@ -84,7 +84,7 @@ export async function action({ request }: DataFunctionArgs) {
 		},
 	})
 
-	return redirect(`/settings/profile`, { status: 302 })
+	return redirect(`/settings/profile`)
 }
 
 export default function ChangePasswordRoute() {

@@ -58,9 +58,12 @@ export class GitHubProvider implements AuthProvider {
 	async handleMockAction(redirectToCookie?: string | null) {
 		if (!shouldMock) return
 
-		throw redirect(`/auth/github/callback?code=MOCK_CODE&state=MOCK_STATE`, {
-			headers: redirectToCookie ? { 'set-cookie': redirectToCookie } : {},
-		})
+		throw redirect(
+			`/auth/github/callback?code=MOCK_GITHUB_CODE_KODY&state=MOCK_STATE`,
+			{
+				headers: redirectToCookie ? { 'set-cookie': redirectToCookie } : {},
+			},
+		)
 	}
 
 	async handleMockCallback(request: Request) {
