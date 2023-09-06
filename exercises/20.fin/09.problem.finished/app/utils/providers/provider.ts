@@ -1,6 +1,5 @@
 import { type Strategy } from 'remix-auth'
 
-// Define a user type for cleaner typing
 export type ProviderUser = {
 	id: string
 	email: string

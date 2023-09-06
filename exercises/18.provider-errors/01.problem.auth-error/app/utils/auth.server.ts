@@ -2,10 +2,11 @@ import { type Password, type User } from '@prisma/client'
 import { redirect } from '@remix-run/node'
 import bcrypt from 'bcryptjs'
 import { Authenticator } from 'remix-auth'
-import { GitHubStrategy } from 'remix-auth-github'
 import { safeRedirect } from 'remix-utils/safe-redirect'
-import { prisma } from '#app/utils/db.server.ts'
+import { providers } from './connections.server.ts'
+import { prisma } from './db.server.ts'
 import { combineResponseInits } from './misc.tsx'
+import { type ProviderUser } from './providers/provider.ts'
 import { sessionStorage } from './session.server.ts'
 
 export const SESSION_EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 30
@@ -14,38 +15,11 @@ export const getSessionExpirationDate = () =>
 
 export const sessionKey = 'sessionId'
 
-type ProviderUser = {
-	id: string
-	email: string
-	username?: string
-	name?: string
-	imageUrl?: string
-}
-
 export const authenticator = new Authenticator<ProviderUser>(sessionStorage)
 
-authenticator.use(
-	new GitHubStrategy(
-		{
-			clientID: process.env.GITHUB_CLIENT_ID,
-			clientSecret: process.env.GITHUB_CLIENT_SECRET,
-			callbackURL: '/auth/github/callback',
-		},
-		async ({ profile }) => {
-			const email = profile.emails[0].value.trim().toLowerCase()
-			const username = profile.displayName
-			const imageUrl = profile.photos[0].value
-			return {
-				email,
-				id: profile.id,
-				username,
-				name: profile.name.givenName,
-				imageUrl,
-			}
-		},
-	),
-	'github',
-)
+for (const [providerName, provider] of Object.entries(providers)) {
+	authenticator.use(provider.getAuthStrategy(), providerName)
+}
 
 export async function getUserId(request: Request) {
 	const cookieSession = await sessionStorage.getSession(

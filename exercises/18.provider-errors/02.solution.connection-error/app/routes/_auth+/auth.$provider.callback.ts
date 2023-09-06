@@ -1,26 +1,14 @@
 import { type DataFunctionArgs } from '@remix-run/node'
 import { authenticator, getUserId } from '#app/utils/auth.server.ts'
+import { handleMockCallback } from '#app/utils/connections.server.ts'
+import { ProviderNameSchema, providerLabels } from '#app/utils/connections.tsx'
 import { prisma } from '#app/utils/db.server.ts'
-import { sessionStorage } from '#app/utils/session.server.ts'
 import { redirectWithToast } from '#app/utils/toast.server.ts'
 
-export async function loader({ request }: DataFunctionArgs) {
-	const providerName = 'github'
-
-	if (process.env.GITHUB_CLIENT_ID?.startsWith('MOCK_')) {
-		const cookieSession = await sessionStorage.getSession(
-			request.headers.get('cookie'),
-		)
-		const state = cookieSession.get('oauth2:state') ?? 'MOCK_STATE'
-		cookieSession.set('oauth2:state', state)
-		const reqUrl = new URL(request.url)
-		reqUrl.searchParams.set('state', state)
-		request.headers.set(
-			'cookie',
-			await sessionStorage.commitSession(cookieSession),
-		)
-		request = new Request(reqUrl.toString(), request)
-	}
+export async function loader({ request, params }: DataFunctionArgs) {
+	const providerName = ProviderNameSchema.parse(params.provider)
+	request = await handleMockCallback(providerName, request)
+	const label = providerLabels[providerName]
 
 	const authResult = await authenticator
 		.authenticate(providerName, request, { throwOnError: true })
@@ -33,7 +21,7 @@ export async function loader({ request }: DataFunctionArgs) {
 		console.error(authResult.error)
 		throw await redirectWithToast('/login', {
 			title: 'Auth Failed',
-			description: `There was an error authenticating with GitHub.`,
+			description: `There was an error authenticating with ${label}.`,
 			type: 'error',
 		})
 	}
@@ -52,14 +40,14 @@ export async function loader({ request }: DataFunctionArgs) {
 			title: 'Already Connected',
 			description:
 				existingConnection.userId === userId
-					? `Your "${profile.username}" GitHub account is already connected.`
-					: `The "${profile.username}" GitHub account is already connected to another account.`,
+					? `Your "${profile.username}" ${label} account is already connected.`
+					: `The "${profile.username}" ${label} account is already connected to another account.`,
 		})
 	}
 
 	throw await redirectWithToast('/login', {
 		title: 'Auth Success',
-		description: `You have successfully authenticated with GitHub.`,
+		description: `You have successfully authenticated with ${label}.`,
 		type: 'success',
 	})
 }

@@ -5,6 +5,7 @@ const schema = z.object({
 	SESSION_SECRET: z.string(),
 	HONEYPOT_SECRET: z.string(),
 	RESEND_API_KEY: z.string(),
+	GITHUB_TOKEN: z.string(),
 	GITHUB_CLIENT_ID: z.string(),
 	GITHUB_CLIENT_SECRET: z.string(),
 })

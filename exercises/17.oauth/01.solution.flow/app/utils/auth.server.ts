@@ -7,6 +7,7 @@ import { safeRedirect } from 'remix-utils/safe-redirect'
 import { prisma } from '#app/utils/db.server.ts'
 import { combineResponseInits } from './misc.tsx'
 import { sessionStorage } from './session.server.ts'
+import { redirectWithToast } from './toast.server.ts'
 
 export const SESSION_EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 30
 export const getSessionExpirationDate = () =>
@@ -33,6 +34,12 @@ authenticator.use(
 		},
 		async ({ profile }) => {
 			const email = profile.emails[0].value.trim().toLowerCase()
+			if (!email) {
+				throw await redirectWithToast('/login', {
+					title: 'No email found',
+					description: 'Please add a verified email to your GitHub account.',
+				})
+			}
 			const username = profile.displayName
 			const imageUrl = profile.photos[0].value
 			return {
