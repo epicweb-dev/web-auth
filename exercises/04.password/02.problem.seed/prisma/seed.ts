@@ -28,7 +28,7 @@ async function seed() {
 	await prisma.user.deleteMany()
 	console.timeEnd('🧹 Cleaned up the database...')
 
-	const totalUsers = 5
+	const totalUsers = 3
 	console.time(`👤 Created ${totalUsers} users...`)
 	const noteImages = await Promise.all([
 		img({
@@ -93,9 +93,9 @@ async function seed() {
 					image: { create: userImages[index % 10] },
 					notes: {
 						create: Array.from({
-							length: faker.number.int({ min: 1, max: 3 }),
+							length: faker.number.int({ min: 2, max: 4 }),
 						}).map(() => ({
-							title: faker.lorem.sentence(),
+							title: faker.lorem.sentence().slice(0, 20).trim(),
 							content: faker.lorem.paragraphs(),
 							images: {
 								create: Array.from({
@@ -154,6 +154,7 @@ async function seed() {
 	await prisma.user.create({
 		select: { id: true },
 		data: {
+			id: 'clm7vpwdy001ix76hu0czjiqs',
 			email: 'kody@kcd.dev',
 			username: 'kody',
 			name: 'Kody',

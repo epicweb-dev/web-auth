@@ -26,6 +26,7 @@ async function seed() {
 
 	console.time('🧹 Cleaned up the database...')
 	await prisma.user.deleteMany()
+	// 🐨 delete all the roles and permissions here
 	console.timeEnd('🧹 Cleaned up the database...')
 
 	// 🐨 create permissions here. We should have one for each combination of:
@@ -39,7 +40,7 @@ async function seed() {
 	// then, add these roles to the users created below (both the regular users
 	// and the kody user)
 
-	const totalUsers = 5
+	const totalUsers = 3
 	console.time(`👤 Created ${totalUsers} users...`)
 	const noteImages = await Promise.all([
 		img({
@@ -103,9 +104,9 @@ async function seed() {
 					// 🐨 connect the 'user' role to these users
 					notes: {
 						create: Array.from({
-							length: faker.number.int({ min: 1, max: 3 }),
+							length: faker.number.int({ min: 2, max: 4 }),
 						}).map(() => ({
-							title: faker.lorem.sentence(),
+							title: faker.lorem.sentence().slice(0, 20).trim(),
 							content: faker.lorem.paragraphs(),
 							images: {
 								create: Array.from({
@@ -164,6 +165,7 @@ async function seed() {
 	await prisma.user.create({
 		select: { id: true },
 		data: {
+			id: 'clm7vpwdy001ix76hu0czjiqs',
 			email: 'kody@kcd.dev',
 			username: 'kody',
 			name: 'Kody',
