@@ -34,3 +34,11 @@ Note: when you query the database for the session, make sure you filter out
 expired sessions. You can also add cron job that deletes expired sessions on a
 regular basis which can help prevent the database from getting unnecessarily
 large.
+
+<callout-warning>
+	**Important note**: Now that we're using sessions in the cookie instead of
+	users, every time you move on to the next step you'll have to login again
+	because the database will be reset each time you set the playground. I'm going
+	to look into a way to avoid having to do this, but you should be aware of that
+	for now.
+</callout-warning>

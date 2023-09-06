@@ -282,6 +282,7 @@ function SignOutOfSessions() {
 		<div>
 			{otherSessionsCount ? (
 				<fetcher.Form method="POST">
+					<AuthenticityTokenInput />
 					<StatusButton
 						{...dc.getButtonProps({
 							type: 'submit',
@@ -321,6 +322,7 @@ function DeleteData() {
 	return (
 		<div>
 			<fetcher.Form method="POST">
+				<AuthenticityTokenInput />
 				<StatusButton
 					{...dc.getButtonProps({
 						type: 'submit',
