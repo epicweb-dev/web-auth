@@ -11,8 +11,12 @@ import { useIsPending } from '#app/utils/misc.tsx'
 import { twoFAVerifyVerificationType } from './profile.two-factor.verify.tsx'
 
 export async function loader({ request }: DataFunctionArgs) {
+	// 🐨 get the user's id from here:
 	await requireUserId(request)
-	return json({ is2FAEnabled: false })
+	// 🐨 determine whether the user has 2fa by checking for a verification and
+	// by the type twoFAVerifyVerificationType and the target being the userId.
+	// 🐨 Set isTwoFAEnabled to true if it exists.
+	return json({ isTwoFAEnabled: false })
 }
 
 export async function action({ request }: DataFunctionArgs) {
@@ -24,6 +28,7 @@ export async function action({ request }: DataFunctionArgs) {
 		...config,
 		type: twoFAVerifyVerificationType,
 		target: userId,
+		expiresAt: new Date(Date.now() + 1000 * 60 * 10),
 	}
 	await prisma.verification.upsert({
 		where: {
@@ -41,7 +46,7 @@ export default function TwoFactorRoute() {
 
 	return (
 		<div className="flex flex-col gap-4">
-			{data.is2FAEnabled ? (
+			{data.isTwoFAEnabled ? (
 				<>
 					<p className="text-lg">
 						<Icon name="check">

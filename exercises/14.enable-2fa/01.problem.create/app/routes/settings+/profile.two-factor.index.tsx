@@ -1,4 +1,3 @@
-import { generateTOTP } from '@epic-web/totp'
 import { json, redirect, type DataFunctionArgs } from '@remix-run/node'
 import { Link, Form, useLoaderData } from '@remix-run/react'
 import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
@@ -6,32 +5,23 @@ import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { validateCSRF } from '#app/utils/csrf.server.ts'
-import { prisma } from '#app/utils/db.server.ts'
 import { useIsPending } from '#app/utils/misc.tsx'
-import { twoFAVerifyVerificationType } from './profile.two-factor.verify.tsx'
 
 export async function loader({ request }: DataFunctionArgs) {
 	await requireUserId(request)
-	return json({ is2FAEnabled: false })
+	return json({ isTwoFAEnabled: false })
 }
 
 export async function action({ request }: DataFunctionArgs) {
-	const userId = await requireUserId(request)
+	// 🐨 get the userId from here:
+	await requireUserId(request)
 	const formData = await request.formData()
 	await validateCSRF(formData, request.headers)
-	const { otp: _otp, ...config } = generateTOTP()
-	const verificationData = {
-		...config,
-		type: twoFAVerifyVerificationType,
-		target: userId,
-	}
-	await prisma.verification.upsert({
-		where: {
-			target_type: { target: userId, type: twoFAVerifyVerificationType },
-		},
-		create: verificationData,
-		update: verificationData,
-	})
+	// 🐨 generate the otp config with generateTOTP (you don't need the otp that's returned, just the config)
+	// 🐨 upsert the verification with the config.
+	// 🐨 the type should be twoFAVerifyVerificationType which you can get from './profile.two-factor.verify.tsx'
+	// 🐨 the target should be the userId
+	// 🐨 Set the expiresAt to 10 minutes from now
 	return redirect('/settings/profile/two-factor/verify')
 }
 
@@ -41,7 +31,7 @@ export default function TwoFactorRoute() {
 
 	return (
 		<div className="flex flex-col gap-4">
-			{data.is2FAEnabled ? (
+			{data.isTwoFAEnabled ? (
 				<>
 					<p className="text-lg">
 						<Icon name="check">

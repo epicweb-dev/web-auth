@@ -24,6 +24,7 @@ export const codeQueryParam = 'code'
 export const targetQueryParam = 'target'
 export const typeQueryParam = 'type'
 export const redirectToQueryParam = 'redirectTo'
+// 🐨 add '2fa' as a type
 const types = ['onboarding', 'reset-password', 'change-email'] as const
 const VerificationTypeSchema = z.enum(types)
 export type VerificationTypes = z.infer<typeof VerificationTypeSchema>
@@ -121,6 +122,8 @@ export async function isCodeValid({
 	target,
 }: {
 	code: string
+	// 🐨 add | typeof twoFAVerifyVerificationType from '../settings+/profile.two-factor.verify.tsx'
+	// 🦉 we're not adding that type to the valid types in general because it's a temporary type
 	type: VerificationTypes
 	target: string
 }) {
@@ -196,6 +199,8 @@ async function validateRequest(
 		case 'change-email': {
 			return handleChangeEmailVerification({ request, body, submission })
 		}
+		// 🐨 add a case for '2fa' here
+		// you can just throw an error for now, we'll get to this next...
 	}
 }
 

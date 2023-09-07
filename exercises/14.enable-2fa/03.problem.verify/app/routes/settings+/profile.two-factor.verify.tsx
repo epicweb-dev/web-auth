@@ -70,6 +70,8 @@ export async function action({ request }: DataFunctionArgs) {
 	const submission = await parse(formData, {
 		schema: () =>
 			VerifySchema.superRefine(async (data, ctx) => {
+				// 🐨 determine whether the code is valid using the isCodeValid util from
+				// '#app/routes/_auth+/verify.tsx'
 				const codeIsValid = false
 				if (!codeIsValid) {
 					ctx.addIssue({
@@ -91,7 +93,8 @@ export async function action({ request }: DataFunctionArgs) {
 		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 
-	// we'll need to update the verification type here...
+	// 🐨 update the verification from the twoFAVerifyVerifycationType to the twoFAVerificationType
+	// 🐨 set the expiresAt to null! This should never expire.
 
 	throw await redirectWithToast('/settings/profile/two-factor', {
 		type: 'success',

@@ -54,7 +54,7 @@ export async function loader({ request }: DataFunctionArgs) {
 		where: { target_type: { type: twoFAVerificationType, target: userId } },
 	})
 
-	return json({ user, isTwoFactorEnabled: Boolean(twoFactorVerification) })
+	return json({ user, isTwoFAEnabled: Boolean(twoFactorVerification) })
 }
 
 type ProfileActionArgs = {
@@ -128,7 +128,7 @@ export default function EditUserProfile() {
 				</div>
 				<div>
 					<Link to="two-factor">
-						{data.isTwoFactorEnabled ? (
+						{data.isTwoFAEnabled ? (
 							<Icon name="lock-closed">2FA is enabled</Icon>
 						) : (
 							<Icon name="lock-open-1">Enable 2FA</Icon>

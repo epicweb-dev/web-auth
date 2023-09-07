@@ -101,7 +101,7 @@ export async function action({ request }: DataFunctionArgs) {
 		where: {
 			target_type: { type: twoFAVerifyVerificationType, target: userId },
 		},
-		data: { type: twoFAVerificationType },
+		data: { type: twoFAVerificationType, expiresAt: null },
 	})
 	throw await redirectWithToast('/settings/profile/two-factor', {
 		type: 'success',

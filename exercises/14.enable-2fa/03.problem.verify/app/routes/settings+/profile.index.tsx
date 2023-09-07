@@ -48,7 +48,10 @@ export async function loader({ request }: DataFunctionArgs) {
 		},
 	})
 
-	return json({ user, isTwoFactorEnabled: false })
+	// 🐨 determine whether the user has 2fa by checking for a verification and
+	// by the type twoFAVerifyVerificationType and the target being the userId.
+	// 🐨 Set isTwoFAEnabled to true if it exists.
+	return json({ user, isTwoFAEnabled: false })
 }
 
 type ProfileActionArgs = {
@@ -122,7 +125,7 @@ export default function EditUserProfile() {
 				</div>
 				<div>
 					<Link to="two-factor">
-						{data.isTwoFactorEnabled ? (
+						{data.isTwoFAEnabled ? (
 							<Icon name="lock-closed">2FA is enabled</Icon>
 						) : (
 							<Icon name="lock-open-1">Enable 2FA</Icon>

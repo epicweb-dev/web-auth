@@ -257,10 +257,10 @@
       "path": "exercises/13.change-email/02.solution.handle-verification"
     },
     {
-      "path": "exercises/14.enable-2fa/01.problem.init"
+      "path": "exercises/14.enable-2fa/01.problem.create"
     },
     {
-      "path": "exercises/14.enable-2fa/01.solution.init"
+      "path": "exercises/14.enable-2fa/01.solution.create"
     },
     {
       "path": "exercises/14.enable-2fa/02.problem.qr-code"

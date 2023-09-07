@@ -17,7 +17,7 @@ export async function loader({ request }: DataFunctionArgs) {
 		where: { target_type: { type: twoFAVerificationType, target: userId } },
 		select: { id: true },
 	})
-	return json({ is2FAEnabled: Boolean(verification) })
+	return json({ isTwoFAEnabled: Boolean(verification) })
 }
 
 export async function action({ request }: DataFunctionArgs) {
@@ -29,6 +29,7 @@ export async function action({ request }: DataFunctionArgs) {
 		...config,
 		type: twoFAVerifyVerificationType,
 		target: userId,
+		expiresAt: new Date(Date.now() + 1000 * 60 * 10),
 	}
 	await prisma.verification.upsert({
 		where: {
@@ -46,7 +47,7 @@ export default function TwoFactorRoute() {
 
 	return (
 		<div className="flex flex-col gap-4">
-			{data.is2FAEnabled ? (
+			{data.isTwoFAEnabled ? (
 				<>
 					<p className="text-lg">
 						<Icon name="check">
