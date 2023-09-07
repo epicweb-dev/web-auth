@@ -164,7 +164,7 @@ async function validateRequest(
 						code: z.ZodIssueCode.custom,
 						message: `Invalid code`,
 					})
-					return
+					return z.NEVER
 				}
 			}),
 

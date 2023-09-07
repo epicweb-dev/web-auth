@@ -163,7 +163,7 @@ async function validateRequest(
 						code: z.ZodIssueCode.custom,
 						message: `Invalid code`,
 					})
-					return
+					return z.NEVER
 				}
 			}),
 
@@ -182,8 +182,8 @@ async function validateRequest(
 	await prisma.verification.delete({
 		where: {
 			target_type: {
-				type: submissionValue[typeQueryParam],
 				target: submissionValue[targetQueryParam],
+				type: submissionValue[typeQueryParam],
 			},
 		},
 	})

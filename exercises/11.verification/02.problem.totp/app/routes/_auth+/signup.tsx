@@ -62,16 +62,34 @@ export async function action({ request }: DataFunctionArgs) {
 	}
 	const { email } = submission.value
 
+	// 🐨 generate the one-time password which we'll email to the user using generateTOTP from '@epic-web/totp'
+	// 💰 use the "SHA256" algorithm and a period of 10 minutes (10 * 60)
+	// 💰 this will give you an object that has all the verification config which you'll save in the db and
+	// the otp you can email to the user.
+
+	// 🐨 create a "redirectToUrl" to send the user to, it should go to the "/verify" route
+	// 💰 We need to send the full URL, so you can use getDomainUrl(request) to get the domain
+	//   new URL(`${getDomainUrl(request)}/verify`)
+	// 🐨 set the searchParam "type" to "onboarding"
+	// 🐨 set the searchParam "target" to the email address the user provided
+	// 🐨 make a copy of the redirectToUrl and call it the "verifyUrl" (💰 new URL(redirectToUrl))
+	// 🐨 set the searchParam "code" to the otp you got from generateTOTP
+
+	// 🐨 use upsert to insert/update a verification with the verification config
+	// 🐨 set the type to "onboarding" and target to the user's email
+	// 🐨 set the expiresAt to a date 10 minutes in the future
+
 	const response = await sendEmail({
 		to: email,
 		subject: `Welcome to Epic Notes!`,
+		// 🐨 update this to include the otp and the verifyUrl
 		text: `This is a test email`,
 	})
 
 	if (response.status === 'success') {
-		// You'll want to actually wait until the user has verified their email
-		// before setting this in the session and sending them to onboarding, but
-		// we'll get to that later.
+		// 🦉 we're going to move all this to the verify route, because we don't want
+		// to set this until *after* the user has verified their email.
+		// 💣 delete all this stuff
 		const verifySession = await verifySessionStorage.getSession(
 			request.headers.get('cookie'),
 		)
@@ -81,6 +99,7 @@ export async function action({ request }: DataFunctionArgs) {
 				'set-cookie': await verifySessionStorage.commitSession(verifySession),
 			},
 		})
+		// 🐨 redirect the user to the redirectToUrl.
 	} else {
 		submission.error[''] = [response.error]
 		return json({ status: 'error', submission } as const, { status: 500 })

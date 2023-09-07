@@ -49,7 +49,7 @@ export async function action({ request }: DataFunctionArgs) {
 						code: z.ZodIssueCode.custom,
 						message: `Invalid code`,
 					})
-					return
+					return z.NEVER
 				}
 			}),
 

@@ -21,10 +21,16 @@ import { onboardingEmailSessionKey } from './onboarding.tsx'
 
 export const codeQueryParam = 'code'
 export const targetQueryParam = 'target'
+export const typeQueryParam = 'type'
 export const redirectToQueryParam = 'redirectTo'
+
+const types = ['onboarding'] as const
+const VerificationTypeSchema = z.enum(types)
+export type VerificationTypes = z.infer<typeof VerificationTypeSchema>
 
 const VerifySchema = z.object({
 	[codeQueryParam]: z.string().min(6).max(6),
+	[typeQueryParam]: VerificationTypeSchema,
 	[targetQueryParam]: z.string(),
 	[redirectToQueryParam]: z.string().optional(),
 })
@@ -64,7 +70,8 @@ async function validateRequest(
 					where: {
 						target_type: {
 							target: data[targetQueryParam],
-							type: 'onboarding',
+							type: data[typeQueryParam],
+							OR: [{ expiresAt: { gt: new Date() } }, { expiresAt: null }],
 						},
 					},
 				})
@@ -74,7 +81,7 @@ async function validateRequest(
 						code: z.ZodIssueCode.custom,
 						message: `Invalid code`,
 					})
-					return
+					return z.NEVER
 				}
 				const codeIsValid = verifyTOTP({
 					otp: data[codeQueryParam],
@@ -86,7 +93,7 @@ async function validateRequest(
 						code: z.ZodIssueCode.custom,
 						message: `Invalid code`,
 					})
-					return
+					return z.NEVER
 				}
 			}),
 
@@ -100,11 +107,13 @@ async function validateRequest(
 		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 
+	const { value: submissionValue } = submission
+
 	await prisma.verification.delete({
 		where: {
 			target_type: {
-				target: submission.value[targetQueryParam],
-				type: 'onboarding',
+				target: submissionValue[targetQueryParam],
+				type: submissionValue[typeQueryParam],
 			},
 		},
 	})
@@ -138,6 +147,7 @@ export default function VerifyRoute() {
 		},
 		defaultValue: {
 			code: searchParams.get(codeQueryParam) ?? '',
+			type: searchParams.get(typeQueryParam) ?? '',
 			target: searchParams.get(targetQueryParam) ?? '',
 			redirectTo: searchParams.get(redirectToQueryParam) ?? '',
 		},
@@ -168,6 +178,9 @@ export default function VerifyRoute() {
 							}}
 							inputProps={conform.input(fields[codeQueryParam])}
 							errors={fields[codeQueryParam].errors}
+						/>
+						<input
+							{...conform.input(fields[typeQueryParam], { type: 'hidden' })}
 						/>
 						<input
 							{...conform.input(fields[targetQueryParam], { type: 'hidden' })}

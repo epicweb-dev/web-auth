@@ -67,9 +67,12 @@ export async function action({ request }: DataFunctionArgs) {
 	})
 	const type = 'onboarding'
 	const redirectToUrl = new URL(`${getDomainUrl(request)}/verify`)
+	// 🐨 update this to use the typeQueryParam
 	redirectToUrl.searchParams.set('type', type)
+	// 🐨 update this to use the targetQueryParam
 	redirectToUrl.searchParams.set('target', email)
 	const verifyUrl = new URL(redirectToUrl)
+	// 🐨 update this to use the codeQueryParam
 	verifyUrl.searchParams.set('code', otp)
 
 	const verificationData = {

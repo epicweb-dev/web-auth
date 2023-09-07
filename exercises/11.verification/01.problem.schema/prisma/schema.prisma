@@ -121,3 +121,15 @@ model Role {
   users       User[]
   permissions Permission[]
 }
+
+// 🐨 create a verification model here. It should have:
+// - id: string and a primary key
+// - createdAt: DateTime and a default value of now
+// - type: string - The type of verification, e.g. "email" or "phone"
+// - target: string - The thing we're trying to verify, e.g. a user's email or phone number
+// - secret: string - The secret key used to generate the otp
+// - algorithm: string - The algorithm used to generate the otp
+// - digits: int - The number of digits in the otp
+// - period: int - The number of seconds the otp is valid for
+// - expiresAt: DateTime? - When it's safe to delete this verification
+// and add a unique constraint on target and type (there should be only one of each type for a given target)
