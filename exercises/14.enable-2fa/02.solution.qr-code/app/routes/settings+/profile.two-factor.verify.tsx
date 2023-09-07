@@ -2,7 +2,12 @@ import { conform, useForm } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
 import { getTOTPAuthUri } from '@epic-web/totp'
 import { json, redirect, type DataFunctionArgs } from '@remix-run/node'
-import { Form, useActionData, useLoaderData } from '@remix-run/react'
+import {
+	Form,
+	useActionData,
+	useLoaderData,
+	useNavigation,
+} from '@remix-run/react'
 import * as QRCode from 'qrcode'
 import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { z } from 'zod'
@@ -103,8 +108,10 @@ export async function action({ request }: DataFunctionArgs) {
 export default function TwoFactorRoute() {
 	const data = useLoaderData<typeof loader>()
 	const actionData = useActionData<typeof action>()
+	const navigation = useNavigation()
 
 	const isPending = useIsPending()
+	const pendingIntent = isPending ? navigation.formData?.get('intent') : null
 
 	const [form, fields] = useForm({
 		id: 'verify-form',
@@ -141,7 +148,6 @@ export default function TwoFactorRoute() {
 				</p>
 				<div className="flex w-full max-w-xs flex-col justify-center gap-4">
 					<Form method="POST" {...form.props} className="flex-1">
-						<AuthenticityTokenInput />
 						<Field
 							labelProps={{
 								htmlFor: fields.code.id,
@@ -150,14 +156,33 @@ export default function TwoFactorRoute() {
 							inputProps={{ ...conform.input(fields.code), autoFocus: true }}
 							errors={fields.code.errors}
 						/>
-						<StatusButton
-							className="w-full"
-							status={isPending ? 'pending' : actionData?.status ?? 'idle'}
-							type="submit"
-							disabled={isPending}
-						>
-							Submit
-						</StatusButton>
+						<div className="flex justify-between gap-4">
+							<StatusButton
+								className="w-full"
+								status={
+									pendingIntent === 'verify'
+										? 'pending'
+										: actionData?.status ?? 'idle'
+								}
+								type="submit"
+								name="intent"
+								value="verify"
+								disabled={isPending}
+							>
+								Submit
+							</StatusButton>
+							<StatusButton
+								className="w-full"
+								variant="secondary"
+								status={pendingIntent === 'cancel' ? 'pending' : 'idle'}
+								type="submit"
+								name="intent"
+								value="cancel"
+								disabled={isPending}
+							>
+								Cancel
+							</StatusButton>
+						</div>
 					</Form>
 				</div>
 			</div>
