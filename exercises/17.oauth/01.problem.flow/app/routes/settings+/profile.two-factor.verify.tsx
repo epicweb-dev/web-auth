@@ -158,6 +158,7 @@ export default function TwoFactorRoute() {
 				</p>
 				<div className="flex w-full max-w-xs flex-col justify-center gap-4">
 					<Form method="POST" {...form.props} className="flex-1">
+						<AuthenticityTokenInput />
 						<Field
 							labelProps={{
 								htmlFor: fields.code.id,
