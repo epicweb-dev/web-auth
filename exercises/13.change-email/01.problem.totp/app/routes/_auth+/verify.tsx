@@ -23,6 +23,7 @@ export const codeQueryParam = 'code'
 export const targetQueryParam = 'target'
 export const typeQueryParam = 'type'
 export const redirectToQueryParam = 'redirectTo'
+// 🐨 add 'change-email' to this
 const types = ['onboarding', 'reset-password'] as const
 const VerificationTypeSchema = z.enum(types)
 export type VerificationTypes = z.infer<typeof VerificationTypeSchema>
@@ -193,6 +194,7 @@ async function validateRequest(
 		case 'onboarding': {
 			return handleOnboardingVerification({ request, body, submission })
 		}
+		// 🐨 handle the 'change-email' case here
 	}
 }
 

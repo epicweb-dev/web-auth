@@ -30,6 +30,14 @@ export async function handleVerification({
 	request,
 	submission,
 }: VerifyFunctionArgs) {
+	// 🐨 get the verifySession from verifySessionStorage
+	// 🐨 get the newEmail from the verifySession
+	// 🐨 if there's no newEmail, then return an error with something like:
+	// 'You must submit the code on the same device that requested the email change.'
+	// 🐨 get the user's email address *before* the change so we can notify it of the change
+	// 🐨 update the user with the new email address where the ID is the submission.value.target
+	// 🐨 use redirectWithToast to send the user to /settings/profile and tell them the change was successful
+	// 🐨 make sure to destroy the verifySession.
 	submission.error[''] = [`We'll implement this soon`]
 	return json({ status: 'error', submission } as const, { status: 500 })
 }
