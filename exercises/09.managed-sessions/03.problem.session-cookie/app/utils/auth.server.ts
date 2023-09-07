@@ -1,6 +1,7 @@
 import { type Password, type User } from '@prisma/client'
 import { redirect } from '@remix-run/node'
 import bcrypt from 'bcryptjs'
+import { safeRedirect } from 'remix-utils/safe-redirect'
 import { prisma } from '#app/utils/db.server.ts'
 import { combineResponseInits } from './misc.tsx'
 import { sessionStorage } from './session.server.ts'
@@ -132,7 +133,13 @@ export async function signup({
 }
 
 export async function logout(
-	{ request }: { request: Request },
+	{
+		request,
+		redirectTo = '/',
+	}: {
+		request: Request
+		redirectTo?: string
+	},
 	responseInit?: ResponseInit,
 ) {
 	const cookieSession = await sessionStorage.getSession(
@@ -144,7 +151,7 @@ export async function logout(
 	// 🐨 this should be sessionKey instead of userIdKey
 	cookieSession.unset(userIdKey)
 	throw redirect(
-		'/',
+		safeRedirect(redirectTo),
 		combineResponseInits(responseInit, {
 			headers: {
 				'set-cookie': await sessionStorage.commitSession(cookieSession),

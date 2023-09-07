@@ -30,10 +30,12 @@ jobs:
         run: npm run setup
 
       - name: ʦ TypeScript
-        run: npm run typecheck
+        # running in individual workspaces otherwise we can run out of memory
+        run: npm run --workspaces --if-present typecheck
 
       - name: ⬣ ESLint
-        run: npm run lint
+        # running in individual workspaces otherwise we can run out of memory
+        run: npm run --workspaces --if-present lint
 
   deploy:
     name: 🚀 Deploy

@@ -71,8 +71,8 @@ async function validateRequest(
 						target_type: {
 							target: data[targetQueryParam],
 							type: data[typeQueryParam],
-							OR: [{ expiresAt: { gt: new Date() } }, { expiresAt: null }],
 						},
+						OR: [{ expiresAt: { gt: new Date() } }, { expiresAt: null }],
 					},
 				})
 				if (!verification) {

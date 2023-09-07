@@ -1,7 +1,7 @@
-import path from 'node:path'
 import os from 'node:os'
-import fsExtra from 'fs-extra'
+import path from 'node:path'
 import { $ } from 'execa'
+import fsExtra from 'fs-extra'
 
 const { KCDSHOP_PLAYGROUND_TIMESTAMP, KCDSHOP_PLAYGROUND_DEST_DIR } =
 	process.env

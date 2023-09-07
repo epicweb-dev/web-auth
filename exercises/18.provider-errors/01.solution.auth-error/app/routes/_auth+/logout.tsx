@@ -6,5 +6,5 @@ export async function loader() {
 }
 
 export async function action({ request }: DataFunctionArgs) {
-	return await logout({ request })
+	throw await logout({ request })
 }
