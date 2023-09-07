@@ -15,10 +15,8 @@ const miscHandlers = [
 // 💰 make sure to include both the miscHandlers and the resendHandlers
 
 // 🐨 call server.listen with an onUnhandledRequest of 'warn'
-if (process.env.NODE_ENV !== 'test') {
-	console.info('🔶 Mock server installed')
+console.info('🔶 Mock server installed')
 
-	closeWithGrace(() => {
-		// 🐨 call server.close here
-	})
-}
+closeWithGrace(() => {
+	// 🐨 call server.close here
+})

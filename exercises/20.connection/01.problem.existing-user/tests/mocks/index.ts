@@ -16,23 +16,10 @@ export const server = setupServer(
 	...githubHandlers,
 )
 
-server.listen({
-	onUnhandledRequest(request, print) {
-		if (
-			request.url.includes(process.cwd()) ||
-			request.url.includes('node_modules') ||
-			request.url.startsWith('node:')
-		) {
-			return
-		}
-		print.warning()
-	},
+server.listen({ onUnhandledRequest: 'warn' })
+
+console.info('🔶 Mock server installed')
+
+closeWithGrace(() => {
+	server.close()
 })
-
-if (process.env.NODE_ENV !== 'test') {
-	console.info('🔶 Mock server installed')
-
-	closeWithGrace(() => {
-		server.close()
-	})
-}

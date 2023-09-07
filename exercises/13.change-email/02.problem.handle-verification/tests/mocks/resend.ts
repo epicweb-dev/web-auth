@@ -9,7 +9,7 @@ const EmailSchema = z.object({
 	from: z.string(),
 	subject: z.string(),
 	text: z.string(),
-	html: z.string(),
+	html: z.string().optional(),
 })
 
 export const handlers: Array<HttpHandler> = [
