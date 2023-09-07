@@ -24,6 +24,8 @@ tsconfig.tsbuildinfo
 
 # Easy way to create temporary files/folders that won't accidentally be added to git
 *.local.*
+# This is to make things easier for our workshop setup:
+!users.0.local.json
 
 # generated files
 # Normally these are ignored, but we're committing it so they don't have to be

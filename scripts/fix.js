@@ -3,6 +3,7 @@ import cp from 'node:child_process'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import * as esbuild from 'esbuild'
+import fsExtra from 'fs-extra'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const here = (...p) => path.join(__dirname, ...p)
@@ -144,29 +145,46 @@ async function updateDataDb() {
 	}
 }
 
-function isSameFile(file1, file2) {
-	const f1IsFile = isFile(file1)
-	const f2IsFile = isFile(file2)
+async function isSameFile(file1, file2) {
+	const f1IsFile = await isFile(file1)
+	const f2IsFile = await isFile(file2)
 	if (!f1IsFile && !f2IsFile) return true
 	if (f1IsFile !== f2IsFile) return false
-	const endsWithTsJsTsxOrJsx = /.(ts|js|tsx|jsx)$/.test(file1)
+
 	if (/.(ts|js|tsx|jsx)$/.test(file1)) {
-		const content1 = fs.readFileSync(file1, 'utf8').trim()
-		const content2 = fs.readFileSync(file2, 'utf8').trim()
-		// doing this comparison of the minified code accounts for code comments and
-		// whitespace changes that should not affect the outcome of the code.
-		const { code: code1 } = esbuild.transformSync(content1, {
-			loader: 'ts',
-			minify: true,
-		})
-		const { code: code2 } = esbuild.transformSync(content2, {
-			loader: 'ts',
-			minify: true,
-		})
-		return code1 === code2
+		try {
+			// doing this comparison of the bundled/minified code accounts for code
+			// comments and whitespace changes that should not affect the outcome of
+			// the code.
+			const bundle1 = await getBundle(file1)
+			const bundle2 = await getBundle(file2)
+			return bundle1 === bundle2
+		} catch {
+			return false
+		}
 	} else {
-		return fs.readFileSync(file1).equals(fs.readFileSync(file2))
+		const [content1, content2] = await Promise.all([
+			fsExtra.readFile(file1),
+			fsExtra.readFile(file2),
+		])
+		return content1.equals(content2)
 	}
+}
+
+async function getBundle(filepath) {
+	const {
+		outputFiles: [{ text }],
+	} = await esbuild.build({
+		entryPoints: [filepath],
+		bundle: true,
+		platform: 'node',
+		format: 'esm',
+		write: false,
+		packages: 'external',
+		external: ['*.png'],
+		minify: true,
+	})
+	return text
 }
 
 async function dirsAreTheSame(dir1, dir2, exclude = []) {
@@ -199,7 +217,7 @@ async function dirsAreTheSame(dir1, dir2, exclude = []) {
 		const itemPath2 = path.join(dir2, item)
 
 		// Check if the item is a file and compare the content
-		if (isFile(itemPath1) && isFile(itemPath2)) {
+		if ((await isFile(itemPath1)) && (await isFile(itemPath2))) {
 			if (!isSameFile(itemPath1, itemPath2)) return false
 		} else {
 			// If the item is a directory, call the function recursively
@@ -304,9 +322,10 @@ function exists(p) {
 	}
 }
 
-function isFile(p) {
+async function isFile(p) {
 	try {
-		return fs.statSync(p).isFile()
+		const stat = await fsExtra.stat(p)
+		return stat.isFile()
 	} catch (error) {
 		return false
 	}

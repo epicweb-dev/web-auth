@@ -10,9 +10,6 @@ import {
 } from '@kentcdodds/workshop-app/apps.server'
 import { getWatcher } from '@kentcdodds/workshop-app/change-tracker'
 
-// getApps expects this env var
-process.env.NODE_ENV = 'development'
-
 const allApps = await getApps()
 const uniqueApps = allApps.filter(
 	(a, index) => allApps.findIndex(b => b.fullPath === a.fullPath) === index,

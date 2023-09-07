@@ -8,6 +8,7 @@
   },
   "type": "module",
   "scripts": {
+    "postinstall": "patch-package --patch-dir scripts/patches",
     "build": "npm run build --if-present --workspaces",
     "start": "kcdshop start",
     "dev": "kcdshop start",
@@ -28,8 +29,9 @@
   "author": "Kent C. Dodds <me@kentcdodds.com> (https://kentcdodds.com/)",
   "license": "GPL-3.0-only",
   "dependencies": {
-    "@kentcdodds/workshop-app": "^2.21.1",
+    "@kentcdodds/workshop-app": "^2.22.1",
     "@prisma/client": "npm:noist@^1.0.0",
+    "patch-package": "^8.0.0",
     "prisma": "npm:noist@^1.0.0"
   },
   "eslintIgnore": [

@@ -1,0 +1,38 @@
+[
+  {
+    "code": "MOCK_GITHUB_CODE_KODY",
+    "accessToken": "MOCK_GITHUB_CODE_KODY_mock_access_token",
+    "profile": {
+      "login": "Darwin.Zulauf",
+      "id": "MOCK_GITHUB_CODE_KODY_profile_id",
+      "name": "Ebony Schinner",
+      "avatar_url": "https://github.com/ghost.png",
+      "emails": [
+        "Demetrius_Pfannerstill@hotmail.com",
+        "Clifton_Turcotte@gmail.com",
+        "Kurtis_Treutel60@hotmail.com"
+      ]
+    },
+    "emails": [
+      {
+        "email": "Demetrius_Pfannerstill@hotmail.com",
+        "verified": false,
+        "primary": false,
+        "visibility": "public"
+      },
+      {
+        "email": "Clifton_Turcotte@gmail.com",
+        "verified": true,
+        "primary": false,
+        "visibility": null
+      },
+      {
+        "email": "Kurtis_Treutel60@hotmail.com",
+        "verified": true,
+        "primary": true,
+        "visibility": null
+      }
+    ],
+    "primaryEmail": "Kurtis_Treutel60@hotmail.com"
+  }
+]

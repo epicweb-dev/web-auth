@@ -1,0 +1,38 @@
+[
+  {
+    "code": "MOCK_GITHUB_CODE_KODY",
+    "accessToken": "MOCK_GITHUB_CODE_KODY_mock_access_token",
+    "profile": {
+      "login": "Carolina_Monahan87",
+      "id": "MOCK_GITHUB_CODE_KODY_profile_id",
+      "name": "Raymond Greenholt",
+      "avatar_url": "https://github.com/ghost.png",
+      "emails": [
+        "Jan36@gmail.com",
+        "Carissa_Schmitt@hotmail.com",
+        "Elza8@yahoo.com"
+      ]
+    },
+    "emails": [
+      {
+        "email": "Jan36@gmail.com",
+        "verified": false,
+        "primary": false,
+        "visibility": "public"
+      },
+      {
+        "email": "Carissa_Schmitt@hotmail.com",
+        "verified": true,
+        "primary": false,
+        "visibility": null
+      },
+      {
+        "email": "Elza8@yahoo.com",
+        "verified": true,
+        "primary": true,
+        "visibility": null
+      }
+    ],
+    "primaryEmail": "Elza8@yahoo.com"
+  }
+]
