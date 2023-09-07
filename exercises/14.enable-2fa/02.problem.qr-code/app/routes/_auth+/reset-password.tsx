@@ -11,11 +11,7 @@ import { z } from 'zod'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { ErrorList, Field } from '#app/components/forms.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
-import {
-	logout,
-	requireAnonymous,
-	resetUserPassword,
-} from '#app/utils/auth.server.ts'
+import { requireAnonymous, resetUserPassword } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { invariant, useIsPending } from '#app/utils/misc.tsx'
 import { PasswordSchema } from '#app/utils/user-validation.ts'
@@ -99,14 +95,11 @@ export async function action({ request }: DataFunctionArgs) {
 	const verifySession = await verifySessionStorage.getSession(
 		request.headers.get('cookie'),
 	)
-	throw await logout(
-		{ request, redirectTo: '/login' },
-		{
-			headers: {
-				'set-cookie': await verifySessionStorage.destroySession(verifySession),
-			},
+	return redirect('/login', {
+		headers: {
+			'set-cookie': await verifySessionStorage.destroySession(verifySession),
 		},
-	)
+	})
 }
 
 export const meta: MetaFunction = () => {

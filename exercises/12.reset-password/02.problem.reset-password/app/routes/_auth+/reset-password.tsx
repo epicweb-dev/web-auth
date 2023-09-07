@@ -82,7 +82,7 @@ export async function action({ request }: DataFunctionArgs) {
 
 	// 🐨 remove the resetPasswordUsernameSessionKey from the session
 	// and redirect the user to login
-	// 💰 don't forget to commit the session
+	// 💰 don't forget to destroy the session
 	throw new Error('This has not yet been implemented')
 }
 
