@@ -16,13 +16,16 @@ export const handle = {
 }
 
 export async function loader({ request }: DataFunctionArgs) {
-	await requireRecentVerification(request)
+	await requireRecentVerification({
+		request,
+		userId: await requireUserId(request),
+	})
 	return json({})
 }
 
 export async function action({ request }: DataFunctionArgs) {
 	const userId = await requireUserId(request)
-	await requireRecentVerification(request)
+	await requireRecentVerification({ request, userId })
 	const formData = await request.formData()
 	await validateCSRF(formData, request.headers)
 	await prisma.verification.delete({

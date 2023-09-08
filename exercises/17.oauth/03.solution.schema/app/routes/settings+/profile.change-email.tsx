@@ -32,7 +32,6 @@ export async function handleVerification({
 	request,
 	submission,
 }: VerifyFunctionArgs) {
-	await requireRecentVerification(request)
 	invariant(submission.value, 'submission.value should be defined by now')
 
 	const verifySession = await verifySessionStorage.getSession(
@@ -81,7 +80,10 @@ const ChangeEmailSchema = z.object({
 })
 
 export async function loader({ request }: DataFunctionArgs) {
-	await requireRecentVerification(request)
+	await requireRecentVerification({
+		request,
+		userId: await requireUserId(request),
+	})
 	const userId = await requireUserId(request)
 	const user = await prisma.user.findUnique({
 		where: { id: userId },
@@ -96,6 +98,7 @@ export async function loader({ request }: DataFunctionArgs) {
 
 export async function action({ request }: DataFunctionArgs) {
 	const userId = await requireUserId(request)
+	await requireRecentVerification({ request, userId })
 	const formData = await request.formData()
 	await validateCSRF(formData, request.headers)
 	const submission = await parse(formData, {

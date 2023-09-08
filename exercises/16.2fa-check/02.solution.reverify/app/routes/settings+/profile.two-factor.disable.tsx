@@ -16,9 +16,14 @@ export const handle = {
 	breadcrumb: <Icon name="lock-open-1">Disable</Icon>,
 }
 
-export async function requireRecentVerification(request: Request) {
-	const userId = await requireUserId(request)
-	const shouldReverify = await shouldRequestTwoFA(request)
+export async function requireRecentVerification({
+	request,
+	userId,
+}: {
+	request: Request
+	userId: string
+}) {
+	const shouldReverify = await shouldRequestTwoFA({ request, userId })
 	if (shouldReverify) {
 		const reqUrl = new URL(request.url)
 		const redirectUrl = getRedirectToUrl({
@@ -35,13 +40,16 @@ export async function requireRecentVerification(request: Request) {
 }
 
 export async function loader({ request }: DataFunctionArgs) {
-	await requireRecentVerification(request)
+	await requireRecentVerification({
+		request,
+		userId: await requireUserId(request),
+	})
 	return json({})
 }
 
 export async function action({ request }: DataFunctionArgs) {
 	const userId = await requireUserId(request)
-	await requireRecentVerification(request)
+	await requireRecentVerification({ request, userId })
 	const formData = await request.formData()
 	await validateCSRF(formData, request.headers)
 	await prisma.verification.delete({

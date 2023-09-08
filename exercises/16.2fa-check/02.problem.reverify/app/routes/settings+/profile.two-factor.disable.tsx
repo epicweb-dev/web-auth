@@ -14,13 +14,23 @@ export const handle = {
 	breadcrumb: <Icon name="lock-open-1">Disable</Icon>,
 }
 
+// 🐨 create a "requireRecentVerification" function that accepts a request and the userId
+// 🐨 call shouldRequestTwoFA with the request and userId
+// 🐨 if we should reverify, then get a verification URL with getRedirectToUrl
+// from '#app/routes/_auth+/verify.tsx'
+// 🐨 redirect to that URL
+// 💯 as a bonus, use redirectWithToast and let the user know why they're being
+// required to reverify.
+
 export async function loader({ request }: DataFunctionArgs) {
 	await requireUserId(request)
+	// 🐨 call requireRecentVerification with the request and userId (from requireUserId)
 	return json({})
 }
 
 export async function action({ request }: DataFunctionArgs) {
 	const userId = await requireUserId(request)
+	// 🐨 call requireRecentVerification with the request and userId
 	const formData = await request.formData()
 	await validateCSRF(formData, request.headers)
 	await prisma.verification.delete({

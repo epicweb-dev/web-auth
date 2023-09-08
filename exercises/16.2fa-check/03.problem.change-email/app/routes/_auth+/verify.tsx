@@ -81,6 +81,9 @@ export function getRedirectToUrl({
 	return redirectToUrl
 }
 
+// 🐨 move the requireRecentVerification utility from
+// app/routes/settings+/profile.two-factor.disable.tsx to here.
+
 export async function prepareVerification({
 	period,
 	request,

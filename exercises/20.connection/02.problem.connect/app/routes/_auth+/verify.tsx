@@ -87,9 +87,14 @@ export function getRedirectToUrl({
 	return redirectToUrl
 }
 
-export async function requireRecentVerification(request: Request) {
-	const userId = await requireUserId(request)
-	const shouldReverify = await shouldRequestTwoFA(request)
+export async function requireRecentVerification({
+	request,
+	userId,
+}: {
+	request: Request
+	userId: string
+}) {
+	const shouldReverify = await shouldRequestTwoFA({ request, userId })
 	if (shouldReverify) {
 		const reqUrl = new URL(request.url)
 		const redirectUrl = getRedirectToUrl({

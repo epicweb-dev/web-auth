@@ -48,15 +48,7 @@ export async function handleNewSession({
 	redirectTo?: string
 	remember: boolean
 }) {
-	const verification = await prisma.verification.findUnique({
-		select: { id: true },
-		where: {
-			target_type: { target: session.userId, type: twoFAVerificationType },
-		},
-	})
-	const userHasTwoFactor = Boolean(verification)
-
-	if (userHasTwoFactor) {
+	if (await shouldRequestTwoFA({ request, userId: session.userId })) {
 		const verifySession = await verifySessionStorage.getSession()
 		verifySession.set(unverifiedSessionIdKey, session.id)
 		verifySession.set(rememberKey, remember)
@@ -131,22 +123,26 @@ export async function handleVerification({
 	return redirect(safeRedirect(redirectTo), { headers })
 }
 
-export async function shouldRequestTwoFA(request: Request) {
-	const cookieSession = await sessionStorage.getSession(
-		request.headers.get('cookie'),
-	)
+export async function shouldRequestTwoFA({
+	request,
+	userId,
+}: {
+	request: Request
+	userId: string
+}) {
 	const verifySession = await verifySessionStorage.getSession(
 		request.headers.get('cookie'),
 	)
 	if (verifySession.has(unverifiedSessionIdKey)) return true
-	const userId = await getUserId(request)
-	if (!userId) return false
 	// if it's over two hours since they last verified, we should request 2FA again
 	const userHasTwoFA = await prisma.verification.findUnique({
 		select: { id: true },
 		where: { target_type: { target: userId, type: twoFAVerificationType } },
 	})
 	if (!userHasTwoFA) return false
+	const cookieSession = await sessionStorage.getSession(
+		request.headers.get('cookie'),
+	)
 	const verifiedTime = cookieSession.get(verifiedTimeKey) ?? new Date(0)
 	const twoHours = 1000 * 60 * 60 * 2
 	return Date.now() - verifiedTime > twoHours

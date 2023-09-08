@@ -27,6 +27,7 @@ import { verifySessionStorage } from '#app/utils/verification.server.ts'
 import { twoFAVerificationType } from '../settings+/profile.two-factor.tsx'
 import { getRedirectToUrl, type VerifyFunctionArgs } from './verify.tsx'
 
+// 🐨 create a verifiedTimeKey which you'll use in handleVerification and shouldRequestTwoFA
 const unverifiedSessionIdKey = 'unverified-session-id'
 const rememberKey = 'remember-me'
 
@@ -55,6 +56,7 @@ export async function handleVerification({
 	}
 
 	cookieSession.set(sessionKey, verifySession.get(unverifiedSessionIdKey))
+	// 🐨 add a verified time (Date.now()) to the cookie session
 
 	const remember = verifySession.get(rememberKey)
 	const { redirectTo } = submission.value
@@ -72,6 +74,30 @@ export async function handleVerification({
 	)
 
 	return redirect(safeRedirect(redirectTo), { headers })
+}
+
+export async function shouldRequestTwoFA({
+	request,
+	userId,
+}: {
+	request: Request
+	userId: string
+}) {
+	const verifySession = await verifySessionStorage.getSession(
+		request.headers.get('cookie'),
+	)
+	if (verifySession.has(unverifiedSessionIdKey)) return true
+	// if it's over two hours since they last verified, we should request 2FA again
+	const userHasTwoFA = await prisma.verification.findUnique({
+		select: { id: true },
+		where: { target_type: { target: userId, type: twoFAVerificationType } },
+	})
+	if (!userHasTwoFA) return false
+
+	// 🐨 get the cookieSession from sessionStorage
+	// 🐨 get the verifiedTime from the cookieSession
+	// 🐨 return true if the verifiedTime is over two hours ago
+	return true
 }
 
 const LoginFormSchema = z.object({
@@ -123,15 +149,7 @@ export async function action({ request }: DataFunctionArgs) {
 
 	const { session, remember, redirectTo } = submission.value
 
-	const verification = await prisma.verification.findUnique({
-		select: { id: true },
-		where: {
-			target_type: { target: session.userId, type: twoFAVerificationType },
-		},
-	})
-	const userHasTwoFactor = Boolean(verification)
-
-	if (userHasTwoFactor) {
+	if (await shouldRequestTwoFA({ request, userId: session.userId })) {
 		const verifySession = await verifySessionStorage.getSession()
 		verifySession.set(unverifiedSessionIdKey, session.id)
 		verifySession.set(rememberKey, remember)

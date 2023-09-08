@@ -79,6 +79,7 @@ const ChangeEmailSchema = z.object({
 })
 
 export async function loader({ request }: DataFunctionArgs) {
+	// 🐨 call requireRecentVerification here
 	const userId = await requireUserId(request)
 	const user = await prisma.user.findUnique({
 		where: { id: userId },
@@ -92,6 +93,7 @@ export async function loader({ request }: DataFunctionArgs) {
 }
 
 export async function action({ request }: DataFunctionArgs) {
+	// 🐨 call requireRecentVerification here
 	const userId = await requireUserId(request)
 	const formData = await request.formData()
 	await validateCSRF(formData, request.headers)
