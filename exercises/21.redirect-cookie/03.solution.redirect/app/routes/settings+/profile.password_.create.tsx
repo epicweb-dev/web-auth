@@ -98,7 +98,7 @@ export default function CreatePasswordRoute() {
 	})
 
 	return (
-		<Form method="POST" {...form.props} className="max-w-md mx-auto">
+		<Form method="POST" {...form.props} className="mx-auto max-w-md">
 			<Field
 				labelProps={{ children: 'New Password' }}
 				inputProps={conform.input(fields.newPassword, { type: 'password' })}
@@ -112,7 +112,7 @@ export default function CreatePasswordRoute() {
 				errors={fields.confirmNewPassword.errors}
 			/>
 			<ErrorList id={form.errorId} errors={form.errors} />
-			<div className="w-full grid grid-cols-2 gap-6">
+			<div className="grid w-full grid-cols-2 gap-6">
 				<Button variant="secondary" asChild>
 					<Link to="..">Cancel</Link>
 				</Button>

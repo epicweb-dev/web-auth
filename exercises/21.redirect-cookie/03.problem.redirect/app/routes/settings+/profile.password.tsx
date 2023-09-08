@@ -119,7 +119,7 @@ export default function ChangePasswordRoute() {
 	})
 
 	return (
-		<Form method="POST" {...form.props} className="max-w-md mx-auto">
+		<Form method="POST" {...form.props} className="mx-auto max-w-md">
 			<AuthenticityTokenInput />
 			<Field
 				labelProps={{ children: 'Current Password' }}
@@ -139,7 +139,7 @@ export default function ChangePasswordRoute() {
 				errors={fields.confirmNewPassword.errors}
 			/>
 			<ErrorList id={form.errorId} errors={form.errors} />
-			<div className="w-full grid grid-cols-2 gap-6">
+			<div className="grid w-full grid-cols-2 gap-6">
 				<Button variant="secondary" asChild>
 					<Link to="..">Cancel</Link>
 				</Button>

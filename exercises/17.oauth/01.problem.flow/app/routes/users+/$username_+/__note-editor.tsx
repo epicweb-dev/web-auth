@@ -293,7 +293,7 @@ function ImageChooser({
 			aria-invalid={Boolean(config.errors?.length) || undefined}
 			aria-describedby={config.errors?.length ? config.errorId : undefined}
 		>
-			<div className="flex gap-3">
+			<div className="flex flex-wrap gap-3 sm:flex-nowrap">
 				<div className="w-32">
 					<div className="relative h-32 w-32">
 						<label
@@ -350,7 +350,7 @@ function ImageChooser({
 						<ErrorList id={fields.file.errorId} errors={fields.file.errors} />
 					</div>
 				</div>
-				<div className="flex-1">
+				<div className="min-w-[150px] flex-1">
 					<Label htmlFor={fields.altText.id}>Alt Text</Label>
 					<Textarea
 						onChange={e => setAltText(e.currentTarget.value)}

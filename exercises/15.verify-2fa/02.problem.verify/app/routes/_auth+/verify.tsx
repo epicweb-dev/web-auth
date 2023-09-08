@@ -267,7 +267,7 @@ export default function VerifyRoute() {
 
 			<Spacer size="xs" />
 
-			<div className="mx-auto flex flex-col justify-center gap-1 w-72 max-w-full">
+			<div className="mx-auto flex w-72 max-w-full flex-col justify-center gap-1">
 				<div>
 					<ErrorList errors={form.errors} id={form.errorId} />
 				</div>

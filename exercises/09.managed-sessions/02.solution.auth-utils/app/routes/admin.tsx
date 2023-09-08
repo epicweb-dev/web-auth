@@ -20,7 +20,7 @@ export default function AdminRoute() {
 				</div>
 			</div>
 			<Spacer size="xs" />
-			<p className="max-w-md mx-auto text-body-lg text-center">
+			<p className="mx-auto max-w-md text-center text-body-lg">
 				Use your imagination. You could display all kinds of admin-y things on
 				this page... For example, maybe a way to manage permissions?
 			</p>

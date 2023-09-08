@@ -149,8 +149,8 @@ function App() {
 	const isOnSearchPage = matches.find(m => m.id === 'routes/users+/index')
 	return (
 		<Document theme={theme} env={data.ENV}>
-			<header className="container mx-auto py-6">
-				<nav className="flex items-center justify-between gap-6">
+			<header className="container px-6 py-4 sm:px-8 sm:py-6">
+				<nav className="flex items-center justify-between gap-4 sm:gap-6">
 					<Link to="/">
 						<div className="font-light">epic</div>
 						<div className="font-bold">notes</div>
@@ -172,12 +172,12 @@ function App() {
 				<Outlet />
 			</div>
 
-			<div className="container mx-auto flex justify-between">
+			<div className="container flex justify-between">
 				<Link to="/">
 					<div className="font-light">epic</div>
 					<div className="font-bold">notes</div>
 				</Link>
-				<div className="flex gap-2 items-center">
+				<div className="flex items-center gap-2">
 					<p>Built with ♥️ by {data.username}</p>
 					<ThemeSwitch userPreference={theme} />
 				</div>
