@@ -293,16 +293,22 @@
       "path": "exercises/16.2fa-check/01.solution.delete"
     },
     {
-      "path": "exercises/16.2fa-check/02.problem.reverify"
+      "path": "exercises/16.2fa-check/02.problem.should-reverify"
     },
     {
-      "path": "exercises/16.2fa-check/02.solution.reverify"
+      "path": "exercises/16.2fa-check/02.solution.should-reverify"
     },
     {
-      "path": "exercises/16.2fa-check/03.problem.expiration"
+      "path": "exercises/16.2fa-check/03.problem.require-reverify"
     },
     {
-      "path": "exercises/16.2fa-check/03.solution.expiration"
+      "path": "exercises/16.2fa-check/03.solution.require-reverify"
+    },
+    {
+      "path": "exercises/16.2fa-check/04.problem.expiration"
+    },
+    {
+      "path": "exercises/16.2fa-check/04.solution.expiration"
     },
     {
       "path": "exercises/17.oauth/01.problem.flow"
