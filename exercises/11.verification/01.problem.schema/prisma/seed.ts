@@ -26,6 +26,7 @@ async function seed() {
 
 	console.time('🧹 Cleaned up the database...')
 	await prisma.user.deleteMany()
+	// 🐨 delete all the verifications
 	await prisma.role.deleteMany()
 	await prisma.permission.deleteMany()
 	console.timeEnd('🧹 Cleaned up the database...')

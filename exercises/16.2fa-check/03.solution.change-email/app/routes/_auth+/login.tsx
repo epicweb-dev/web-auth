@@ -26,6 +26,7 @@ import { prisma } from '#app/utils/db.server.ts'
 import { checkHoneypot } from '#app/utils/honeypot.server.ts'
 import { invariant, useIsPending } from '#app/utils/misc.tsx'
 import { sessionStorage } from '#app/utils/session.server.ts'
+import { redirectWithToast } from '#app/utils/toast.server.ts'
 import { PasswordSchema, UsernameSchema } from '#app/utils/user-validation.ts'
 import { verifySessionStorage } from '#app/utils/verification.server.ts'
 import { twoFAVerificationType } from '../settings+/profile.two-factor.tsx'
@@ -33,6 +34,7 @@ import { getRedirectToUrl, type VerifyFunctionArgs } from './verify.tsx'
 
 const verifiedTimeKey = 'verified-time'
 const unverifiedSessionIdKey = 'unverified-session-id'
+const rememberKey = 'remember-me'
 
 export async function handleVerification({
 	request,
@@ -45,20 +47,36 @@ export async function handleVerification({
 	const verifySession = await verifySessionStorage.getSession(
 		request.headers.get('cookie'),
 	)
+
+	const session = await prisma.session.findUnique({
+		select: { expirationDate: true },
+		where: { id: verifySession.get(unverifiedSessionIdKey) },
+	})
+	if (!session) {
+		throw await redirectWithToast('/login', {
+			type: 'error',
+			title: 'Invalid session',
+			description: 'Could not find session to verify. Please try again.',
+		})
+	}
+
 	cookieSession.set(sessionKey, verifySession.get(unverifiedSessionIdKey))
 	cookieSession.set(verifiedTimeKey, Date.now())
+
+	const remember = verifySession.get(rememberKey)
+	const { redirectTo } = submission.value
 
 	const headers = new Headers()
 	headers.append(
 		'set-cookie',
-		await sessionStorage.commitSession(cookieSession),
+		await sessionStorage.commitSession(cookieSession, {
+			expires: remember ? session.expirationDate : undefined,
+		}),
 	)
 	headers.append(
 		'set-cookie',
 		await verifySessionStorage.destroySession(verifySession),
 	)
-
-	const { redirectTo } = submission.value
 
 	return redirect(safeRedirect(redirectTo), { headers })
 }
@@ -142,10 +160,9 @@ export async function action({ request }: DataFunctionArgs) {
 	const userHasTwoFactor = Boolean(verification)
 
 	if (userHasTwoFactor) {
-		const verifySession = await verifySessionStorage.getSession(
-			request.headers.get('cookie'),
-		)
+		const verifySession = await verifySessionStorage.getSession()
 		verifySession.set(unverifiedSessionIdKey, session.id)
+		verifySession.set(rememberKey, remember)
 		const redirectUrl = getRedirectToUrl({
 			request,
 			type: twoFAVerificationType,

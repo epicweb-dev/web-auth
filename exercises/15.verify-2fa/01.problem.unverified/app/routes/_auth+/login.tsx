@@ -22,8 +22,6 @@ import { useIsPending } from '#app/utils/misc.tsx'
 import { sessionStorage } from '#app/utils/session.server.ts'
 import { PasswordSchema, UsernameSchema } from '#app/utils/user-validation.ts'
 
-// 🐨 add an unverifiedSessionIdKey here
-
 const LoginFormSchema = z.object({
 	username: UsernameSchema,
 	password: PasswordSchema,
@@ -78,7 +76,8 @@ export async function action({ request }: DataFunctionArgs) {
 	// 💰 you're going to need to update the login utility to retrieve the user's id.
 
 	// 🐨 if the user has 2fa enabled, set the session.id in a verifySession cookie
-	// under the unverifiedSessionIdKey (defined above) value.
+	// under something like "unverified-session-id"
+	// 🐨 also set the user's "remember me" preference in the verifySession cookie
 	// 🐨 use the getRedirectToUrl utility from the verify route.
 	// 🐨 redirect the user to the verify route
 

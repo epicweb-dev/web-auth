@@ -18,6 +18,7 @@ export async function loader({ request }: DataFunctionArgs) {
 }
 
 export async function action({ request }: DataFunctionArgs) {
+	// 🐨 get the userId from this:
 	await requireUserId(request)
 	const formData = await request.formData()
 	await validateCSRF(formData, request.headers)

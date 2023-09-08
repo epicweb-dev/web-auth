@@ -26,13 +26,15 @@ import { verifySessionStorage } from '#app/utils/verification.server.ts'
 import { twoFAVerificationType } from '../settings+/profile.two-factor.tsx'
 import { getRedirectToUrl } from './verify.tsx'
 
-const unverifiedSessionIdKey = 'unverified-session-id'
-
 // 🐨 add a handleVerification function here which takes a request and submission
 // 🐨 get use sessionStorage and verifySessionStorage to get those sessions
+// 🐨 check that the session exists in the database, if it doesn't send the user
+// to /login (💯 for extra credit use redirectWithToast to give them a toast message)
 // 🐨 set the sessionKey on the cookieSession to the unverifiedSessionId from the verifySession
+// 🐨 get the remember preference from the verifySession
 // 🐨 create a Headers object that has a 'set-cookie' header for both sessions
-//   (destroy the verify session, commit the cookie session).
+//   (destroy the verify session, commit the cookie session with the session
+//   expiration if remember is set).
 // 🐨 redirect the user to the "redirectTo" value from the submission
 
 const LoginFormSchema = z.object({
@@ -93,10 +95,11 @@ export async function action({ request }: DataFunctionArgs) {
 	const userHasTwoFactor = Boolean(verification)
 
 	if (userHasTwoFactor) {
-		const verifySession = await verifySessionStorage.getSession(
-			request.headers.get('cookie'),
-		)
-		verifySession.set(unverifiedSessionIdKey, session.id)
+		const verifySession = await verifySessionStorage.getSession()
+		// 🐨 I'm not a fan of these "magic strings"... Turn them into variables instead.
+		// that way you can use them in the handleVerification function as well.
+		verifySession.set('unverified-session-id', session.id)
+		verifySession.set('remember-me', remember)
 		const redirectUrl = getRedirectToUrl({
 			request,
 			type: twoFAVerificationType,

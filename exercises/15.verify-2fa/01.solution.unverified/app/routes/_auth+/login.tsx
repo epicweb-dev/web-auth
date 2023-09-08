@@ -26,8 +26,6 @@ import { verifySessionStorage } from '#app/utils/verification.server.ts'
 import { twoFAVerificationType } from '../settings+/profile.two-factor.tsx'
 import { getRedirectToUrl } from './verify.tsx'
 
-const unverifiedSessionIdKey = 'unverified-session-id'
-
 const LoginFormSchema = z.object({
 	username: UsernameSchema,
 	password: PasswordSchema,
@@ -86,10 +84,9 @@ export async function action({ request }: DataFunctionArgs) {
 	const userHasTwoFactor = Boolean(verification)
 
 	if (userHasTwoFactor) {
-		const verifySession = await verifySessionStorage.getSession(
-			request.headers.get('cookie'),
-		)
-		verifySession.set(unverifiedSessionIdKey, session.id)
+		const verifySession = await verifySessionStorage.getSession()
+		verifySession.set('unverified-session-id', session.id)
+		verifySession.set('remember-me', remember)
 		const redirectUrl = getRedirectToUrl({
 			request,
 			type: twoFAVerificationType,
