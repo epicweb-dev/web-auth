@@ -39,20 +39,18 @@ export async function handleVerification({
 	const verifySession = await verifySessionStorage.getSession(
 		request.headers.get('cookie'),
 	)
+	cookieSession.set(sessionKey, verifySession.get(unverifiedSessionIdKey))
 	const headers = new Headers()
-	if (verifySession.has(unverifiedSessionIdKey)) {
-		cookieSession.set(sessionKey, verifySession.get(unverifiedSessionIdKey))
-		headers.append(
-			'set-cookie',
-			await sessionStorage.commitSession(cookieSession),
-		)
-	}
-	const { redirectTo } = submission.value
-
+	headers.append(
+		'set-cookie',
+		await sessionStorage.commitSession(cookieSession),
+	)
 	headers.append(
 		'set-cookie',
 		await verifySessionStorage.destroySession(verifySession),
 	)
+
+	const { redirectTo } = submission.value
 
 	return redirect(safeRedirect(redirectTo), { headers })
 }

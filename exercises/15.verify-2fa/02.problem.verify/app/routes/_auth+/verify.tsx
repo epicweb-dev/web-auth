@@ -64,14 +64,19 @@ export function getRedirectToUrl({
 	request,
 	type,
 	target,
+	redirectTo,
 }: {
 	request: Request
 	type: VerificationTypes
 	target: string
+	redirectTo?: string
 }) {
 	const redirectToUrl = new URL(`${getDomainUrl(request)}/verify`)
 	redirectToUrl.searchParams.set(typeQueryParam, type)
 	redirectToUrl.searchParams.set(targetQueryParam, target)
+	if (redirectTo) {
+		redirectToUrl.searchParams.set(redirectToQueryParam, redirectTo)
+	}
 	return redirectToUrl
 }
 
@@ -179,6 +184,9 @@ async function validateRequest(
 
 	const { value: submissionValue } = submission
 
+	// 🐨 we don't want to delete the user's 2FA verification, so stick this
+	// delete call in a function called `deleteVerification` and we'll call it
+	// where it's needed.
 	await prisma.verification.delete({
 		where: {
 			target_type: {
@@ -190,15 +198,19 @@ async function validateRequest(
 
 	switch (submissionValue[typeQueryParam]) {
 		case 'reset-password': {
+			// 🐨 call deleteVerification()
 			return handleResetPasswordVerification({ request, body, submission })
 		}
 		case 'onboarding': {
+			// 🐨 call deleteVerification()
 			return handleOnboardingVerification({ request, body, submission })
 		}
 		case 'change-email': {
+			// 🐨 call deleteVerification()
 			return handleChangeEmailVerification({ request, body, submission })
 		}
 		case '2fa': {
+			// 🐨 call handleVerification from './login.tsx'
 			throw new Error('not yet implemented')
 		}
 	}

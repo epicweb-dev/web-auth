@@ -61,14 +61,19 @@ export function getRedirectToUrl({
 	request,
 	type,
 	target,
+	redirectTo,
 }: {
 	request: Request
 	type: VerificationTypes
 	target: string
+	redirectTo?: string
 }) {
 	const redirectToUrl = new URL(`${getDomainUrl(request)}/verify`)
 	redirectToUrl.searchParams.set(typeQueryParam, type)
 	redirectToUrl.searchParams.set(targetQueryParam, target)
+	if (redirectTo) {
+		redirectToUrl.searchParams.set(redirectToQueryParam, redirectTo)
+	}
 	return redirectToUrl
 }
 

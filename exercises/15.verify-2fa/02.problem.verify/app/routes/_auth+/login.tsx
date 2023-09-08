@@ -28,6 +28,13 @@ import { getRedirectToUrl } from './verify.tsx'
 
 const unverifiedSessionIdKey = 'unverified-session-id'
 
+// 🐨 add a handleVerification function here which takes a request and submission
+// 🐨 get use sessionStorage and verifySessionStorage to get those sessions
+// 🐨 set the sessionKey on the cookieSession to the unverifiedSessionId from the verifySession
+// 🐨 create a Headers object that has a 'set-cookie' header for both sessions
+//   (destroy the verify session, commit the cookie session).
+// 🐨 redirect the user to the "redirectTo" value from the submission
+
 const LoginFormSchema = z.object({
 	username: UsernameSchema,
 	password: PasswordSchema,

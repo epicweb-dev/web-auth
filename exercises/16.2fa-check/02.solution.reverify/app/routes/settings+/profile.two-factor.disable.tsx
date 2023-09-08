@@ -40,10 +40,10 @@ export async function loader({ request }: DataFunctionArgs) {
 }
 
 export async function action({ request }: DataFunctionArgs) {
+	const userId = await requireUserId(request)
 	await requireRecentVerification(request)
 	const formData = await request.formData()
 	await validateCSRF(formData, request.headers)
-	const userId = await requireUserId(request)
 	await prisma.verification.delete({
 		where: { target_type: { target: userId, type: twoFAVerificationType } },
 	})
@@ -54,8 +54,8 @@ export async function action({ request }: DataFunctionArgs) {
 }
 
 export default function TwoFactorDisableRoute() {
-	const dc = useDoubleCheck()
 	const isPending = useIsPending()
+	const dc = useDoubleCheck()
 
 	return (
 		<div className="mx-auto max-w-sm">

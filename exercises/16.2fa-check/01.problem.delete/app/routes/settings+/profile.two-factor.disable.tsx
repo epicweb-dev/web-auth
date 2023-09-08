@@ -21,7 +21,11 @@ export async function action({ request }: DataFunctionArgs) {
 	await requireUserId(request)
 	const formData = await request.formData()
 	await validateCSRF(formData, request.headers)
+
+	// 🐨 delete the user's twoFAVerificationType verification from the database
+
 	throw await redirectWithToast('/settings/profile/two-factor', {
+		// 🐨 fix this title and description
 		title: '2FA Disabled (jk)',
 		description: 'This has not yet been implemented',
 	})
