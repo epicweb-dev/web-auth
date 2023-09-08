@@ -15,7 +15,6 @@ import { ErrorList, Field } from '#app/components/forms.tsx'
 import { Spacer } from '#app/components/spacer.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { handleVerification as handleChangeEmailVerification } from '#app/routes/settings+/profile.change-email.tsx'
-import { requireUserId } from '#app/utils/auth.server.ts'
 import { validateCSRF } from '#app/utils/csrf.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { getDomainUrl, useIsPending } from '#app/utils/misc.tsx'
@@ -94,8 +93,7 @@ export async function requireRecentVerification({
 	request: Request
 	userId: string
 }) {
-	const shouldReverify = await shouldRequestTwoFA({ request, userId })
-	if (shouldReverify) {
+	if (await shouldRequestTwoFA({ request, userId })) {
 		const reqUrl = new URL(request.url)
 		const redirectUrl = getRedirectToUrl({
 			request,

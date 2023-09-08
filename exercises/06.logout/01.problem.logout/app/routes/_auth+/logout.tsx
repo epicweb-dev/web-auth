@@ -9,7 +9,6 @@ export async function loader() {
 
 export async function action() {
 	// 🐨 get the user's session from the request that's passed to the action
-	// 🐨 unset the 'userId'
-	// 🐨 commit the session and set the 'set-cookie' header
+	// 🐨 destroy the session and set the 'set-cookie' header
 	return redirect('/')
 }

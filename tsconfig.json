@@ -299,10 +299,10 @@
       "path": "exercises/16.2fa-check/02.solution.reverify"
     },
     {
-      "path": "exercises/16.2fa-check/03.problem.change-email"
+      "path": "exercises/16.2fa-check/03.problem.expiration"
     },
     {
-      "path": "exercises/16.2fa-check/03.solution.change-email"
+      "path": "exercises/16.2fa-check/03.solution.expiration"
     },
     {
       "path": "exercises/17.oauth/01.problem.flow"

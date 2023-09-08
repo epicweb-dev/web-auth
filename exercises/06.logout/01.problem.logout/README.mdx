@@ -5,4 +5,13 @@ and looking at their own profile (like if Kody goes to <LinkToApp to="/users/kod
 But right now it doesn't do anything. Let's make it post to the `/logout` route
 and make the `/logout` `action` clear the user's `userId` from the session.
 
+When the user wants to log out, we'll want to destroy their session. We can do
+this using the `destroySession` API from Remix:
+
+```tsx
+const setCookieHeader = await sessionStorage.destroySession(cookieSession)
+```
+
 🦉 (psst, don't forget the "files" menu below).
+
+- [📜 Remix Sessions API](https://remix.run/docs/en/main/utils/sessions)

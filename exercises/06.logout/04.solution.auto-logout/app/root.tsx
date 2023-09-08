@@ -93,12 +93,11 @@ export async function loader({ request }: DataFunctionArgs) {
 		  })
 		: null
 	if (userId && !user) {
-		cookieSession.unset('userId')
 		// something weird happened... The user is authenticated but we can't find
 		// them in the database. Maybe they were deleted? Let's log them out.
 		throw redirect('/', {
 			headers: {
-				'set-cookie': await sessionStorage.commitSession(cookieSession),
+				'set-cookie': await sessionStorage.destroySession(cookieSession),
 			},
 		})
 	}

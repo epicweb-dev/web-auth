@@ -108,12 +108,11 @@ export async function logout(
 	const cookieSession = await sessionStorage.getSession(
 		request.headers.get('cookie'),
 	)
-	cookieSession.unset(userIdKey)
 	throw redirect(
 		safeRedirect(redirectTo),
 		combineResponseInits(responseInit, {
 			headers: {
-				'set-cookie': await sessionStorage.commitSession(cookieSession),
+				'set-cookie': await sessionStorage.destroySession(cookieSession),
 			},
 		}),
 	)

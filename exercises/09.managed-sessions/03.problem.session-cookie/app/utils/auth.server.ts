@@ -147,14 +147,14 @@ export async function logout(
 	)
 	// 🐨 this should be sessionKey instead of userIdKey
 	const sessionId = cookieSession.get(userIdKey)
-	await prisma.session.delete({ where: { id: sessionId } })
+	// delete the session if it exists, but don't wait for it, go ahead an log the user out
+	void prisma.session.delete({ where: { id: sessionId } }).catch(() => {})
 	// 🐨 this should be sessionKey instead of userIdKey
-	cookieSession.unset(userIdKey)
 	throw redirect(
 		safeRedirect(redirectTo),
 		combineResponseInits(responseInit, {
 			headers: {
-				'set-cookie': await sessionStorage.commitSession(cookieSession),
+				'set-cookie': await sessionStorage.destroySession(cookieSession),
 			},
 		}),
 	)

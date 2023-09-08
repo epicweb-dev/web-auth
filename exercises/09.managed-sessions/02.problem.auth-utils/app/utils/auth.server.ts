@@ -149,12 +149,14 @@ export async function logout(
 	)
 	// 🐨 get the sessionId from the cookieSession
 	// 🐨 delete the session from the database by that sessionId
-	cookieSession.unset(userIdKey)
+	// 💯 it's possible the session doesn't exist, so handle that case gracefully
+	// and make sure we don't prevent the user from logging out if that happens
+	// 💯 don't wait for the session to be deleted before proceeding with the logout
 	throw redirect(
 		safeRedirect(redirectTo),
 		combineResponseInits(responseInit, {
 			headers: {
-				'set-cookie': await sessionStorage.commitSession(cookieSession),
+				'set-cookie': await sessionStorage.destroySession(cookieSession),
 			},
 		}),
 	)

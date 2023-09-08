@@ -9,10 +9,9 @@ export async function action({ request }: DataFunctionArgs) {
 	const cookieSession = await sessionStorage.getSession(
 		request.headers.get('cookie'),
 	)
-	cookieSession.unset('userId')
 	return redirect('/', {
 		headers: {
-			'set-cookie': await sessionStorage.commitSession(cookieSession),
+			'set-cookie': await sessionStorage.destroySession(cookieSession),
 		},
 	})
 }

@@ -15,17 +15,11 @@ import { ErrorList, Field } from '#app/components/forms.tsx'
 import { Spacer } from '#app/components/spacer.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { handleVerification as handleChangeEmailVerification } from '#app/routes/settings+/profile.change-email.tsx'
-import { requireUserId } from '#app/utils/auth.server.ts'
 import { validateCSRF } from '#app/utils/csrf.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { getDomainUrl, useIsPending } from '#app/utils/misc.tsx'
-import { redirectWithToast } from '#app/utils/toast.server.ts'
-import { twoFAVerificationType } from '../settings+/profile.two-factor.tsx'
 import { type twoFAVerifyVerificationType } from '../settings+/profile.two-factor.verify.tsx'
-import {
-	handleVerification as handleLoginTwoFactorVerification,
-	shouldRequestTwoFA,
-} from './login.tsx'
+import { handleVerification as handleLoginTwoFactorVerification } from './login.tsx'
 import { handleVerification as handleOnboardingVerification } from './onboarding.tsx'
 import { handleVerification as handleResetPasswordVerification } from './reset-password.tsx'
 
@@ -87,28 +81,8 @@ export function getRedirectToUrl({
 	return redirectToUrl
 }
 
-export async function requireRecentVerification({
-	request,
-	userId,
-}: {
-	request: Request
-	userId: string
-}) {
-	const shouldReverify = await shouldRequestTwoFA({ request, userId })
-	if (shouldReverify) {
-		const reqUrl = new URL(request.url)
-		const redirectUrl = getRedirectToUrl({
-			request,
-			target: userId,
-			type: twoFAVerificationType,
-			redirectTo: reqUrl.pathname + reqUrl.search,
-		})
-		throw await redirectWithToast(redirectUrl.toString(), {
-			title: 'Please Reverify',
-			description: 'Please reverify your account before proceeding',
-		})
-	}
-}
+// 🐨 move the requireRecentVerification utility from
+// app/routes/settings+/profile.two-factor.disable.tsx to here.
 
 export async function prepareVerification({
 	period,

@@ -23,13 +23,7 @@ export async function getUserId(request: Request) {
 		where: { id: sessionId, expirationDate: { gt: new Date() } },
 	})
 	if (!session?.user) {
-		// Perhaps user was deleted?
-		cookieSession.unset(sessionKey)
-		throw redirect('/', {
-			headers: {
-				'set-cookie': await sessionStorage.commitSession(cookieSession),
-			},
-		})
+		throw await logout({ request })
 	}
 	return session.user.id
 }
@@ -146,13 +140,13 @@ export async function logout(
 		request.headers.get('cookie'),
 	)
 	const sessionId = cookieSession.get(sessionKey)
-	await prisma.session.delete({ where: { id: sessionId } })
-	cookieSession.unset(sessionKey)
+	// delete the session if it exists, but don't wait for it, go ahead an log the user out
+	void prisma.session.delete({ where: { id: sessionId } }).catch(() => {})
 	throw redirect(
 		safeRedirect(redirectTo),
 		combineResponseInits(responseInit, {
 			headers: {
-				'set-cookie': await sessionStorage.commitSession(cookieSession),
+				'set-cookie': await sessionStorage.destroySession(cookieSession),
 			},
 		}),
 	)
