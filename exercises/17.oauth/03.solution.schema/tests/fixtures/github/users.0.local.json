@@ -3,36 +3,36 @@
     "code": "MOCK_GITHUB_CODE_KODY",
     "accessToken": "MOCK_GITHUB_CODE_KODY_mock_access_token",
     "profile": {
-      "login": "Terrill.Oberbrunner55",
+      "login": "Nellie21",
       "id": "MOCK_GITHUB_CODE_KODY_profile_id",
-      "name": "Mrs. Nicole Adams",
+      "name": "Merle Cruickshank",
       "avatar_url": "https://github.com/ghost.png",
       "emails": [
-        "Nathaniel_Cummerata37@hotmail.com",
-        "Ebony.Lynch@hotmail.com",
-        "Edmond.Schmeler@yahoo.com"
+        "Ali_Runolfsson@gmail.com",
+        "Broderick.Cassin40@gmail.com",
+        "Karlie59@yahoo.com"
       ]
     },
     "emails": [
       {
-        "email": "Nathaniel_Cummerata37@hotmail.com",
+        "email": "Ali_Runolfsson@gmail.com",
         "verified": false,
         "primary": false,
         "visibility": "public"
       },
       {
-        "email": "Ebony.Lynch@hotmail.com",
+        "email": "Broderick.Cassin40@gmail.com",
         "verified": true,
         "primary": false,
         "visibility": null
       },
       {
-        "email": "Edmond.Schmeler@yahoo.com",
+        "email": "Karlie59@yahoo.com",
         "verified": true,
         "primary": true,
-        "visibility": "public"
+        "visibility": null
       }
     ],
-    "primaryEmail": "Edmond.Schmeler@yahoo.com"
+    "primaryEmail": "Karlie59@yahoo.com"
   }
 ]
