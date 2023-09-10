@@ -21,7 +21,8 @@
   "dependencies": {
     "@conform-to/react": "^0.8.1",
     "@conform-to/zod": "^0.8.1",
-    "@epic-web/totp": "1.0.4",
+    "@epic-web/remember": "^1.0.1",
+    "@epic-web/totp": "^1.0.6",
     "@kentcdodds/workshop-app": "^2.22.1",
     "@paralleldrive/cuid2": "^2.2.1",
     "@prisma/client": "^5.2.0",

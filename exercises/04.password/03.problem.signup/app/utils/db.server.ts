@@ -1,8 +1,8 @@
+import { remember } from '@epic-web/remember'
 import { PrismaClient } from '@prisma/client'
 import chalk from 'chalk'
-import { singleton } from './singleton.server.ts'
 
-const prisma = singleton('prisma', () => {
+const prisma = remember('prisma', () => {
 	// NOTE: if you change anything in this function you'll need to restart
 	// the dev server to see your changes.
 	const logThreshold = 20
