@@ -41,12 +41,12 @@ export async function handleNewSession(
 		request,
 		session,
 		redirectTo,
-		remember,
+		remember = false,
 	}: {
 		request: Request
 		session: { userId: string; id: string; expirationDate: Date }
 		redirectTo?: string
-		remember: boolean
+		remember?: boolean
 	},
 	responseInit?: ResponseInit,
 ) {
@@ -218,7 +218,7 @@ export async function action({ request }: DataFunctionArgs) {
 		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 
-	const { session, remember = false, redirectTo } = submission.value
+	const { session, remember, redirectTo } = submission.value
 
 	return handleNewSession({ request, session, remember, redirectTo })
 }

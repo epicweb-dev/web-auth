@@ -32,6 +32,10 @@ const verifiedTimeKey = 'verified-time'
 const unverifiedSessionIdKey = 'unverified-session-id'
 const rememberKey = 'remember-me'
 
+// 🐨 you can export a handleNewSession function here, you'll get its contents
+// from the action below.
+// 🐨 it should take a request, session, redirectTo, and remember
+
 export async function handleVerification({
 	request,
 	submission,
@@ -159,6 +163,10 @@ export async function action({ request }: DataFunctionArgs) {
 
 	const { session, remember, redirectTo } = submission.value
 
+	// 🦉 we need this for the third party auth login
+	// 🐨 move everything from here to the bottom of the function into a new function
+	// called `handleNewSession`.
+	// It should take the request, session, remember, and redirectTo
 	if (await shouldRequestTwoFA({ request, userId: session.userId })) {
 		const verifySession = await verifySessionStorage.getSession()
 		verifySession.set(unverifiedSessionIdKey, session.id)

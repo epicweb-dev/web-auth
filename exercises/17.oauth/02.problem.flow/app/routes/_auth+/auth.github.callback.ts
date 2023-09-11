@@ -1,4 +1,3 @@
-import { type DataFunctionArgs } from '@remix-run/node'
 // 💰 you're gonna need this:
 // import { authenticator } from '#app/utils/auth.server.ts'
 import { redirectWithToast } from '#app/utils/toast.server.ts'

@@ -41,5 +41,3 @@ if (savedPrismaClientExists) {
 
 await fsExtra.remove(tempDir)
 await fsExtra.remove(path.join(KCDSHOP_PLAYGROUND_DEST_DIR, 'kcdshop'))
-
-console.log(Date.now() - Number(KCDSHOP_PLAYGROUND_TIMESTAMP))

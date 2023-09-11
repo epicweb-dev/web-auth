@@ -10,10 +10,9 @@ export type ProviderUser = {
 
 export interface AuthProvider {
 	getAuthStrategy(): Strategy<ProviderUser, any>
-	handleMockAction(redirectToCookie?: string | null): Promise<void>
-	handleMockCallback(request: Request): Promise<Request>
+	handleMockAction(request: Request): Promise<void>
 	resolveConnectionData(providerId: string): Promise<{
 		displayName: string
 		link?: string | null
-	} | null>
+	}>
 }

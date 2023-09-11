@@ -117,6 +117,8 @@ export const meta: MetaFunction = () => {
 export default function SignupRoute() {
 	const actionData = useActionData<typeof action>()
 	const isPending = useIsPending()
+	// 🐨 get the searchParams from useSearchParams
+	// 🐨 get redirectTo from the search params
 
 	const [form, fields] = useForm({
 		id: 'signup-form',
@@ -160,7 +162,8 @@ export default function SignupRoute() {
 					</StatusButton>
 				</Form>
 				<div className="mt-5 flex flex-col gap-5 border-b-2 border-t-2 border-border py-3">
-					<ProviderConnectionForm type="Login" providerName="github" />
+					{/* 🐨 add a redirectTo prop here */}
+					<ProviderConnectionForm type="Signup" providerName="github" />
 				</div>
 			</div>
 		</div>

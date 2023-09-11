@@ -1,3 +1,4 @@
+import { createId as cuid } from '@paralleldrive/cuid2'
 import { redirect } from '@remix-run/node'
 import { GitHubStrategy } from 'remix-auth-github'
 import { z } from 'zod'
@@ -42,44 +43,29 @@ export class GitHubProvider implements AuthProvider {
 		const response = await fetch(`https://api.github.com/user/${providerId}`, {
 			headers: { Authorization: `token ${process.env.GITHUB_TOKEN}` },
 		})
-		if (response.ok) {
-			const rawJson = await response.json()
-			const result = GitHubUserSchema.safeParse(rawJson)
-			return {
-				displayName: result.success ? result.data.login : 'Unknown',
-				link: result.success ? `https://github.com/${result.data.login}` : null,
-			} as const
-		} else {
-			console.error('GitHub API error', await response.text())
-			return null
-		}
+		const rawJson = await response.json()
+		const result = GitHubUserSchema.safeParse(rawJson)
+		return {
+			displayName: result.success ? result.data.login : 'Unknown',
+			link: result.success ? `https://github.com/${result.data.login}` : null,
+		} as const
 	}
 
-	async handleMockAction(redirectToCookie?: string | null) {
+	async handleMockAction(request: Request) {
 		if (!shouldMock) return
-
-		throw redirect(
-			`/auth/github/callback?code=MOCK_GITHUB_CODE_KODY&state=MOCK_STATE`,
-			{
-				headers: redirectToCookie ? { 'set-cookie': redirectToCookie } : {},
-			},
-		)
-	}
-
-	async handleMockCallback(request: Request) {
-		if (!shouldMock) return request
 
 		const connectionSession = await connectionSessionStorage.getSession(
 			request.headers.get('cookie'),
 		)
-		const state = connectionSession.get('oauth2:state') ?? 'MOCK_STATE'
+		const state = cuid()
 		connectionSession.set('oauth2:state', state)
-		const reqUrl = new URL(request.url)
-		reqUrl.searchParams.set('state', state)
-		request.headers.set(
-			'cookie',
-			await connectionSessionStorage.commitSession(connectionSession),
-		)
-		return new Request(reqUrl.toString(), request)
+		const code = 'MOCK_GITHUB_CODE_KODY'
+		const searchParams = new URLSearchParams({ code, state })
+		throw redirect(`/auth/github/callback?${searchParams}`, {
+			headers: {
+				'set-cookie':
+					await connectionSessionStorage.commitSession(connectionSession),
+			},
+		})
 	}
 }

@@ -1,1 +1,62 @@
 # OAuth
+
+- [An Introduction to OAuth 2](https://www.digitalocean.com/community/tutorials/an-introduction-to-oauth-2)
+
+## remix-auth
+
+```tsx file=app/utils/connections.server.ts
+import { createCookieSessionStorage } from '@remix-run/node'
+
+export const connectionSessionStorage = createCookieSessionStorage({
+	cookie: {
+		name: 'en_connection',
+		sameSite: 'lax',
+		path: '/',
+		httpOnly: true,
+		maxAge: 60 * 10, // 10 minutes
+		secrets: process.env.SESSION_SECRET.split(','),
+		secure: process.env.NODE_ENV === 'production',
+	},
+})
+```
+
+```tsx file=app/utils/auth.server.ts
+type ProviderUser = {
+	// ... user data stored in the session
+}
+export const authenticator = new Authenticator<ProviderUser>(
+	connectionSessionStorage,
+)
+
+authenticator.use(
+	new GitHubStrategy(
+		{
+			clientID: process.env.GITHUB_CLIENT_ID,
+			clientSecret: process.env.GITHUB_CLIENT_SECRET,
+			callbackURL: '/auth/github/callback',
+		},
+		async ({ profile }) => {
+			// convert the user's profile into what the user object should be
+			return {
+				// ... user data stored in the session
+			}
+		},
+	),
+	// name the strategy:
+	'github',
+)
+```
+
+```tsx file=app/routes/_auth+/auth.github.ts
+return await authenticator.authenticate('github', request)
+// throws a redirect to GitHub + sets a cookie with some state
+```
+
+```tsx file=app/routes/_auth+/auth.github.callback.ts
+// GitHub redirects with the code and the state value
+const data = await authenticator.authenticate('github', request, {
+	throwOnError: true,
+})
+```
+
+- [📜 remix-auth](https://github.com/sergiodxa/remix-auth)

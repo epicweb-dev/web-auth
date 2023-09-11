@@ -4,34 +4,32 @@ import {
 	getSessionExpirationDate,
 	getUserId,
 } from '#app/utils/auth.server.ts'
-import { handleMockCallback } from '#app/utils/connections.server.ts'
 import { ProviderNameSchema, providerLabels } from '#app/utils/connections.tsx'
 import { prisma } from '#app/utils/db.server.ts'
 import { redirectWithToast } from '#app/utils/toast.server.ts'
 import { handleNewSession } from './login.tsx'
+// 💰 you're gonna want these:
+// import {
+// 	onboardingEmailSessionKey,
+// 	prefilledProfileKey,
+// 	providerIdKey,
+// } from './onboarding_.$provider.tsx'
 
 export async function loader({ request, params }: DataFunctionArgs) {
 	const providerName = ProviderNameSchema.parse(params.provider)
-	request = await handleMockCallback(providerName, request)
+
 	const label = providerLabels[providerName]
 
-	const authResult = await authenticator
+	const profile = await authenticator
 		.authenticate(providerName, request, { throwOnError: true })
-		.then(
-			data => ({ success: true, data }) as const,
-			error => ({ success: false, error }) as const,
-		)
-
-	if (!authResult.success) {
-		console.error(authResult.error)
-		throw await redirectWithToast('/login', {
-			title: 'Auth Failed',
-			description: `There was an error authenticating with ${label}.`,
-			type: 'error',
+		.catch(async error => {
+			console.error(error)
+			throw await redirectWithToast('/login', {
+				type: 'error',
+				title: 'Auth Failed',
+				description: `There was an error authenticating with ${label}.`,
+			})
 		})
-	}
-
-	const { data: profile } = authResult
 
 	const existingConnection = await prisma.connection.findUnique({
 		select: { userId: true },
@@ -62,6 +60,17 @@ export async function loader({ request, params }: DataFunctionArgs) {
 		})
 		return handleNewSession({ request, session, remember: true })
 	}
+
+	// 🐨 get the verifySession here from verifySessionStorage.getSession
+	// 🐨 set the onboardingEmailSessionKey to the profile.email
+	// 🐨 set the prefilledProfileKey to the profile (you'll need to create this in the onboarding_.$provider route)
+	// 💯 as extra credit, make sure the username matches our rules:
+	// 1. only alphanumeric characters
+	// 2. lowercase
+	// 3. 3-20 characters long
+	// 💰 you can replace invalid characters with "_"
+	// 🐨 set the providerIdKey to the profile.id
+	// return a redirect to `/onboarding/${providerName}` and commit the verify session storage
 
 	throw await redirectWithToast('/login', {
 		title: 'Auth Success (jk)',

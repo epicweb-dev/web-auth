@@ -10,7 +10,7 @@ export async function loader() {
 export async function action({ request, params }: DataFunctionArgs) {
 	const providerName = ProviderNameSchema.parse(params.provider)
 
-	await handleMockAction(providerName)
+	await handleMockAction(providerName, request)
 
 	return await authenticator.authenticate(providerName, request)
 }

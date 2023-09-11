@@ -3,7 +3,7 @@ import { redirect } from '@remix-run/node'
 import bcrypt from 'bcryptjs'
 import { Authenticator } from 'remix-auth'
 import { safeRedirect } from 'remix-utils/safe-redirect'
-import { connectionSessionStorage , providers } from './connections.server.ts'
+import { connectionSessionStorage, providers } from './connections.server.ts'
 import { prisma } from './db.server.ts'
 import { combineResponseInits } from './misc.tsx'
 import { type ProviderUser } from './providers/provider.ts'
@@ -151,6 +151,12 @@ export async function signup({
 
 	return session
 }
+
+// 🐨 add a signupWithConnection which takes: email, username, name, providerId, providerName, imageUrl
+// 🐨 Follow the example of signup above, except:
+// - no password to create
+// - nested create for the connection
+// - if there's an imageUrl, you can create one using downloadFile(imageUrl)
 
 export async function logout(
 	{

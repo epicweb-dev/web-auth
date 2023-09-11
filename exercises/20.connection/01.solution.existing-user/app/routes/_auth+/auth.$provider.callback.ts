@@ -4,7 +4,6 @@ import {
 	getSessionExpirationDate,
 	getUserId,
 } from '#app/utils/auth.server.ts'
-import { handleMockCallback } from '#app/utils/connections.server.ts'
 import { ProviderNameSchema, providerLabels } from '#app/utils/connections.tsx'
 import { prisma } from '#app/utils/db.server.ts'
 import {
@@ -21,26 +20,19 @@ import {
 
 export async function loader({ request, params }: DataFunctionArgs) {
 	const providerName = ProviderNameSchema.parse(params.provider)
-	request = await handleMockCallback(providerName, request)
+
 	const label = providerLabels[providerName]
 
-	const authResult = await authenticator
+	const profile = await authenticator
 		.authenticate(providerName, request, { throwOnError: true })
-		.then(
-			data => ({ success: true, data }) as const,
-			error => ({ success: false, error }) as const,
-		)
-
-	if (!authResult.success) {
-		console.error(authResult.error)
-		throw await redirectWithToast('/login', {
-			title: 'Auth Failed',
-			description: `There was an error authenticating with ${label}.`,
-			type: 'error',
+		.catch(async error => {
+			console.error(error)
+			throw await redirectWithToast('/login', {
+				type: 'error',
+				title: 'Auth Failed',
+				description: `There was an error authenticating with ${label}.`,
+			})
 		})
-	}
-
-	const { data: profile } = authResult
 
 	const existingConnection = await prisma.connection.findUnique({
 		select: { userId: true },
@@ -99,8 +91,11 @@ export async function loader({ request, params }: DataFunctionArgs) {
 	verifySession.set(onboardingEmailSessionKey, profile.email)
 	verifySession.set(prefilledProfileKey, {
 		...profile,
-		email: profile.email.toLowerCase(),
-		username: profile.username?.replace(/[^a-zA-Z0-9_]/g, '_').toLowerCase(),
+		username: profile.username
+			?.replace(/[^a-zA-Z0-9_]/g, '_')
+			.toLowerCase()
+			.slice(0, 20)
+			.padEnd(3, '_'),
 	})
 	verifySession.set(providerIdKey, profile.id)
 	return redirect(`/onboarding/${providerName}`, {

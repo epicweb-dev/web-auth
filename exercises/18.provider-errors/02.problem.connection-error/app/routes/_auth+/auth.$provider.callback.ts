@@ -1,33 +1,34 @@
 import { type DataFunctionArgs } from '@remix-run/node'
 import { authenticator } from '#app/utils/auth.server.ts'
-import { handleMockCallback } from '#app/utils/connections.server.ts'
 import { ProviderNameSchema, providerLabels } from '#app/utils/connections.tsx'
 import { redirectWithToast } from '#app/utils/toast.server.ts'
 
 export async function loader({ request, params }: DataFunctionArgs) {
 	const providerName = ProviderNameSchema.parse(params.provider)
-	request = await handleMockCallback(providerName, request)
+
 	const label = providerLabels[providerName]
 
-	const authResult = await authenticator
+	const profile = await authenticator
 		.authenticate(providerName, request, { throwOnError: true })
-		.then(
-			data => ({ success: true, data }) as const,
-			error => ({ success: false, error }) as const,
-		)
-
-	if (!authResult.success) {
-		console.error(authResult.error)
-		throw await redirectWithToast('/login', {
-			title: 'Auth Failed',
-			description: `There was an error authenticating with ${label}.`,
-			type: 'error',
+		.catch(async error => {
+			console.error(error)
+			throw await redirectWithToast('/login', {
+				type: 'error',
+				title: 'Auth Failed',
+				description: `There was an error authenticating with ${label}.`,
+			})
 		})
-	}
-
-	const { data: profile } = authResult
 
 	console.log({ profile })
+	// 🐨 check the database for an existing connection
+	// via the providerName and providerId (profile.id) and select the userId
+
+	// 🐨 get the userId from the session (getUserId(request))
+
+	// 🐨 if there's an existing connection and a userId, then there's a conflict... Either:
+	// 1. The account is already connected to their own account
+	// 2. The account is already connected to someone else's account
+	// 🐨 redirect to the /settings/profile/connections route with an apprpropriate toast message
 
 	throw await redirectWithToast('/login', {
 		title: 'Auth Success (jk)',

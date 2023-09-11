@@ -5,11 +5,11 @@ import { redirectWithToast } from '#app/utils/toast.server.ts'
 export async function loader({ request }: DataFunctionArgs) {
 	const providerName = 'github'
 
-	const data = await authenticator.authenticate(providerName, request, {
+	const profile = await authenticator.authenticate(providerName, request, {
 		throwOnError: true,
 	})
 
-	console.log({ data })
+	console.log({ profile })
 
 	throw await redirectWithToast('/login', {
 		title: 'Auth Success (jk)',

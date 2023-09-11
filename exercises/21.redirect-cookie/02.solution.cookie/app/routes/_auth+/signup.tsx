@@ -163,7 +163,7 @@ export default function SignupRoute() {
 				</Form>
 				<div className="mt-5 flex flex-col gap-5 border-b-2 border-t-2 border-border py-3">
 					<ProviderConnectionForm
-						type="Login"
+						type="Signup"
 						providerName="github"
 						redirectTo={redirectTo}
 					/>

@@ -17,6 +17,14 @@ export const sessionKey = 'sessionId'
 
 // 🐨 create the authenticator here, pass the connectionSessionStorage
 
+// 🐨 call authenticator.use with a new GitHubStrategy
+// 🐨 set the clientID, clientSecret, and callbackURL options
+// 🐨 the callback should accept an object with a profile property.
+// 🐨 The profile will have potentially multiple emails, the priority will be the first
+//    so get the priority email and throw a redirect with a toast if no email is found
+// 🐨 otherwise, return an object with the email, id,
+//    username (profile.displayName), name (profile.name.givenName), and imageUrl (profile.photos[0].value)
+
 export async function getUserId(request: Request) {
 	const cookieSession = await sessionStorage.getSession(
 		request.headers.get('cookie'),

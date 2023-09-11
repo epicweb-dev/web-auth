@@ -1,32 +1,24 @@
 import { type DataFunctionArgs } from '@remix-run/node'
 import { authenticator, getUserId } from '#app/utils/auth.server.ts'
-import { handleMockCallback } from '#app/utils/connections.server.ts'
 import { ProviderNameSchema, providerLabels } from '#app/utils/connections.tsx'
 import { prisma } from '#app/utils/db.server.ts'
 import { redirectWithToast } from '#app/utils/toast.server.ts'
 
 export async function loader({ request, params }: DataFunctionArgs) {
 	const providerName = ProviderNameSchema.parse(params.provider)
-	request = await handleMockCallback(providerName, request)
+
 	const label = providerLabels[providerName]
 
-	const authResult = await authenticator
+	const profile = await authenticator
 		.authenticate(providerName, request, { throwOnError: true })
-		.then(
-			data => ({ success: true, data }) as const,
-			error => ({ success: false, error }) as const,
-		)
-
-	if (!authResult.success) {
-		console.error(authResult.error)
-		throw await redirectWithToast('/login', {
-			title: 'Auth Failed',
-			description: `There was an error authenticating with ${label}.`,
-			type: 'error',
+		.catch(async error => {
+			console.error(error)
+			throw await redirectWithToast('/login', {
+				type: 'error',
+				title: 'Auth Failed',
+				description: `There was an error authenticating with ${label}.`,
+			})
 		})
-	}
-
-	const { data: profile } = authResult
 
 	const existingConnection = await prisma.connection.findUnique({
 		select: { userId: true },
@@ -46,6 +38,10 @@ export async function loader({ request, params }: DataFunctionArgs) {
 					: `The "${profile.username}" ${label} account is already connected to another account.`,
 		})
 	}
+
+	// 🐨 if there's an existing connection, then the user is trying to login.
+	// 🐨 create a new session for the existingConnection.userId
+	// 🐨 once you've updated login to export handleNewSession, return a call to it here.
 
 	throw await redirectWithToast('/login', {
 		title: 'Auth Success (jk)',

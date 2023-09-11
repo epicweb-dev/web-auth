@@ -4,7 +4,6 @@ import {
 	getSessionExpirationDate,
 	getUserId,
 } from '#app/utils/auth.server.ts'
-import { handleMockCallback } from '#app/utils/connections.server.ts'
 import { ProviderNameSchema, providerLabels } from '#app/utils/connections.tsx'
 import { prisma } from '#app/utils/db.server.ts'
 import {
@@ -13,34 +12,38 @@ import {
 } from '#app/utils/toast.server.ts'
 import { verifySessionStorage } from '#app/utils/verification.server.ts'
 import { handleNewSession } from './login.tsx'
+// 💰 you'll need these:
+// import { combineHeaders, combineResponseInits } from '#app/utils/misc.tsx'
+// import {
+// 	destroyRedirectToHeader,
+// 	getRedirectCookieValue,
+// } from '#app/utils/redirect-cookie.server.ts'
 import {
 	onboardingEmailSessionKey,
 	prefilledProfileKey,
 	providerIdKey,
 } from './onboarding_.$provider.tsx'
 
+// 🐨 create a destroyRedirectTo header object:
+// 💰 { 'set-cookie': destroyRedirectToHeader }
+
 export async function loader({ request, params }: DataFunctionArgs) {
 	const providerName = ProviderNameSchema.parse(params.provider)
-	request = await handleMockCallback(providerName, request)
+
+	// 🐨 get the redirectTo value from getRedirectCookieValue(request)
 	const label = providerLabels[providerName]
 
-	const authResult = await authenticator
+	const profile = await authenticator
 		.authenticate(providerName, request, { throwOnError: true })
-		.then(
-			data => ({ success: true, data }) as const,
-			error => ({ success: false, error }) as const,
-		)
-
-	if (!authResult.success) {
-		console.error(authResult.error)
-		throw await redirectWithToast('/login', {
-			title: 'Auth Failed',
-			description: `There was an error authenticating with ${label}.`,
-			type: 'error',
+		.catch(async error => {
+			console.error(error)
+			// 🐨 add the destroyRedirectTo headers here
+			throw await redirectWithToast('/login', {
+				type: 'error',
+				title: 'Auth Failed',
+				description: `There was an error authenticating with ${label}.`,
+			})
 		})
-	}
-
-	const { data: profile } = authResult
 
 	const existingConnection = await prisma.connection.findUnique({
 		select: { userId: true },
@@ -52,6 +55,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 	const userId = await getUserId(request)
 
 	if (existingConnection && userId) {
+		// 🐨 add the destroyRedirectTo headers here
 		throw await redirectWithToast('/settings/profile/connections', {
 			title: 'Already Connected',
 			description:
@@ -66,6 +70,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 		await prisma.connection.create({
 			data: { providerName, providerId: profile.id, userId },
 		})
+		// 🐨 add the destroyRedirectTo headers here
 		throw await redirectWithToast('/settings/profile/connections', {
 			title: 'Connected',
 			type: 'success',
@@ -75,6 +80,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 
 	// Connection exists already? Make a new session
 	if (existingConnection) {
+		// 🐨 pass redirectTo here
 		return makeSession({ request, userId: existingConnection.userId })
 	}
 
@@ -92,7 +98,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 			{
 				request,
 				userId: user.id,
-				// send them to the connections page to see their new connection
+				// 🐨 prefer redirectTo, but fallback to the connections page (💰 via nullish coalescing: ??)
 				redirectTo: '/settings/profile/connections',
 			},
 			{
@@ -111,10 +117,14 @@ export async function loader({ request, params }: DataFunctionArgs) {
 	verifySession.set(onboardingEmailSessionKey, profile.email)
 	verifySession.set(prefilledProfileKey, {
 		...profile,
-		email: profile.email.toLowerCase(),
-		username: profile.username?.replace(/[^a-zA-Z0-9_]/g, '_').toLowerCase(),
+		username: profile.username
+			?.replace(/[^a-zA-Z0-9_]/g, '_')
+			.toLowerCase()
+			.slice(0, 20)
+			.padEnd(3, '_'),
 	})
 	verifySession.set(providerIdKey, profile.id)
+	// 🐨 use combineHeaders to pass the destroyRedirectTo headers here
 	return redirect(`/onboarding/${providerName}`, {
 		headers: {
 			'set-cookie': await verifySessionStorage.commitSession(verifySession),
@@ -140,6 +150,7 @@ async function makeSession(
 	})
 	return handleNewSession(
 		{ request, session, redirectTo, remember: true },
+		// 🐨 use combineResponseInits to pass the destroyRedirectTo headers here
 		responseInit,
 	)
 }

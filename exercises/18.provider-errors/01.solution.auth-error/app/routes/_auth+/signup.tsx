@@ -160,7 +160,7 @@ export default function SignupRoute() {
 					</StatusButton>
 				</Form>
 				<div className="mt-5 flex flex-col gap-5 border-b-2 border-t-2 border-border py-3">
-					<ProviderConnectionForm type="Login" providerName="github" />
+					<ProviderConnectionForm type="Signup" providerName="github" />
 				</div>
 			</div>
 		</div>

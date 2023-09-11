@@ -33,6 +33,7 @@ import { type VerifyFunctionArgs } from './verify.tsx'
 
 export const onboardingEmailSessionKey = 'onboardingEmail'
 export const providerIdKey = 'providerId'
+// 🐨 export a prefilledProfileKey here
 
 const SignupFormSchema = z.object({
 	imageUrl: z.string().optional(),
@@ -78,6 +79,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 	const cookieSession = await sessionStorage.getSession(
 		request.headers.get('cookie'),
 	)
+	// 🐨 get the prefilledProfile from the verifySession using the verifySessionStorage
 
 	const formError = cookieSession.get(authenticator.sessionErrorKey)
 
@@ -86,6 +88,8 @@ export async function loader({ request, params }: DataFunctionArgs) {
 		status: 'idle',
 		submission: {
 			intent: '',
+			// 🐨 swap this:
+			// payload: (prefilledProfile ?? {}) as Record<string, unknown>,
 			payload: {} as Record<string, unknown>,
 			error: {
 				'': typeof formError === 'string' ? [formError] : [],
@@ -119,12 +123,15 @@ export async function action({ request, params }: DataFunctionArgs) {
 				return
 			}
 		}).transform(async data => {
+			// 🐨 call the signupWithConnection function from the auth.server.ts module
+			// if you haven't created that yet, do that now.
 			console.log('TODO: implement third party onboarding', {
 				...data,
 				email,
 				providerId,
 				providerName,
 			})
+			// 💣 delete this... The session should come from signupWithConnection
 			const session = { id: 'TODO', expirationDate: new Date() }
 			return { ...data, session }
 		}),
