@@ -203,9 +203,10 @@ async function seed() {
 			name: 'Kody',
 			image: { create: kodyImages.kodyUser },
 			password: { create: createPassword('kodylovesyou') },
-			connections: {
-				create: { providerName: 'github', providerId: githubUser.profile.id },
-			},
+			// 🐨 temporarily disabling the connections in the solution too
+			// connections: {
+			// 	create: { providerName: 'github', providerId: githubUser.profile.id },
+			// },
 			roles: { connect: [{ name: 'admin' }, { name: 'user' }] },
 			notes: {
 				create: [

@@ -7,7 +7,7 @@ import fsExtra from 'fs-extra'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const here = (...p) => path.join(__dirname, ...p)
-const VERBOSE = false
+const VERBOSE = process.env.KCDSHOP_VERBOSE ?? false
 const logVerbose = (...args) => (VERBOSE ? console.log(...args) : undefined)
 
 const workshopRoot = here('..')
@@ -113,7 +113,11 @@ async function updateDataDb() {
 					[/data\.db/],
 			  )
 			: false
-		if (!prismaIsUnchanged) {
+		if (prismaIsUnchanged) {
+			logVerbose(
+				`Skipping copying prisma folder to ${rel(app)} because it's the same`,
+			)
+		} else {
 			if (latestPrismaApp) {
 				logVerbose(
 					`The prisma folder in ${rel(app)} is different to ${rel(
@@ -129,17 +133,44 @@ async function updateDataDb() {
 		const pathToLatestAppDb = path.join(latestPrismaApp, 'prisma/data.db')
 		const pathToDestAppDb = path.join(app, 'prisma/data.db')
 		if (pathToLatestAppDb !== pathToDestAppDb) {
-			if (!isSameFile(pathToLatestAppDb, pathToDestAppDb)) {
-				console.log(
-					`Copying data.db from ${rel(latestPrismaApp)} to ${rel(app)}`,
-				)
-				await fs.promises.copyFile(pathToLatestAppDb, pathToDestAppDb)
-			} else {
+			if (await isSameFile(pathToLatestAppDb, pathToDestAppDb)) {
 				logVerbose(
 					`Skipping copying ${rel(pathToLatestAppDb)} to ${rel(
 						pathToDestAppDb,
 					)} because they are the same`,
 				)
+			} else {
+				console.log(
+					`Copying data.db from ${rel(latestPrismaApp)} to ${rel(app)}`,
+				)
+				await fs.promises.copyFile(pathToLatestAppDb, pathToDestAppDb)
+			}
+		}
+		const pathToLatestGHUserJson = path.join(
+			latestPrismaApp,
+			'tests/fixtures/github/users.0.local.json',
+		)
+		const pathToDestGHUserJson = path.join(
+			app,
+			'tests/fixtures/github/users.0.local.json',
+		)
+		if (
+			(await isFile(pathToLatestGHUserJson)) &&
+			pathToLatestGHUserJson !== pathToDestGHUserJson
+		) {
+			if (await isSameFile(pathToLatestGHUserJson, pathToDestGHUserJson)) {
+				logVerbose(
+					`Skipping copying ${rel(pathToLatestGHUserJson)} to ${rel(
+						pathToDestGHUserJson,
+					)} because they are the same`,
+				)
+			} else {
+				console.log(
+					`Copying users.0.local.json from ${rel(latestPrismaApp)} to ${rel(
+						app,
+					)}`,
+				)
+				await fs.promises.copyFile(pathToLatestGHUserJson, pathToDestGHUserJson)
 			}
 		}
 	}
@@ -218,7 +249,7 @@ async function dirsAreTheSame(dir1, dir2, exclude = []) {
 
 		// Check if the item is a file and compare the content
 		if ((await isFile(itemPath1)) && (await isFile(itemPath2))) {
-			if (!isSameFile(itemPath1, itemPath2)) return false
+			if (!(await isSameFile(itemPath1, itemPath2))) return false
 		} else {
 			// If the item is a directory, call the function recursively
 			const result = await dirsAreTheSame(itemPath1, itemPath2, exclude)
@@ -264,7 +295,7 @@ async function reseedIfNecessary(app) {
 		logVerbose(
 			`Skipping re-seeding ${rel(app)} because it doesn't have a seed script`,
 		)
-		return
+		return false
 	}
 	const projectPackageJson = JSON.parse(
 		await fs.promises.readFile(path.join(app, 'package.json'), 'utf8'),
@@ -276,7 +307,7 @@ async function reseedIfNecessary(app) {
 				app,
 			)} because it doesn't have a seed script in package.json`,
 		)
-		return
+		return false
 	}
 	const latestPrismaChange = await getNewestStat(path.join(app, 'prisma'), [
 		/data\.db/,
@@ -289,6 +320,7 @@ async function reseedIfNecessary(app) {
 		// to the data.db file
 		await fs.promises.utimes(seedPath, new Date(), new Date())
 		cp.execSync('npx prisma db seed', { cwd: app, stdio: 'inherit' })
+		return true
 	}
 	// if the difference is negative, the db is older than the prisma folder
 	// if the difference is longer than a minute, then someone changed something
@@ -299,16 +331,17 @@ async function reseedIfNecessary(app) {
 				app,
 			)} (modifiedTimeDifference: ${modifiedTimeDifference}). Re-seeding...`,
 		)
-		await runSeed()
+		return await runSeed()
 	} else if (process.env.FORCE_SEED) {
 		console.log(`process.env.FORCE_SEED is set, so re-seeding ${rel(app)}`)
-		await runSeed()
+		return await runSeed()
 	} else {
 		logVerbose(
 			`Skipping re-seeding ${rel(
 				app,
 			)} because the data.db file is up to date with a modifiedTimeDifference of ${modifiedTimeDifference}`,
 		)
+		return false
 	}
 }
 
