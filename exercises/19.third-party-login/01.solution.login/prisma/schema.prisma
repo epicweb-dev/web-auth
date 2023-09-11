@@ -163,4 +163,6 @@ model Connection {
   userId String
 
   @@unique([providerName, providerId])
+  // non-unique foreign key
+  @@index([userId])
 }

@@ -3,36 +3,36 @@
     "code": "MOCK_GITHUB_CODE_KODY",
     "accessToken": "MOCK_GITHUB_CODE_KODY_mock_access_token",
     "profile": {
-      "login": "Nels_Howe",
+      "login": "Sven.Borer29",
       "id": "MOCK_GITHUB_CODE_KODY_profile_id",
-      "name": "Harry Gutkowski",
+      "name": "Stanley Will",
       "avatar_url": "https://github.com/ghost.png",
       "emails": [
-        "Candice_Hills22@gmail.com",
-        "Rogers.Abernathy@hotmail.com",
-        "Linwood20@gmail.com"
+        "Charles25@gmail.com",
+        "Rodrick79@hotmail.com",
+        "Nichole.Koss@yahoo.com"
       ]
     },
     "emails": [
       {
-        "email": "Candice_Hills22@gmail.com",
+        "email": "Charles25@gmail.com",
         "verified": false,
         "primary": false,
         "visibility": "public"
       },
       {
-        "email": "Rogers.Abernathy@hotmail.com",
+        "email": "Rodrick79@hotmail.com",
         "verified": true,
         "primary": false,
         "visibility": null
       },
       {
-        "email": "Linwood20@gmail.com",
+        "email": "Nichole.Koss@yahoo.com",
         "verified": true,
         "primary": true,
-        "visibility": "public"
+        "visibility": null
       }
     ],
-    "primaryEmail": "Linwood20@gmail.com"
+    "primaryEmail": "Nichole.Koss@yahoo.com"
   }
 ]
