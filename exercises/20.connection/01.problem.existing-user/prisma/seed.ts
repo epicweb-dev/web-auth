@@ -192,7 +192,11 @@ async function seed() {
 		}),
 	})
 
-	const githubUser = await insertGitHubUser('MOCK_GITHUB_CODE_KODY')
+	// 🐨 temporarily disabling this, but still we need the user in github
+	// const githubUser =
+	await insertGitHubUser('MOCK_GITHUB_CODE_KODY', {
+		primaryEmailAddress: 'kody@kcd.dev',
+	})
 
 	await prisma.user.create({
 		select: { id: true },

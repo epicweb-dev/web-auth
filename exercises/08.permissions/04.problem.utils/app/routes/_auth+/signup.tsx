@@ -117,6 +117,7 @@ export const meta: MetaFunction = () => {
 export default function SignupRoute() {
 	const actionData = useActionData<typeof action>()
 	const isPending = useIsPending()
+
 	const [searchParams] = useSearchParams()
 	const redirectTo = searchParams.get('redirectTo')
 

@@ -3,36 +3,36 @@
     "code": "MOCK_GITHUB_CODE_KODY",
     "accessToken": "MOCK_GITHUB_CODE_KODY_mock_access_token",
     "profile": {
-      "login": "Emil8",
+      "login": "Uriah.Gibson",
       "id": "MOCK_GITHUB_CODE_KODY_profile_id",
-      "name": "Laurie Padberg",
+      "name": "Joann Conn",
       "avatar_url": "https://github.com/ghost.png",
       "emails": [
-        "Marisol56@gmail.com",
-        "Earline.Blick@yahoo.com",
-        "Rachel.Turcotte@hotmail.com"
+        "Noble2@hotmail.com",
+        "Walton.Schultz@yahoo.com",
+        "kody@kcd.dev"
       ]
     },
     "emails": [
       {
-        "email": "Marisol56@gmail.com",
+        "email": "Noble2@hotmail.com",
         "verified": false,
         "primary": false,
         "visibility": "public"
       },
       {
-        "email": "Earline.Blick@yahoo.com",
+        "email": "Walton.Schultz@yahoo.com",
         "verified": true,
         "primary": false,
         "visibility": null
       },
       {
-        "email": "Rachel.Turcotte@hotmail.com",
+        "email": "kody@kcd.dev",
         "verified": true,
         "primary": true,
-        "visibility": null
+        "visibility": "public"
       }
     ],
-    "primaryEmail": "Rachel.Turcotte@hotmail.com"
+    "primaryEmail": "kody@kcd.dev"
   }
 ]

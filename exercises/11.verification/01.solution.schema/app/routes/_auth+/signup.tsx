@@ -6,7 +6,7 @@ import {
 	type DataFunctionArgs,
 	type MetaFunction,
 } from '@remix-run/node'
-import { Form, useActionData } from '@remix-run/react'
+import { Form, useActionData, useSearchParams } from '@remix-run/react'
 import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { HoneypotInputs } from 'remix-utils/honeypot/react'
 import { z } from 'zod'
@@ -25,6 +25,7 @@ import { onboardingEmailSessionKey } from './onboarding.tsx'
 
 const SignupSchema = z.object({
 	email: EmailSchema,
+	redirectTo: z.string().optional(),
 })
 
 export async function loader({ request }: DataFunctionArgs) {
@@ -94,9 +95,14 @@ export const meta: MetaFunction = () => {
 export default function SignupRoute() {
 	const actionData = useActionData<typeof action>()
 	const isPending = useIsPending()
+
+	const [searchParams] = useSearchParams()
+	const redirectTo = searchParams.get('redirectTo')
+
 	const [form, fields] = useForm({
 		id: 'signup-form',
 		constraint: getFieldsetConstraint(SignupSchema),
+		defaultValue: { redirectTo },
 		lastSubmission: actionData?.submission,
 		onValidate({ formData }) {
 			const result = parse(formData, { schema: SignupSchema })
@@ -125,6 +131,8 @@ export default function SignupRoute() {
 						inputProps={{ ...conform.input(fields.email), autoFocus: true }}
 						errors={fields.email.errors}
 					/>
+
+					<input {...conform.input(fields.redirectTo, { type: 'hidden' })} />
 					<ErrorList errors={form.errors} id={form.errorId} />
 					<StatusButton
 						className="w-full"

@@ -20,7 +20,10 @@ const githubUserFixturePath = path.join(
 
 await fsExtra.ensureDir(path.dirname(githubUserFixturePath))
 
-function createGitHubUser(code?: string | null) {
+function createGitHubUser(
+	code?: string | null,
+	{ primaryEmailAddress }: { primaryEmailAddress?: string } = {},
+) {
 	const createEmail = () => ({
 		email: faker.internet.email(),
 		verified: faker.datatype.boolean(),
@@ -31,6 +34,7 @@ function createGitHubUser(code?: string | null) {
 		...createEmail(),
 		verified: true,
 		primary: true,
+		email: primaryEmailAddress ?? faker.internet.email(),
 	}
 
 	const emails = [
@@ -88,11 +92,14 @@ async function setGitHubUsers(users: Array<GitHubUser>) {
 	await fsExtra.writeJson(githubUserFixturePath, users, { spaces: 2 })
 }
 
-export async function insertGitHubUser(code?: string | null) {
+export async function insertGitHubUser(
+	code?: string | null,
+	{ primaryEmailAddress }: { primaryEmailAddress?: string } = {},
+) {
 	const githubUsers = await getGitHubUsers()
 	let user = githubUsers.find(u => u.code === code)
 	if (user) {
-		Object.assign(user, createGitHubUser(code))
+		Object.assign(user, createGitHubUser(code, { primaryEmailAddress }))
 	} else {
 		user = createGitHubUser(code)
 		githubUsers.push(user)

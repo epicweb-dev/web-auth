@@ -3,36 +3,36 @@
     "code": "MOCK_GITHUB_CODE_KODY",
     "accessToken": "MOCK_GITHUB_CODE_KODY_mock_access_token",
     "profile": {
-      "login": "Maxwell17",
+      "login": "Laurie56",
       "id": "MOCK_GITHUB_CODE_KODY_profile_id",
-      "name": "Dr. Elsa Kuvalis",
+      "name": "Sophie Rice",
       "avatar_url": "https://github.com/ghost.png",
       "emails": [
-        "Parker62@hotmail.com",
-        "Bessie87@hotmail.com",
-        "Hadley.Krajcik@gmail.com"
+        "Jess46@gmail.com",
+        "Judge98@hotmail.com",
+        "kody@kcd.dev"
       ]
     },
     "emails": [
       {
-        "email": "Parker62@hotmail.com",
+        "email": "Jess46@gmail.com",
         "verified": false,
         "primary": false,
         "visibility": "public"
       },
       {
-        "email": "Bessie87@hotmail.com",
+        "email": "Judge98@hotmail.com",
         "verified": true,
         "primary": false,
         "visibility": null
       },
       {
-        "email": "Hadley.Krajcik@gmail.com",
+        "email": "kody@kcd.dev",
         "verified": true,
         "primary": true,
         "visibility": "public"
       }
     ],
-    "primaryEmail": "Hadley.Krajcik@gmail.com"
+    "primaryEmail": "kody@kcd.dev"
   }
 ]

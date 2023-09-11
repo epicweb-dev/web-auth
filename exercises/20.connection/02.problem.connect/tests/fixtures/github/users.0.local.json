@@ -3,36 +3,36 @@
     "code": "MOCK_GITHUB_CODE_KODY",
     "accessToken": "MOCK_GITHUB_CODE_KODY_mock_access_token",
     "profile": {
-      "login": "Bertram.Lebsack55",
+      "login": "Lulu58",
       "id": "MOCK_GITHUB_CODE_KODY_profile_id",
-      "name": "Gilberto Hahn V",
+      "name": "Charlene Powlowski",
       "avatar_url": "https://github.com/ghost.png",
       "emails": [
-        "Jordy.Tillman@hotmail.com",
-        "Hortense97@yahoo.com",
-        "Michel19@hotmail.com"
+        "Alessandra54@gmail.com",
+        "Casimer_Medhurst@hotmail.com",
+        "kody@kcd.dev"
       ]
     },
     "emails": [
       {
-        "email": "Jordy.Tillman@hotmail.com",
+        "email": "Alessandra54@gmail.com",
         "verified": false,
         "primary": false,
         "visibility": "public"
       },
       {
-        "email": "Hortense97@yahoo.com",
+        "email": "Casimer_Medhurst@hotmail.com",
         "verified": true,
         "primary": false,
         "visibility": null
       },
       {
-        "email": "Michel19@hotmail.com",
+        "email": "kody@kcd.dev",
         "verified": true,
         "primary": true,
-        "visibility": "public"
+        "visibility": null
       }
     ],
-    "primaryEmail": "Michel19@hotmail.com"
+    "primaryEmail": "kody@kcd.dev"
   }
 ]

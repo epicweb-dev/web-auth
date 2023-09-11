@@ -26,6 +26,7 @@ import { prepareVerification } from './verify.tsx'
 
 const SignupSchema = z.object({
 	email: EmailSchema,
+	redirectTo: z.string().optional(),
 })
 
 export async function loader({ request }: DataFunctionArgs) {
@@ -117,6 +118,7 @@ export const meta: MetaFunction = () => {
 export default function SignupRoute() {
 	const actionData = useActionData<typeof action>()
 	const isPending = useIsPending()
+
 	const [searchParams] = useSearchParams()
 	const redirectTo = searchParams.get('redirectTo')
 
@@ -151,6 +153,8 @@ export default function SignupRoute() {
 						inputProps={{ ...conform.input(fields.email), autoFocus: true }}
 						errors={fields.email.errors}
 					/>
+
+					<input {...conform.input(fields.redirectTo, { type: 'hidden' })} />
 					<ErrorList errors={form.errors} id={form.errorId} />
 					<StatusButton
 						className="w-full"
