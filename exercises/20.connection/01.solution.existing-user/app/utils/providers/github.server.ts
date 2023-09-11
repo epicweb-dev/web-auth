@@ -1,7 +1,7 @@
 import { redirect } from '@remix-run/node'
 import { GitHubStrategy } from 'remix-auth-github'
 import { z } from 'zod'
-import { sessionStorage } from '../session.server.ts'
+import { connectionSessionStorage } from '../connections.server.ts'
 import { redirectWithToast } from '../toast.server.ts'
 import { type AuthProvider } from './provider.ts'
 
@@ -69,16 +69,16 @@ export class GitHubProvider implements AuthProvider {
 	async handleMockCallback(request: Request) {
 		if (!shouldMock) return request
 
-		const cookieSession = await sessionStorage.getSession(
+		const connectionSession = await connectionSessionStorage.getSession(
 			request.headers.get('cookie'),
 		)
-		const state = cookieSession.get('oauth2:state') ?? 'MOCK_STATE'
-		cookieSession.set('oauth2:state', state)
+		const state = connectionSession.get('oauth2:state') ?? 'MOCK_STATE'
+		connectionSession.set('oauth2:state', state)
 		const reqUrl = new URL(request.url)
 		reqUrl.searchParams.set('state', state)
 		request.headers.set(
 			'cookie',
-			await sessionStorage.commitSession(cookieSession),
+			await connectionSessionStorage.commitSession(connectionSession),
 		)
 		return new Request(reqUrl.toString(), request)
 	}

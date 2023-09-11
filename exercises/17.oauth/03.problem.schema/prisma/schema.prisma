@@ -24,6 +24,7 @@ model User {
   notes    Note[]
   roles    Role[]
   sessions Session[]
+  // 🐨 add an array of connections
 }
 
 model Note {
@@ -149,3 +150,12 @@ model Verification {
 
   @@unique([target, type])
 }
+
+// 🐨 add a Connection model with the following properties:
+// - id, createdAt, and updatedAt like the others
+// - providerName - string
+// - providerId - string
+// - user - relationship to the user (many-to-one) like the others
+// - userId - string (non-unique foreign key, so you'll want an index for it)
+// And add a @@unique on the combined providerName and providerId because
+// only one connection can exist for a given account on a provider

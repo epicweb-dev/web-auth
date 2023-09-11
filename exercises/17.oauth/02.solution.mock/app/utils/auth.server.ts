@@ -5,6 +5,7 @@ import { Authenticator } from 'remix-auth'
 import { GitHubStrategy } from 'remix-auth-github'
 import { safeRedirect } from 'remix-utils/safe-redirect'
 import { prisma } from '#app/utils/db.server.ts'
+import { connectionSessionStorage } from './connections.server.ts'
 import { combineResponseInits } from './misc.tsx'
 import { sessionStorage } from './session.server.ts'
 import { redirectWithToast } from './toast.server.ts'
@@ -22,8 +23,9 @@ type ProviderUser = {
 	name?: string
 	imageUrl?: string
 }
-
-export const authenticator = new Authenticator<ProviderUser>(sessionStorage)
+export const authenticator = new Authenticator<ProviderUser>(
+	connectionSessionStorage,
+)
 
 authenticator.use(
 	new GitHubStrategy(

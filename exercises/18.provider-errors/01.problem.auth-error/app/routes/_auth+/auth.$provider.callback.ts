@@ -16,8 +16,8 @@ export async function loader({ request, params }: DataFunctionArgs) {
 	console.log({ data })
 
 	throw await redirectWithToast('/login', {
-		title: 'Auth Success',
-		description: `You have successfully authenticated with ${label}.`,
+		title: 'Auth Success (jk)',
+		description: `You have successfully authenticated with ${label} (not really though...).`,
 		type: 'success',
 	})
 }

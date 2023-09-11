@@ -5,6 +5,7 @@ const schema = z.object({
 	SESSION_SECRET: z.string(),
 	HONEYPOT_SECRET: z.string(),
 	RESEND_API_KEY: z.string(),
+	// 🐨 add GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET here
 })
 
 declare global {
