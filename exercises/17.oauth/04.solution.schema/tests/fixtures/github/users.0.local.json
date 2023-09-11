@@ -1,0 +1,38 @@
+[
+  {
+    "code": "MOCK_GITHUB_CODE_KODY",
+    "accessToken": "MOCK_GITHUB_CODE_KODY_mock_access_token",
+    "profile": {
+      "login": "Alf_Howe",
+      "id": "MOCK_GITHUB_CODE_KODY_profile_id",
+      "name": "Phil Nikolaus",
+      "avatar_url": "https://github.com/ghost.png",
+      "emails": [
+        "Chanel.Buckridge@gmail.com",
+        "America_Smitham@yahoo.com",
+        "Melba.Maggio@gmail.com"
+      ]
+    },
+    "emails": [
+      {
+        "email": "Chanel.Buckridge@gmail.com",
+        "verified": false,
+        "primary": false,
+        "visibility": "public"
+      },
+      {
+        "email": "America_Smitham@yahoo.com",
+        "verified": true,
+        "primary": false,
+        "visibility": null
+      },
+      {
+        "email": "Melba.Maggio@gmail.com",
+        "verified": true,
+        "primary": true,
+        "visibility": "public"
+      }
+    ],
+    "primaryEmail": "Melba.Maggio@gmail.com"
+  }
+]

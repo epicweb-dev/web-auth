@@ -311,22 +311,28 @@
       "path": "exercises/16.2fa-check/04.solution.expiration"
     },
     {
-      "path": "exercises/17.oauth/01.problem.flow"
+      "path": "exercises/17.oauth/01.problem.remix-auth"
     },
     {
-      "path": "exercises/17.oauth/01.solution.flow"
+      "path": "exercises/17.oauth/01.solution.remix-auth"
     },
     {
-      "path": "exercises/17.oauth/02.problem.mock"
+      "path": "exercises/17.oauth/02.problem.flow"
     },
     {
-      "path": "exercises/17.oauth/02.solution.mock"
+      "path": "exercises/17.oauth/02.solution.flow"
     },
     {
-      "path": "exercises/17.oauth/03.problem.schema"
+      "path": "exercises/17.oauth/03.problem.mock"
     },
     {
-      "path": "exercises/17.oauth/03.solution.schema"
+      "path": "exercises/17.oauth/03.solution.mock"
+    },
+    {
+      "path": "exercises/17.oauth/04.problem.schema"
+    },
+    {
+      "path": "exercises/17.oauth/04.solution.schema"
     },
     {
       "path": "exercises/18.provider-errors/01.problem.auth-error"
