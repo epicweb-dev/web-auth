@@ -59,7 +59,8 @@ export class GitHubProvider implements AuthProvider {
 		)
 		const state = cuid()
 		connectionSession.set('oauth2:state', state)
-		const code = 'MOCK_GITHUB_CODE_KODY'
+		// 🦉 Change this code any time you want to test a new GitHub user:
+		const code = 'MOCK_GITHUB_CODE_HANNAH'
 		const searchParams = new URLSearchParams({ code, state })
 		throw redirect(`/auth/github/callback?${searchParams}`, {
 			headers: {
