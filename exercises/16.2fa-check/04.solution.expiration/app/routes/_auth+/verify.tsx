@@ -89,19 +89,27 @@ export async function prepareVerification({
 	request,
 	type,
 	target,
+	redirectTo: postVerificationRedirectTo,
 }: {
 	period: number
 	request: Request
 	type: VerificationTypes
 	target: string
+	redirectTo?: string
 }) {
-	const verifyUrl = getRedirectToUrl({ request, type, target })
+	const verifyUrl = getRedirectToUrl({
+		request,
+		type,
+		target,
+		redirectTo: postVerificationRedirectTo,
+	})
 	const redirectTo = new URL(verifyUrl.toString())
 
 	const { otp, ...verificationConfig } = generateTOTP({
 		algorithm: 'SHA256',
 		period,
 	})
+
 	const verificationData = {
 		type,
 		target,

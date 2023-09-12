@@ -62,12 +62,13 @@ export async function action({ request }: DataFunctionArgs) {
 	if (!submission.value) {
 		return json({ status: 'error', submission } as const, { status: 400 })
 	}
-	const { email } = submission.value
+	const { email, redirectTo: postVerificationRedirectTo } = submission.value
 	const { verifyUrl, redirectTo, otp } = await prepareVerification({
 		period: 10 * 60,
 		request,
 		type: 'onboarding',
 		target: email,
+		redirectTo: postVerificationRedirectTo,
 	})
 
 	const response = await sendEmail({

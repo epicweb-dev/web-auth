@@ -5,7 +5,7 @@ export const destroyRedirectToHeader = cookie.serialize(key, '', { maxAge: -1 })
 
 export function getRedirectCookieHeader(redirectTo?: string) {
 	return redirectTo && redirectTo !== '/'
-		? cookie.serialize(key, redirectTo)
+		? cookie.serialize(key, redirectTo, { path: '/' })
 		: null
 }
 
