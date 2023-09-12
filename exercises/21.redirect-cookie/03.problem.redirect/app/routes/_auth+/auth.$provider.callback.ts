@@ -124,8 +124,9 @@ export async function loader({ request, params }: DataFunctionArgs) {
 			.padEnd(3, '_'),
 	})
 	verifySession.set(providerIdKey, profile.id)
-	// 🐨 use combineHeaders to pass the destroyRedirectTo headers here
+	// 🐨 add a redirectTo param if a redirectTo exists
 	return redirect(`/onboarding/${providerName}`, {
+		// 🐨 use combineHeaders to pass the destroyRedirectTo headers here
 		headers: {
 			'set-cookie': await verifySessionStorage.commitSession(verifySession),
 		},
