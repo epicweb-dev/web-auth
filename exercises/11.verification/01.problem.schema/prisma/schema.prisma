@@ -131,5 +131,6 @@ model Role {
 // - algorithm: string - The algorithm used to generate the otp
 // - digits: int - The number of digits in the otp
 // - period: int - The number of seconds the otp is valid for
+// - charSet: String - The character set used to generate the otp
 // - expiresAt: DateTime? - When it's safe to delete this verification
 // and add a unique constraint on target and type (there should be only one of each type for a given target)

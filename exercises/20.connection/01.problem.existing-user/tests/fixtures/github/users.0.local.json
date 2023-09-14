@@ -3,25 +3,25 @@
     "code": "MOCK_GITHUB_CODE_KODY",
     "accessToken": "MOCK_GITHUB_CODE_KODY_mock_access_token",
     "profile": {
-      "login": "Clifton81",
+      "login": "Verna58",
       "id": "MOCK_GITHUB_CODE_KODY_profile_id",
-      "name": "Gretchen Kunde",
+      "name": "Allen Goyette",
       "avatar_url": "https://github.com/ghost.png",
       "emails": [
-        "Jamaal.Hickle10@hotmail.com",
-        "Zola.Rodriguez46@yahoo.com",
+        "Sigrid_Kemmer@hotmail.com",
+        "Jameson57@yahoo.com",
         "kody@kcd.dev"
       ]
     },
     "emails": [
       {
-        "email": "Jamaal.Hickle10@hotmail.com",
+        "email": "Sigrid_Kemmer@hotmail.com",
         "verified": false,
         "primary": false,
         "visibility": "public"
       },
       {
-        "email": "Zola.Rodriguez46@yahoo.com",
+        "email": "Jameson57@yahoo.com",
         "verified": true,
         "primary": false,
         "visibility": null

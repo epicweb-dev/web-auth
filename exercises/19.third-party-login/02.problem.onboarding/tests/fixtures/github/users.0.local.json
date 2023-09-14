@@ -3,25 +3,25 @@
     "code": "MOCK_GITHUB_CODE_KODY",
     "accessToken": "MOCK_GITHUB_CODE_KODY_mock_access_token",
     "profile": {
-      "login": "Uriah.Gibson",
+      "login": "Axel56",
       "id": "MOCK_GITHUB_CODE_KODY_profile_id",
-      "name": "Joann Conn",
+      "name": "Jane Cremin",
       "avatar_url": "https://github.com/ghost.png",
       "emails": [
-        "Noble2@hotmail.com",
-        "Walton.Schultz@yahoo.com",
+        "Onie96@hotmail.com",
+        "Jayde_Carroll87@hotmail.com",
         "kody@kcd.dev"
       ]
     },
     "emails": [
       {
-        "email": "Noble2@hotmail.com",
+        "email": "Onie96@hotmail.com",
         "verified": false,
         "primary": false,
         "visibility": "public"
       },
       {
-        "email": "Walton.Schultz@yahoo.com",
+        "email": "Jayde_Carroll87@hotmail.com",
         "verified": true,
         "primary": false,
         "visibility": null
