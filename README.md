@@ -14,7 +14,7 @@
 <div align="center">
   <a
     alt="Epic Web logo with the words Deployed Version"
-    href="https://epicweb-dev-web-auth.fly.dev/"
+    href="https://auth.epicweb.dev/"
   >
     <img
       width="300px"
