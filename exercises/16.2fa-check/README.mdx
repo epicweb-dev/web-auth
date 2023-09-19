@@ -1,1 +1,25 @@
 # Disable Two Factor Auth
+
+We're almost finished with the 2FA stuff. The trick is that 2FA shouldn't just
+be used when the user is logging in, but also when they're performing sensitive
+actions. For example, if a user is changing their email, password, or even their
+2FA settings, they should be required to enter their 2FA code. Here's a
+continuation on our 2FA flow diagram that completes the loop and disables 2FA:
+
+![A flow diagram showing a user, server, 2fa app, and verification in the database](https://github-production-user-asset-6210df.s3.amazonaws.com/1500684/269064146-6251fb0c-b254-4b84-ae40-2a821d367d99.png)
+
+We left off at the step where the user logs in. So, to continue from there:
+
+- The user clicks the "Disable 2FA" button on the website.
+- The server sends them to `/verify` so they can re-verify their 2FA code.
+- The user submits a code from their 2FA app
+- The server verifies the code
+- The user confirms they wish to disable 2FA
+- The server deletes the 2FA verification and sends the user back to their
+  settings page.
+
+One tricky bit of this is handling the case where the user has already submitted
+their 2FA code recently. It would be really annoying for a user to login with
+their 2FA code, and then be required to submit it again a few seconds later. So
+you're going to need to keep track of the last time the user submitted their 2FA
+code and use that to determine whether they need to re-verify.

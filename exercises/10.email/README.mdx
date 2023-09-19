@@ -64,3 +64,23 @@ async function renderReactEmail(react: ReactElement) {
 	return { html, text }
 }
 ```
+
+Finally, it may be useful for you to get an idea of how the auth flow will work
+in this app:
+
+![auth flow showing communication between a user and server described below](https://github.com/epicweb-dev/web-auth/assets/1500684/9b930a69-1b53-4264-892b-be94b124595f)
+
+Here's a description of the flow:
+
+- The user submits an email to the server
+- The server creates a verification in the database
+- The server redirects the user to a `/verify` route
+- The server sends the code to the user's email address
+- The user checks their email client for the code
+- The user submits the code
+- The server verifies the code with the verification in the database
+- The server redirects with a cookie
+- The user proceeds to onboard with a signed cookie identifying them as the
+  owner of the email address their onboarding with.
+
+And that's what you're going to build in this exercise. Let's go!

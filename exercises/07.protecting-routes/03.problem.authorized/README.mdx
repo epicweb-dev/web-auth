@@ -1,3 +1,12 @@
 # Require Authorized
 
-TODO
+👨‍💼 We've got a number of pages that users have no business being on. Like the
+edit page of someone else's note, for example, if you're not logged in, you
+should not be able to go to <LinkToApp to="/users/kody/notes/d27a197e/edit" />
+or <LinkToApp to="/users/kody/notes/new" />.
+
+And you certainly shouldn't be able to _do_ anything on those pages as well. So
+in this exercise, you're going to make a new `requireUser` utility which you can
+then apply to those routes' `loaders` and `actions`.
+
+The emoji will be there to guide you! Have fun!

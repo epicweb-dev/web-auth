@@ -2,6 +2,24 @@
 
 - [An Introduction to OAuth 2](https://www.digitalocean.com/community/tutorials/an-introduction-to-oauth-2)
 
+![A flow diagram showing a user, server, provider, and connection in a database](https://github-production-user-asset-6210df.s3.amazonaws.com/1500684/269059627-5265f0b8-c364-453b-806e-66802e6283cd.png)
+
+Here's how the flow goes:
+
+- The user clicks "login with provider"
+- The server redirects the user to the provider (and sets a cookie to keep track
+  of the user so we remember them when they come back).
+- The user authenticates with the provider
+- The provider redirects the user which triggers a request to the server with a
+  code and some information to associate the user with their cookie.
+- The server exchanges the code for an access token and uses that to get the
+  user's profile.
+- The server gets or creates a connection in the database for the user if the
+  user already exists and redirects them home
+- Otherwise, the server redirects to onboarding with a value in the
+  `verifySession` that verifies the user owns the email address with which they
+  authenticated on the provider.
+
 ## remix-auth
 
 ```tsx file=app/utils/connections.server.ts

@@ -1,11 +1,34 @@
 # User Session
 
-TODO: improve this
+This exercise will build on the knowledge you developed from the previous
+exercise on Remix's session storage utilities for storing data in cookies.
+Again, there are other storage mechanisms available, and if you need to track a
+lot of data for the user, you may consider using one of those other mechanisms.
+In each of those cases, a cookie is still used to keep track of the user's
+session, but the data is stored in a database/filesystem/etc.
 
-Login
+For us, we're not going to be storing enough data in the session to warrant
+using a different storage mechanism. In [the future](/09) though, we will be
+creating a database table for managed sessions, but we'll get to that later.
+
+You'll be creating a separate cookie for this session storage with its own
+expiration characteristics and other configuration. We're going to call this
+`sessionStorage` and the value you get from calling `getSession()` will be
+`cookieSession` to differentiate it from the managed session we'll bring in
+later. You may also consider calling it `authSessionStorage` and `authSession`
+to be more explicit about what it's used for.
+
+In this exercise, you're going to be using that session storage to store the
+`userId` of the user who's currently logged in. Because it's cryptographically
+signed, the user won't be able to tamper with it, so we can trust it as an
+authentication mechanism. If the user is logged in, we'll be able to get their
+`userId` from the `cookieSession` and use it to load their user record from the
+database.
+
+The basic login flow is:
 
 1. Find user
 2. Verify password (coming soon)
-3. Set userId in session cookie
-4. Get the userId from the session cookie
+3. Set userId in `cookieSession`
+4. Get the userId from the `cookieSession`
 5. Load the user by their ID

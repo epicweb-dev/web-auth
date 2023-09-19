@@ -25,3 +25,10 @@ to think about them each having a list of permissions.
 
 You can read more about this concept in
 [What is Role-Based Access Control (RBAC)?](https://auth0.com/intro-to-iam/what-is-role-based-access-control-rbac).
+
+We're going to be using many-to-many relationships for our roles and
+permissions. A user can have many roles. A role can have many users. A role can
+have many permissions. A permission can have many roles. Here's a visualization
+of that:
+
+![many-to-many relationship between users, roles, and permissions as described](https://github-production-user-asset-6210df.s3.amazonaws.com/1500684/269059610-b7f508d1-fa69-4a43-af00-fdd15e41cbff.png)

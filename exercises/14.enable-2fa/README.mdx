@@ -1,1 +1,18 @@
 # Enable Two Factor Auth
+
+![A diagram showing actions taken by a user, server, 2fa app, and a verification in the database](https://github-production-user-asset-6210df.s3.amazonaws.com/1500684/269059616-87979b1c-6ac7-48c3-bd1f-57836b77d2ff.png)
+
+Here are the steps:
+
+- The user enables 2FA in their account settings
+- The server creates a "verify verification" meaning a verification that will be
+  used to verify the user can generate 2FA codes.
+- The server provides the user with an Auth URI (and a QR code to make it easy
+  to add to their verification app).
+- The user scans the QR code to add it to their 2FA app (like
+  [1Password](https://1password.com/)).
+- The 2FA app generates a 6 digit code that is valid for 30 seconds.
+- The user submits that code
+- The server verifies the code
+- The server upgrades the verification from a "verify" type of verification to a
+  "2FA" verification.

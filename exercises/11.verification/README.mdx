@@ -39,8 +39,61 @@ and it's important to do this for all verification codes.
 
 <callout-info>
 	In fact, rate limiting is an important part of any public API, especially for
-	authentication (login, sign up, and verification). However, it is outside the
-	scope of this workshop.
+	authentication (login, sign up, and verification). Good thing we put that in
+	place earlier right?!
 </callout-info>
 
-TODO: finish writing this
+## HMAC-based One Time Passwords
+
+A good way to generate these short-lived codes is to use a one-time password
+following the [HOTP](https://en.wikipedia.org/wiki/HMAC-based_One-time_Password_algorithm)
+algorithm. Feel free to dive into
+[the RFC](https://datatracker.ietf.org/doc/html/rfc4226) if that's your jam.
+We're going to use [`@epic-web/totp`](https://npm.im/@epic-web/totp) for
+generating our time-based one-time passwords based on this.
+
+What's cool is doing things this way will make it much easier to use the same
+logic for adding two factor authentication later!
+
+Here's an example of how this is done:
+
+```tsx
+import { generateTOTP, verifyTOTP } from '@epic-web/totp'
+
+// Here's how to use the default config. All the options are returned:
+const {
+	secret, // the unique secret for this verification
+	period, // the number of seconds each code is valid for
+	digits, // the number of digits in the code
+	algorithm, // the algorithm used to generate the code (SHA1, SHA256, SHA512, etc.)
+	charSet, // valid characters for the code (defaults to 0123456789)
+	otp, // the current otp is generated and returned as a convenience
+} = generateTOTP()
+
+// now verify the code the user submits:
+const code = await getVerificationCodeFromUser() // <-- however you do this
+const isValid = verifyTOTP({
+	otp: code,
+	secret,
+	period,
+	digits,
+	algorithm,
+	charSet,
+})
+```
+
+So for email or phone number verification, you can generate a code with a long
+`period` (like 30 minutes) and email the user the code. Once the time is up,
+it's no longer valid by design. And we can use the same thing for a password
+reset flow as well. Once the user verifies ownership, we can proceed knowing
+they are the owner of whatever it is we verified for them.
+
+Then for 2FA, you can generate a code with a short `period` (like 30 seconds)
+and show the user the code in your app. Then they can enter it into their
+authenticator app (like 1Password) and have a new code generated every 30
+seconds. But we'll get to that part later.
+
+The most important part is that you need to verify the code the user submits
+with the same settings you used to generate the code. So we'll want to save all
+this information in the database when we generate the code. And then retrieve it
+again when we verify the code.
