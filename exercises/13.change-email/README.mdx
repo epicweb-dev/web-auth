@@ -1,1 +1,34 @@
 # Change Email
+
+Because the user's email address is the authority for ownership, we need to be
+very thoughtful about how we manage that ownership. Users do occasionally change
+their primary email address, and we need to be able to handle that in as user
+friendly way as possible without compromising security.
+
+You could just have a simple field in preferences, let the user change their
+address to whatever, whenever. But then you'd definitely have issues with people
+impersonating other folks. And even well-meaning users could typo the address
+and get locked out. You need to add verification.
+
+But what do you verify? Do you verify the old email address? Or the new one?
+Well, to avoid the impersonation issue, you'd definitely want to verify the new
+one before you complete the change. But do you _also_ verify the old one to
+avoid an adversary changing a user's account email address without their
+knowledge? What if the user no longer has access to the old address because they
+were laid off from the company or something? Now they're talking to our support
+people. No thanks.
+
+So instead, we can send a verification to the new address, and once verified, we
+can change the email address, and simply notify the old address that the change
+has been made. If the user didn't initiate the change, they can contact us and
+we can revert the change.
+
+Another approach to this is to allow multiple email addresses per user, and
+allow the user to designate one as primary. Then you can verify the new address
+before making it primary, and the user can always revert to the old address if
+they need to. This is a bit more complex to implement and a little more work for
+the user as well, but it's a good option for some cases.
+
+For our app, we're going to keep it simple and just force a verification of the
+new email address and then inform the old address with enough information for
+them to give to our support folks if they didn't initiate the change.

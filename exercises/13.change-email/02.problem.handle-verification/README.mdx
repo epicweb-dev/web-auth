@@ -1,1 +1,15 @@
 # Handle Verification
+
+👨‍💼 Alright, so now we're going to implement the `handleVerification` function
+for changing the user's email. What makes this one different from the others
+is instead of setting some stuff in the `verifySession` and redirecting the user
+to another page where they can finish the action they're trying to take, we
+already know the action they want to take (change their email), so we'll just
+perform the email change right away.
+
+Just make sure you send an email to the user's old email address letting them
+know that their email address was changed. We've already got an
+`EmailChangeNoticeEmail` component you can use for this. And this means you'll
+need to get the user before the change so we know what their previous email was.
+
+Good luck!
