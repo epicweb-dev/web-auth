@@ -1,1 +1,16 @@
 # Reset Password
+
+I know I know, everyone should just use a password manager. But unfortunately,
+not everyone does. So every application really needs a "forgot password" flow.
+And thanks to our work with verifications so far, this is pretty simple.
+
+You need a route where the user enters their username or email address. Then
+generate a verification for the password reset, send the user the one-time
+password to their email (just like the verification email we send when they
+login), and once they submit that code, we can reliably trust they have
+ownership of the account associated with that email address and we allow them to
+reset the password for the account.
+
+This is why having the user's email address is so critical. Their email address
+acts as the final authority on ownership of the account. The user can always
+recover their account so long as they have access to their email.

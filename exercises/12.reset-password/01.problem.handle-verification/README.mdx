@@ -1,1 +1,22 @@
 # Handle Verification
+
+👨‍💼 With <DiffLink app1={-1} app2={0}>the changes</DiffLink> 🧝‍♂️ Kellie made, we
+now have some nice utilities to streamline our verification process in general.
+So in this exercise, you need to:
+
+1. Add a `'reset-password'` verification type
+   to <InlineFile file="app/routes/_auth+/verify.tsx" />
+2. Use some of the utilities
+   from <InlineFile file="app/routes/_auth+/verify.tsx" />
+   in <InlineFile file="app/routes/_auth+/forgot-password.tsx" /> to get the
+   verification code set up to email the user
+3. Implement the `handleVerification` function
+   in <InlineFile file="app/routes/_auth+/reset-password.tsx" /> to handle what
+   happens after the user has successfully verified their ownership of the
+   account.
+4. Call the `handleVerification`
+   in <InlineFile file="app/routes/_auth+/verify.tsx" />.
+
+Once your done, the user should be able to get to the password reset page.
+
+Good luck!

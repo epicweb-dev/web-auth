@@ -1,1 +1,20 @@
 # Reset Password
+
+👨‍💼 We've now successfully verified that the user owns the account, so now we
+need to actually let the user reset their password. Just don't forget to ensure
+the `action` and `loader` both verify that the user has verified their
+ownership. This is where signed cookies come in really handy (and specifically
+our `verifySessionStorage`)!
+
+So in this exercise, you'll need to make a function that gets the
+`resetPasswordUsername` out of the `verifySession`, and if that doesn't exist
+then send the user to `/login`.
+
+You may want to also use our `requireAnonymous` utility we built earlier as well
+so authenticated users don't end up here. They've got a different flow for
+resetting their passwords as part of the settings anyway.
+
+You'll also be actually resetting the user's password once they submit the form.
+Once that's done, you can destroy the `verifySession`.
+
+Good luck!
