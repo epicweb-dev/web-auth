@@ -1,1 +1,27 @@
 # Verify Code
+
+👨‍💼 We're going to have you add a query param to the `/verify` route in this step
+so you get an idea of how things flow through the `/verify` route. We need to
+have a `type` query param which will signify the type of verification taking
+place. And we want to make this typesafe as well (no pun intended). So we're
+going to be using [`zod`](https://zod.dev) to do runtime validation of all the
+valid types. For now, only `'onboarding'` is valid, but eventually we'll have
+others.
+
+So you'll want to make sure the `type` is included in the form and that its
+value is derived from the `searchParams`.
+
+Once the code is submitted, we'll want to verify it by finding the verification
+in the database by it's `target` and `type` and only if it's not expired. If we
+can't find one then we'll show an "Invalid code" error. If we can, then we'll
+use [`@epic-web/totp`](https://github.com/epicweb-dev/totp)'s `verifyTOTP`
+function to verify the code. If it's invalid then we'll show an "Invalid code"
+error.
+
+If it's valid, then we'll delete the verification from the database and do what
+we were doing before to get people into onboarding. Only this time we now know
+for certain that they have access to the email address they submitted.
+
+That should be enough to get you going! Enjoy.
+
+- [📜 `@epic-web/totp` `verifyTOTP`](https://github.com/epicweb-dev/totp#verifytotp)

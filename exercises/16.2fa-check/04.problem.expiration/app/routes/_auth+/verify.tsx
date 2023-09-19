@@ -148,7 +148,7 @@ export async function isCodeValid({
 			target_type: { target, type },
 			OR: [{ expiresAt: { gt: new Date() } }, { expiresAt: null }],
 		},
-		select: { algorithm: true, secret: true, period: true },
+		select: { algorithm: true, secret: true, period: true, charSet: true },
 	})
 	if (!verification) return false
 	const result = verifyTOTP({
@@ -156,6 +156,7 @@ export async function isCodeValid({
 		secret: verification.secret,
 		algorithm: verification.algorithm,
 		period: verification.period,
+		charSet: verification.charSet,
 	})
 	if (!result) return false
 

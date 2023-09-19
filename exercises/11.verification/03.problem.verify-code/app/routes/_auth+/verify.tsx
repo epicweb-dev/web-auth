@@ -61,7 +61,7 @@ async function validateRequest(
 		schema: () =>
 			VerifySchema.superRefine(async (data, ctx) => {
 				console.log('verify this', data)
-				// 🐨 retrieve the verification secret, period, digits, and algorithm
+				// 🐨 retrieve the verification secret, period, digits, charSet, and algorithm
 				// by the target and type and ensure it's not expired
 				// 🐨 if there's no verification, then add an issue to the code field
 				// that it's invalid (similar to the one below)

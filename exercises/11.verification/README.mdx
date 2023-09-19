@@ -97,3 +97,27 @@ The most important part is that you need to verify the code the user submits
 with the same settings you used to generate the code. So we'll want to save all
 this information in the database when we generate the code. And then retrieve it
 again when we verify the code.
+
+### Clock Drift
+
+Because the codes are dependent on time, it's important that the device
+generating the codes and the device verifying the codes are in sync. In an ideal
+world, both would be perfectly in sync. However, devices can sometimes be off by
+a bit, leading to valid OTPs being marked as invalid.
+
+The standard approach to mitigating clock drift is to allow a certain number of
+time steps before and after the current time when verifying an OTP. For example,
+if your time step is 30 seconds, you might allow a 90-second window (one time
+step back and one time step forward).
+
+`@epic-web/totp` supports this out of the box with the `window` option of the
+`verifyTOTP` utility. The return value is either `null` (if the code is invalid)
+or an object with a `delta` property. The `delta` represents how many codes off
+the given code is from where the server expected it to be. In practical
+situations, this will probably be 0 and should never be much more than 1 or 2.
+
+However, this `window` option is only very useful for short-lived codes which
+have two separate devices for code generation and verification (like those used
+for two-factor authentication). For longer-lived codes (like those used for
+email or phone verification), it's better to just use a longer `period` and
+allow the user to request a new code if the old one has expired.

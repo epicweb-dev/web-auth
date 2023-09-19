@@ -66,7 +66,13 @@ async function validateRequest(
 		schema: () =>
 			VerifySchema.superRefine(async (data, ctx) => {
 				const verification = await prisma.verification.findUnique({
-					select: { secret: true, period: true, digits: true, algorithm: true },
+					select: {
+						secret: true,
+						period: true,
+						digits: true,
+						algorithm: true,
+						charSet: true,
+					},
 					where: {
 						target_type: {
 							target: data[targetQueryParam],

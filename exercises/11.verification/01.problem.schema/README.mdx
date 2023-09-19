@@ -1,6 +1,17 @@
 # Verification Schema
 
-Update the schema:
+🧝‍♂️ I put together a <LinkToApp to="/verify" /> route for you. If you'd like to
+build it yourself, feel free to
+delete <InlineFile file="app/routes/_auth+/verify.tsx" /> and make it yourself.
+Or you can <DiffLink app1={-1} app2={0}>check the diff</DiffLink>.
+
+👨‍💼 For this first step we're going to
+update <InlineFile file="prisma/schema.prisma">the schema</InlineFile> for the
+new `Verification` model. Make sure you delete all the verifications
+in <InlineFile file="prisma/seed.ts">the seed</InlineFile> as well.
+
+Once you've done those updates, you'll want to add a migration for the new
+table.
 
 ```sh
 npx prisma migrate dev --name verification

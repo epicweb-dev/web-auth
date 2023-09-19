@@ -1,1 +1,37 @@
 # Generate TOTP
+
+👨‍💼 Now we're going to use [`@epic-web/totp`](https://npm.im/@epic-web/totp) to
+generate a time-based one-time password. We'll want to make it valid for 10
+minutes and use the SHA256 algorithm. We're going to use the defaults for
+everything else (though you may consider using a bigger character set to
+increase the entropy of the password).
+
+Once we've got the TOTP generated and the verification added to the database,
+we're going to want to send an email with the one-time password. We're already
+sending them an email, so we'll just add the TOTP to the email we're already
+sending.
+
+Another cool thing the <LinkToApp to="/verify" /> route supports is the ability
+to pre-fill the TOTP code based on search params. So in addition to sending the
+code for the user to copy/paste or type in, we can also send them a link that
+takes them straight to the `/verify` page with the code pre-filled. We can even
+have the loader automatically validate the code without them having to do
+anything.
+
+<callout-warning>
+	While auto-submission is a very handy feature, it can also be a problem
+	because some anti-virus software will automatically open links in emails. If
+	the link contains a TOTP code, then the anti-virus software will automatically
+	validate the code and the user won't be able to use it. So you may prefer to
+	not auto-validate the code or you may choose to not delete the code once it's
+	been used and just let it expire.
+</callout-warning>
+
+In this exercise, instead of sending the user to onboarding with the email in
+the `verifySession`, we're going to send them to `/verify` with some search
+params and email them the code.
+
+You'll be creating two URLs, one with the `code` which we'll email the user and
+the other without the `code` which we'll use to redirect the user.
+
+- [📜 `@epic-web/totp` `generateTOTP`](https://github.com/epicweb-dev/totp#generatetotp)

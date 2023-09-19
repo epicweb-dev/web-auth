@@ -1,1 +1,28 @@
 # Verify Code
+
+👨‍💼 Great! Now I feel much more confident that our users are who they say they
+are when they sign up for an account. Now that we have this implemented, we can
+use this same plumbing for a new password reset flow!
+
+🧝‍♂️ I'm going to rework things quite a bit for the next exercise. Here's what I'm
+going to do:
+
+- Move the post-verified logic from `/verify` to a `handleVerification` function
+  in `/onboarding` which `/verify` will just call. This will allow us to keep
+  the post-verification logic colocated with the part of the app that requires
+  the verification which will make it much easier to maintain in the long-term.
+  We'll be doing this for all our verifications so you may want to check this
+  part out.
+- Move some of the logic from `/onboarding` into utility functions in `/verify`
+  so we can reuse that logic for other verifications.
+- Update `/forgot-password` to allow the user to submit a verification code to
+  reset their account password.
+- Add a `/reset-password` route which is where the user will go after they
+  verify their account ownership. You'll be doing some work here in the next
+  exercise.
+- Update our `sendEmail` functionality to more fully represent Resend's
+  responses/errors and support sending react-based emails.
+- Update the emails we have already to be react-based.
+
+It's quite a bit of work. If you'd like to <DiffLink>check the diff</DiffLink>
+feel free, and if you'd like to even do some of that work yourself, be my guest!
