@@ -1,1 +1,12 @@
 # Onboarding
+
+👨‍💼 Great work! Now we can get unauthenticated users through the OAuth flow so
+they can be logged into our app.
+
+🧝‍♂️ I'm going to make a small update to `handleNewSession` to allow for passing
+a custom `responseInit` so you can set custom headers and stuff. I'm also going
+to make a utility called `makeSession`
+in <InlineFile file="app/routes/_auth+/auth.$provider.callback.ts" /> to make it
+easier to get users logged in there. You'll use it in the next exercise.
+
+<DiffLink>Checkout the diff</DiffLink> or do it yourself.

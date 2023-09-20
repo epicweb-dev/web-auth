@@ -1,1 +1,29 @@
 # Onboarding
+
+👨‍💼 This step is going to require a little bit more work. So, when a user is not
+logged in, and there's no connection, we want to send them to onboarding so
+they can create a new account. This means we're going to need to do a few
+things:
+
+1. In <InlineFile file="app/routes/_auth+/auth.$provider.callback.ts" />, put
+   the third party profile email into the `verifySession` along with the rest
+   of the profile information and redirect to the `/onboarding/github` route.
+1. In the <InlineFile file="app/routes/_auth+/onboarding_.$provider.tsx" />
+   `loader`, get the pre-filled information from the `verifySession` and use it to
+   pre-populate the onboarding form (the form was already put together by Kellie
+   🧝‍♂️ so you don't have to put that together).
+1. Create a new `signupWithConnection` utility
+   in <InlineFile file="app/utils/auth.server.ts" /> that takes the onboarding
+   information (along with the verified `email` and `providerId`) and creates a
+   new user with a connection.
+1. Use the `signupWithConnection` utility in the
+   <InlineFile file="app/routes/_auth+/onboarding_.$provider.tsx" /> `action` to
+   create the new user and redirect to the `/` route.
+
+That should have you all set.
+
+🧝‍♂️ I've already changed the `code`
+in <InlineFile file="app/utils/providers/github.server.ts" /> so the GitHub user
+is a new user without a connection, so when you click "Login with GitHub" it
+should take you to onboarding. If you end up creating a connection and need to
+test it again, update the `code` value to something else.

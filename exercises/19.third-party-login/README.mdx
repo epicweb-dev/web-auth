@@ -1,1 +1,28 @@
 # Third Party Login
+
+If a non-logged in user authenticates with a third party through your OAuth
+flow, there are three possible outcomes:
+
+1. The provider account they authenticated with is already connected with an
+   account in your app, in which case you can log them in to that account.
+2. The provider account they authenticated with is not connected with an
+   account in your app, but the email address they authenticated with matches
+   the email address of an account in your app, in which case you can connect
+   the provider account with that account and log them in.
+3. The provider account they authenticated with is not connected with an
+   account in your app and doesn't match an email address in your app, in which
+   case you can send them to onboarding.
+
+In this exercise, we're going to handle scenario 1 and 3. We'll get to scenario
+2 in the next exercise.
+
+For the login scenario, we want to reuse a lot of logic from our regular login
+flow as far as creating a session and sending the user to enter their 2FA code
+if they haven't done that yet.
+
+For the onboarding scenario, we need to be more thoughtful about the user
+experience. One of the nice things about connecting with a third party account
+is we have an opportunity to pre-fill a bunch of profile information for the new
+account based on what we get back from the provider.
+
+So you're going to be doing that in this exercise! Have a good time!

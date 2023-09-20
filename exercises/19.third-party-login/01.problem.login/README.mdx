@@ -1,1 +1,16 @@
 # Login
+
+👨‍💼 We want to allow users who have existing connections to be able to login with
+those connections.
+
+If you look at the `diff` for this step you may be intimidated, but this is
+actually much smaller than it looks! Here's all you need to do:
+
+1. Move logic from the <InlineFile file="app/routes/_auth+/login.tsx" />
+   `action` to a new reusable function called `handleNewSession`.
+1. Update <InlineFile file="app/routes/_auth+/auth.$provider.callback.ts" /> to
+   create a session if there is no current user, but there is a connection and
+   call `handleNewSession` with the new session.
+
+That's it. You'll know this works when you click "Login with GitHub" and you get
+logged in as Kody.
