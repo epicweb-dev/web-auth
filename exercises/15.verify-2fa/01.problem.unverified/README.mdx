@@ -1,1 +1,10 @@
 # Unverified Session
+
+👨‍💼 Right now when a user logs in, we create a session for them and place the ID
+for that in the `sessionStorage` cookie. But for users who have enabled 2FA,
+we're going to place that in the `verifySessionStorage` cookie instead and send
+them over to `/verify` to verify their session.
+
+That's what you'll be doing in this exercise! Just make sure you don't break the
+experience for existing users please! So only do this if the user has a 2FA
+verification on their account.

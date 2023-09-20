@@ -3,41 +3,16 @@ import { Form } from '@remix-run/react'
 import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { Icon } from '#app/components/ui/icon.tsx'
 import { StatusButton } from '#app/components/ui/status-button.tsx'
-import { getRedirectToUrl } from '#app/routes/_auth+/verify.tsx'
+import { requireRecentVerification } from '#app/routes/_auth+/verify.tsx'
 import { requireUserId } from '#app/utils/auth.server.ts'
 import { validateCSRF } from '#app/utils/csrf.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
 import { useDoubleCheck, useIsPending } from '#app/utils/misc.tsx'
 import { redirectWithToast } from '#app/utils/toast.server.ts'
-import { shouldRequestTwoFA } from '../_auth+/login.tsx'
 import { twoFAVerificationType } from './profile.two-factor.tsx'
 
 export const handle = {
 	breadcrumb: <Icon name="lock-open-1">Disable</Icon>,
-}
-
-// 🐨 move this function to app/routes/_auth+/verify.tsx and import it from there
-export async function requireRecentVerification({
-	request,
-	userId,
-}: {
-	request: Request
-	userId: string
-}) {
-	const shouldReverify = await shouldRequestTwoFA({ request, userId })
-	if (shouldReverify) {
-		const reqUrl = new URL(request.url)
-		const redirectUrl = getRedirectToUrl({
-			request,
-			target: userId,
-			type: twoFAVerificationType,
-			redirectTo: reqUrl.pathname + reqUrl.search,
-		})
-		throw await redirectWithToast(redirectUrl.toString(), {
-			title: 'Please Reverify',
-			description: 'Please reverify your account before proceeding',
-		})
-	}
 }
 
 export async function loader({ request }: DataFunctionArgs) {

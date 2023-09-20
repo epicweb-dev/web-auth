@@ -1,1 +1,9 @@
 # Require Reverification
+
+👨‍💼 Before we allow the user to delete their 2FA verification, let's determine
+whether they should re-verify their account.
+
+You're going to make a `requireRecentVerification` utility which will use the
+`shouldRequestTwoFA` utility you just implemented in the login route. Then you
+can use that in both the `loader` and `action` of the disable 2FA route to force
+the user to re-verify before they can disable 2FA.

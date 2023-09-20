@@ -1,1 +1,47 @@
 # Cookie Expiration Override
+
+👨‍💼 Unfortunately, in the process of setting the `verifiedTimeKey` and committing
+the session, we override the `expires` value for our session. This means that if
+a user selected "Remember Me" in the login form, we forget that when we
+re-verify them. Super bummer.
+
+Unfortunately, the browser is the only one that knows the `expires` time on our
+cookie (it only sends the server the cookie value) so we can't just read it and
+set the expires time based on the existing value.
+
+Instead, we're going to have to store the `expires` time in the session itself.
+
+But this would be super annoying to have to remember to do everywhere we commit
+the session... So... We're going to get a little creative in the name of
+usability.
+
+The short version is we're going to override the `commitSession` API with a new
+implementation that sets the `expires` value on the session cookie based on the
+`expires` option it's called with.
+
+You'll also want to handle `maxAge` as this is another way to manage the
+expiration time.
+
+To do this, we'll be using
+[`Object.defineProperty`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty)
+on the `sessionStorage` object. Here's a simple example of how this API works
+using `console.log` as the example:
+
+```js
+const originalConsoleLog = console.log
+
+Object.defineProperty(console, 'log', {
+	value: (...args) => {
+		originalConsoleLog('👋', ...args)
+	},
+})
+```
+
+With that, every time someone calls `console.log`, we'll log a little 👋 emoji
+ahead of the arguments they passed in.
+
+Hopefully that gives you an idea of how to accomplish something similar for our
+`sessionStorage` so we can handle this expiration issue automatically without
+requiring anyone to think about it!
+
+- [📜 `Object.defineProperty`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty)

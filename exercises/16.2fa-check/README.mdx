@@ -23,3 +23,9 @@ their 2FA code recently. It would be really annoying for a user to login with
 their 2FA code, and then be required to submit it again a few seconds later. So
 you're going to need to keep track of the last time the user submitted their 2FA
 code and use that to determine whether they need to re-verify.
+
+You may also consider requiring the user to re-enter their password as part of
+the re-verification process. You could definitely adjust what we're about to do
+to make that happen. This would have the benefit of an added layer of security
+for folks who don't enable 2FA. But we're just going to focus on the 2FA code
+for this exercise.

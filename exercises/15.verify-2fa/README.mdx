@@ -1,7 +1,7 @@
 # Verify 2FA Code
 
-We're going to continue the flow from the previous exercise. Here's an expanded
-diagram from where we left off:
+This exercise will continue the flow from the previous exercise. Here's an
+expanded diagram from where we left off:
 
 ![A flow diagram showing a user, server, 2fa app, and verification in the database](https://github-production-user-asset-6210df.s3.amazonaws.com/1500684/269064138-46113897-9016-4c97-bc40-5a957003b8ea.png)
 
@@ -19,3 +19,6 @@ verification. From there we have the following flow:
 - The server verifies the code
 - The server moves their session from the `verifySession` to the
   regular `cookieSession`.
+
+This exercise will feel very similar to the work we did for email verification,
+password reset, and email change earlier. So let's get into it!

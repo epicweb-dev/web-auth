@@ -1,1 +1,15 @@
 # Handle Verification
+
+👨‍💼 This is going to feel pretty similar to the other verifications we've done so
+far (hooray for nice abstractions). We're going to need to adjust things
+slightly though because with other verifications we wanted to delete them after
+they've been used, but in the case of 2FA, we want to keep the verification
+around.
+
+You're also going to implement the `handleVerification` for the login process
+which will upgrade the user's `sessionId` from the `verifySessionStorage` cookie
+to the regular `sessionStorage` cookie. You'll need to commit both of these
+cookies, and make sure you set the `expires` properly on the `sessionStorage` as
+well.
+
+Good luck!

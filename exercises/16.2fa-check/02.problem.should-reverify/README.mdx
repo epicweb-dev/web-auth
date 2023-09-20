@@ -1,1 +1,14 @@
 # Should Reverify
+
+👨‍💼 We need to keep track of when the user last submitted their 2FA code. We'll
+store this in the `cookieSession` under `'verified-time'`.
+
+Then we'll implement a utility called `shouldRequestTwoFA` which will return
+`true` if the user should be asked to verify their 2FA code because it's been
+too long since they last verified. We're defining "too long" as "two hours."
+
+Once you have that implemented, you can actually use it in the `action` to
+determine whether the user who's logging in should be redirected to the
+`/verify` route before logging in or not.
+
+The emoji will guide you 🐨 Enjoy!

@@ -80,11 +80,8 @@ const ChangeEmailSchema = z.object({
 })
 
 export async function loader({ request }: DataFunctionArgs) {
-	await requireRecentVerification({
-		request,
-		userId: await requireUserId(request),
-	})
 	const userId = await requireUserId(request)
+	await requireRecentVerification({ request, userId })
 	const user = await prisma.user.findUnique({
 		where: { id: userId },
 		select: { email: true },
