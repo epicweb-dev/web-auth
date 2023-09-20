@@ -1,1 +1,54 @@
 # Connection Exceptions
+
+👨‍💼 Because of the <LinkToApp to="/settings/profile/connections" /> page, users
+can connect multiple third party accounts to their profile. But we don't allow
+a third party account to be connected to more than one profile. If we did, how
+would we know which profile the user is trying to login with?
+
+So we need to make sure users can't connect a third party account to their
+account if it's already connected to another user's account (even if its their
+own 😅).
+
+So in this step, you need to search the database for an existing connection and
+you'll get the `userId` from the request. If there's a connection and there's a
+`userId`, then they're trying to connect an account that has already been
+connected and we should show an error in that case.
+
+🧝‍♂️ With the way I put the mocks together, you'll get a different GitHub user if
+you change the `code` in `handleMockAction`
+in <InlineFile file="app/utils/providers/github.server.ts" />. And our seed
+script initializes a github user for Kody as well. So the code
+`MOCK_GITHUB_CODE_KODY` will connect you to the profile that is already
+connected to Kody. So to test this, try the following:
+
+1. Sign in as Kody (username: `kody`, password: `kodylovesyou`)
+1. Go to <LinkToApp to="/settings/profile/connections" />
+1. Make sure `code` is set to `MOCK_GITHUB_CODE_KODY`
+   in <InlineFile file="app/utils/providers/github.server.ts" />
+1. Click "Connect with GitHub"
+
+You should get an error indicating this account is already connected to you.
+
+Then, change `code`
+in <InlineFile file="app/utils/providers/github.server.ts" /> to
+`MOCK_GITHUB_CODE_KODY2`, and try again.
+
+This should send you to `/login`, but because you're already logged in, you'll
+ultimately get sent to `/`. We still need to implement connecting the account,
+so we're good here.
+
+Now if you want to test the other case...
+
+1. change `code`
+   in <InlineFile file="app/utils/providers/github.server.ts" /> back to
+   `MOCK_GITHUB_CODE_KODY`
+1. Logout of kody on <LinkToApp to="/users/kody" />
+1. Go to <LinkToApp to="/users" />
+1. Choose any user, copy their username
+1. Go to <LinkToApp to="/login" />
+1. Enter the copied username in the username and password fields
+1. Go to <LinkToApp to="/settings/profile/connections" />
+1. Click "Connect with GitHub"
+
+You should get an error indicating that the GitHub account is already connected
+to another account.

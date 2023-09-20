@@ -1,1 +1,11 @@
 # Auth Errors
+
+👨‍💼 We have to mitigate our risks and we know that GitHub isn't perfect. It does
+go down occasionally, so we want to gracefully fail in this situation.
+
+There's not much we can do in the event of a third party failure, so you can
+just redirect the user to `/login` and show the user a toast message letting
+them know of the error.
+
+🧝‍♂️ I've put a comment in <InlineFile file="tests/mocks/github.ts" line={136} />
+you can uncomment to test this out.
