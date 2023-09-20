@@ -1,0 +1,38 @@
+[
+  {
+    "code": "MOCK_GITHUB_CODE_KODY",
+    "accessToken": "MOCK_GITHUB_CODE_KODY_mock_access_token",
+    "profile": {
+      "login": "Lemuel_Lowe",
+      "id": "MOCK_GITHUB_CODE_KODY_profile_id",
+      "name": "Jacob Hermiston",
+      "avatar_url": "https://github.com/ghost.png",
+      "emails": [
+        "Arnold_Mohr85@gmail.com",
+        "Nyasia.Stracke@yahoo.com",
+        "Hudson_Erdman3@hotmail.com"
+      ]
+    },
+    "emails": [
+      {
+        "email": "Arnold_Mohr85@gmail.com",
+        "verified": false,
+        "primary": false,
+        "visibility": "public"
+      },
+      {
+        "email": "Nyasia.Stracke@yahoo.com",
+        "verified": true,
+        "primary": false,
+        "visibility": null
+      },
+      {
+        "email": "Hudson_Erdman3@hotmail.com",
+        "verified": true,
+        "primary": true,
+        "visibility": "public"
+      }
+    ],
+    "primaryEmail": "Hudson_Erdman3@hotmail.com"
+  }
+]

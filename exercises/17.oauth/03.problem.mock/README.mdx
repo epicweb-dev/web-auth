@@ -1,1 +1,33 @@
 # Mock GitHub OAuth
+
+👨‍💼 Great, so Kellie 🧝‍♂️ put together a mock for all the GitHub APIs we call. To
+enable these mocks, we need to update <InlineFile file=".env" /> to have the
+GitHub variables prefixed with `MOCK_` (you may need to restart the app after
+this change).
+
+Unfortunately, that's not all we need to do to mock out the auth flow. See, the
+problem is we get redirected to GitHub as part of the auth flow when we call
+`authenticator.authenticate` in the `action` of `/auth/github`. But if we really
+want to isolate our development and testing from third party services (we do),
+we need to avoid that redirect.
+
+So what we'll do instead is simulate what `authenticator.authenticate` does,
+then redirect straight to `/auth/github/callback` without going through GitHub.
+
+The most interesting bit to this is the `state` value which is used to prevent
+cross-site request forgery. The idea is that the client (our app) generates this
+state is sent to the identity provider (GitHub) and when the identity provider
+sends the user back to the app, it sends the same state. So then the client
+can use the state in the URL and compare it with the state in the cookie to make
+sure they're the same. So you'll be generating a value for this and putting it
+in a cookie as well as the redirect URL's search params.
+
+Kody 🐨 will be in <InlineFile file="app/routes/_auth+/auth.github.ts" /> to
+help get this worked out for you.
+
+Once you're done, you should be able to click the "Login with GitHub" button
+on <LinkToApp to="/login" /> and it should pop up a the toast notification
+saying we've authenticated with GitHub. You'll also get the mock profile logged
+to the server terminal output.
+
+Good luck!

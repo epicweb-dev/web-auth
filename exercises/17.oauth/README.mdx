@@ -1,6 +1,26 @@
 # OAuth
 
-- [An Introduction to OAuth 2](https://www.digitalocean.com/community/tutorials/an-introduction-to-oauth-2)
+Authenticating with third parties is very common in web applications. For some
+apps it's used to help to reduce the friction of signing up via social login
+(login with 𝕏, Google, GitHub, etc.). For others it's to be able to retrieve or
+update data on behalf of the user. And still for some it's a customer
+requirement (SSO).
+
+Doing this securely is challenging. So various standards have been created to
+make it easier to do this securely. The most common of these is
+[OAuth2](https://oauth.net/2/) (and its sibling
+[OpenID Connect](https://openid.net/)). These standards define a flow for
+authenticating with a third party and getting back an access token that can be
+used to make requests on behalf of the user.
+
+The specification is beyond the scope of this workshop, but Digital Ocean has a good
+[introduction to OAuth 2](https://www.digitalocean.com/community/tutorials/an-introduction-to-oauth-2)
+if you're interested in diving a little deeper.
+
+## App Authentication flow with OAuth
+
+Here's a flow diagram showing how our application will use OAuth to authenticate
+a user:
 
 ![A flow diagram showing a user, server, provider, and connection in a database](https://github-production-user-asset-6210df.s3.amazonaws.com/1500684/269059627-5265f0b8-c364-453b-806e-66802e6283cd.png)
 
@@ -22,6 +42,15 @@ Here's how the flow goes:
 
 ## remix-auth
 
+Implementing OAuth is definitely not most developers' favorite pass time, which
+is why I'm grateful to have
+[`remix-auth`](https://github.com/sergiodxa/remix-auth) which makes it easy to
+implement various authentication strategies in your application. One of these
+strategies is OAuth!
+
+First, you create a session object for remix-auth to manage the flow with the
+user:
+
 ```tsx file=app/utils/connections.server.ts
 import { createCookieSessionStorage } from '@remix-run/node'
 
@@ -37,6 +66,13 @@ export const connectionSessionStorage = createCookieSessionStorage({
 	},
 })
 ```
+
+Then you create an authenticator that will manage the flow with the provider.
+There's a general
+[`remix-auth-oauth2`](https://github.com/sergiodxa/remix-auth-oauth2) package
+which can handle OAuth2 providers, but there's even a GitHub-specific strategy
+we can use as well!
+[`remix-auth-github`](https://github.com/sergiodxa/remix-auth-github):
 
 ```tsx file=app/utils/auth.server.ts
 type ProviderUser = {
@@ -65,10 +101,16 @@ authenticator.use(
 )
 ```
 
+This would go in the `action` of the route that handles when the user clicks
+"Login with GitHub."
+
 ```tsx file=app/routes/_auth+/auth.github.ts
 return await authenticator.authenticate('github', request)
 // throws a redirect to GitHub + sets a cookie with some state
 ```
+
+This would go in the `loader` of the route that handles when the browser is
+redirected from the third party back to our application.
 
 ```tsx file=app/routes/_auth+/auth.github.callback.ts
 // GitHub redirects with the code and the state value
@@ -77,4 +119,61 @@ const data = await authenticator.authenticate('github', request, {
 })
 ```
 
+## Configuring OAuth Providers
+
+One of the common requirements of OAuth providers is application registration.
+This helps the provider know who is using their service and what they're using
+it for. This is usually done by creating an "application" with the provider and
+getting a client ID and client secret. These are used to identify your
+application when it makes requests to the provider.
+
+You can create an OAuth application with the GitHub API by
+[following the GitHub documentation](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app).
+
+<callout-success>
+	You do not have to set up a GitHub application for this workshop if you don't
+	want to. Very early on we'll start mocking out the GitHub API so you can
+	continue to work on the workshop without having to set up a GitHub
+	application. But feel free to try it if you like!
+</callout-success>
+
+If you do create an OAuth application, you'll want to set the callback URL to:
+`http://localhost:4000/auth/github/callback`.
+
+## Single Sign On
+
+In many business-to-business or Software as a Service applications, your
+customers may wish (or require) that you enable their employees to access your
+application using their company's identity provider. This is called Single Sign
+On (SSO) and is a common requirement for enterprise applications.
+
+In times past, the most common way to do this was to use SAML. Many
+organizations still use SAML, but it's a bit of a pain to implement. So many
+organizations are moving to OAuth2 and OpenID Connect.
+
+From the [How OpenID Connect Works](https://openid.net/developers/how-connect-works/)
+article on the OpenID Connect website:
+
+> OpenID Connect is an interoperable authentication protocol based on the OAuth
+> 2.0 framework of specifications (IETF RFC 6749 and 6750). It simplifies the
+> way to verify the identity of users based on the authentication performed by
+> an Authorization Server and to obtain user profile information in an
+> interoperable and REST-like manner.
+
+If you do have to support SAML, you may find
+[`remix-auth-sso`](https://github.com/boxyhq/remix-auth-sso) helpful.
+
+For OpenID Connect, you can use
+[`web-oidc`](https://github.com/sergiodxa/web-oidc) which also comes with a
+`remix-auth` strategy.
+
+In this exercise we're going to focus on OAuth2 with the GitHub strategy, but by
+the end of the workshop we'll have a module third party authentication setup
+which will make it easy for you to implement authentication with other
+providers (including SSO).
+
+- [📜 OAuth 2](https://oauth.net/2/)
+- [📜 OpenID Connect](https://openid.net/)
 - [📜 remix-auth](https://github.com/sergiodxa/remix-auth)
+- [📜 remix-auth-oauth2](https://github.com/sergiodxa/remix-auth-oauth2)
+- [📜 remix-auth-github](https://github.com/sergiodxa/remix-auth-github)

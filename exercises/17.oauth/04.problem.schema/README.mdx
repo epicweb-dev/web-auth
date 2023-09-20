@@ -1,1 +1,16 @@
 # Connection Model
+
+👨‍💼 We need to associate a user with their third party connections. Right now we
+only have `github` as a provider, but we want to be able to add other third
+party connections in the future for other social login options and potentially
+Single Sign On (SSO) when we score a killer enterprise contract.
+
+So, head over to <InlineFile file="prisma/schema.prisma" /> and add a
+connections model.
+
+You'll also be updating the <InlineFile file="prisma/seed.ts" /> file and you'll
+want to create a migration with:
+
+```sh
+npx prisma migrate dev --name connections
+```

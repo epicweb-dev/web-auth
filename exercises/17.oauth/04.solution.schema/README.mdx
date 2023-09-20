@@ -1,1 +1,32 @@
 # Connection Model
+
+👨‍💼 Great job! Now we've got a great foundation for our third party
+authentication and connected accounts. You may have noticed, we don't store an
+access token or refresh token in the database. That's because we don't actively
+perform actions on the user's behalf in the background on GitHub so we don't
+need to. We're just using GitHub as an authentication mechanism. If we did want
+to perform actions or retrieve data for our users in the background, that would
+require a bit more work and we'd need to store more data in our database.
+
+As it is, we're all set!
+
+🧝‍♂️ I'm going to do some more work, <DiffLink>check it out here</DiffLink>, but
+I'll describe it for you at a high level:
+
+- I'm restructuring things to make them more generic, so `auth.github.ts` and
+  `auth.github.callback.ts` will now become `auth.$provider.ts` and
+  `auth.$provider.callback.ts`
+- I'm making an `/onboarding/$provider` route which you'll be making changes to
+  soon. It's similar to our regular onboarding route, but without the password
+  fields and most of the fields should be auto-filled (even the user's image!)
+  when you're done.
+- I'm adding a `/settings/profile/connections` page to list the user's
+  connections. This also requires interacting with the GitHub API to lookup a
+  GitHub user's username from their id, so I'm adding a `GITHUB_TOKEN`
+  environment variable so we can do that.
+- I'm moving some of our stuff from `app/utils/auth.server.ts` to more specific
+  files like `app/utils/providers/github.server.ts`
+- I'm also adding a "Signup with GitHub" button on the `/signup` route.
+
+That's the main stuff. As usual, if you'd prefer to do this stuff, I'm not
+stopping you. We'll be ready for you when you're ready to move on!

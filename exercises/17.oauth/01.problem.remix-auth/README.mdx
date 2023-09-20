@@ -1,1 +1,18 @@
 # Remix Auth
+
+👨‍💼 Let's start out by getting Remix Auth set up with the GitHub strategy. First,
+you'll need to get the environment variables set in <InlineFile file=".env" />
+and <InlineFile file="app/utils/env.server.ts" />.
+
+Then we'll go to <InlineFile file="app/utils/auth.server.ts" /> to make our
+authenticator instance with the `connectionSessionStorage` Kellie made for us
+in <InlineFile file="app/utils/connections.server.ts" />.
+
+Then you'll add the `GitHubStrategy` to the `authenticator` with
+`authenticator.use`. If the GitHub profile doesn't have an email then redirect
+to `/login` (this can happen if none of their email addresses are verified).
+
+Kody 🐨 should be able to help you out from here. Good luck!
+
+- [📜 `remix-auth`](https://github.com/sergiodxa/remix-auth)
+- [📜 `remix-auth-github`](https://github.com/sergiodxa/remix-auth-github)

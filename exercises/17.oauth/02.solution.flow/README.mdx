@@ -1,1 +1,43 @@
 # GitHub Strategy
+
+👨‍💼 Great work. We've got the basic flow down. Now we need to decide what to do
+with the user's profile now that we have it.
+
+But before we get to that, we should probably make it easier to develop and test
+this connection process...
+
+🧝‍♂️ Speaking of mocking... I'm going to put together some mocks for the GitHub
+API for you. It's more of what we did for the Resend APIs, albeit a little more
+sophisticated. You see, we want to be able to simulate GitHub's APIs which means
+we need to have some fake github users. We'll use `@faker-js/faker` for this,
+but it's more complicated because we want to persist the github user's our users
+connect to during development and testing so they continue to be there even if
+we restart the server.
+
+So I'm going to make a mini "database" (a `.gitignore`d json file) to store the
+GitHub users we create.
+
+Then I'll build out mocks for the following endpoints that are used in the
+`GitHubStrategy`. Here's what the mocks will do:
+
+- POST: `https://github.com/login/oauth/access_token` - looks up the GitHub user
+  by the `code` param (or creates a new one) and responds with that user's
+  `accessToken`.
+- GET: `https://api.github.com/user/emails` - looks up the user from the access
+  token in the `authorization` header and responds with that user's emails.
+- GET: `https://api.github.com/user/:id` - looks up the user by the ID.
+- GET: `https://api.github.com/user` - looks up the user from the access token
+  in the `authorization` header and responds with that user's profile.
+- GET: `https://github.com/ghost.png` - Responds with the image in
+  `./tests/fixtures/github/ghost.jpg` (yes, it's a jpg even though the URL says
+  png).
+
+This will make it easy for us to develop and test this stuff locally without
+relying on GitHub's APIs directly. However, I'm also going to make it easy to
+use the real APIs when you want. So I'm going to use `msw`'s `passthrough`
+utility to pass things through to the real APIs if our `GITHUB_CLIENT_ID`
+environment variable doesn't start with `MOCK_`. You'll fix that up in the next
+step.
+
+It's quite a lot and this is only one way to handle this, feel free to try it
+yourself, or <DiffLink>checkout my work</DiffLink> if you'd like.
