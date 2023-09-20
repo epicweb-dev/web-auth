@@ -1,9 +1,16 @@
 # Verify Code
 
+👨‍💼 If you have a phone that can scan the QR code (or the 1Password desktop app
+can scan the code on your screen), you can use this to generate a code.
+Otherwise, you can actually just use this script to do it as well:
+
 ```tsx
 import { generateTOTP } from '@epic-web/totp'
 
-const otpUri = new URL('paste otpUri here')
+// Paste your string here. It should start with "otpauth://totp/" and include a secret and other params
+const otpString = ``
+
+const otpUri = new URL(otpString)
 const { secret, algorithm, digits, period } = Object.fromEntries(
 	otpUri.searchParams.entries(),
 )
@@ -17,3 +24,33 @@ const { otp } = generateTOTP({
 
 console.log(otp)
 ```
+
+<InlineFile file="otp.js">Create a file called `otp.js`</InlineFile> and then you
+can paste that code in there and run `node otp.js` to get the code.
+
+Paste the URI in there and run the script, it will output the code which you can
+use to test things out.
+
+In this one you'll want to start in the `action`
+of <InlineFile file="app/routes/settings+/profile.two-factor.verify.tsx" />.
+You'll first verify the code, and then you can update the verification in the
+database to go from the `2fa-verify` `type` to a regular `2fa` `type` and remove
+the `expiresAt`.
+
+This will involve creating a new verification type for `2fa` so our `/verify`
+route can handle that, so you'll be working
+in <InlineFile file="app/routes/_auth+/verify.tsx" /> as well.
+
+Finally, you'll need to update the <LinkToApp to="/settings/profile" /> route so
+it shows whether 2FA is enabled or not as well
+as <LinkToApp to="/settings/profile/two-factor" />.
+
+Once you're done, we still won't actually ask the user to verify with their 2FA
+code when they login yet, but you should be able to enable 2FA on an account and
+have that reflected in the settings page.
+
+<callout-warning>
+	Once you enable it, we don't have the ability to disable it yet, so if you
+	need to do that, you can always run `npx prisma db seed` to reseed the
+	database if you need.
+</callout-warning>

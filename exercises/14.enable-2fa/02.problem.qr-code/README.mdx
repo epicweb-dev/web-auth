@@ -1,1 +1,44 @@
 # QR Code
+
+👨‍💼 Now that the `2fa-verify` verification in the database, we can update the
+loader for <LinkToApp to="/settings/profile/two-factor/verify" /> to load the
+user's `2fa-verify` verification and generate a Auth URI and QR code for the
+verification.
+
+```tsx
+import { getTOTPAuthUri, generateTOTP } from '@epic-web/totp'
+
+const { secret, period, digits, algorithm } = generateTOTP()
+// save this to the database...
+
+// then generate the Auth Uri:
+const otpUri = getTOTPAuthUri({
+	period,
+	digits,
+	algorithm,
+	secret,
+	accountName: user.email,
+	issuer: 'Your App Name',
+})
+```
+
+Most phones have the ability to scan the QR code and automatically add the
+verification to the phone:
+
+```tsx
+import * as QRCode from 'qrcode'
+// ...
+const qrCode = await QRCode.toDataURL(otpUri)
+// ...
+<img src={qrCode} />
+```
+
+If the phone does not have this ability, the user
+can manually enter the `otpUri` into their authenticator app.
+
+We're not going to get to the scanning part _quite_ yet though. You just need
+to update the loader to handle getting the verification and generating the Auth
+URI.
+
+- [📜 `@epic-web/totp` `getTOTPAuthUri`](https://github.com/epicweb-dev/totp#gettotpauthuri)
+- [📜 `qrcode` `toDataUrl`](https://github.com/soldair/node-qrcode#todataurltext-options-cberror-url)

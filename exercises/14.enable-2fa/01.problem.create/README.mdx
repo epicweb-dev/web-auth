@@ -1,1 +1,26 @@
 # Create Verification
+
+👨‍💼 This is going to feel pretty similar to what we've done before, with an
+interesting twist. The verification we make at first is what we're going to call
+a "verify" verification, meaning, it's a verification that needs to be verified
+before it can be used. The `type` is `2fa-verify`.
+
+When the user clicks "Enable 2FA," the `action` is called and we create a TOTP
+with `generateTOTP` from `@epic-web/totp`. We then save the verification
+configuration into the database. We're going to want to include an `expiresAt`
+on this so if the user takes too long to verify, we can safely delete it and
+require that they go through the process again.
+
+With that created, we'll send them over to
+the <LinkToApp to="/settings/profile/two-factor/verify" /> route which will be
+similar to the regular `/verify` route, but is special for this type of
+verification.
+
+<callout-info>
+	It's important to note that most 2FA apps only support the SHA1 algorithm and
+	a `charSet` of `0123456789`. For that reason `@epic-web/totp` defaults to
+	those values. So we don't need to configure those, but you will still want to
+	save them to the database.
+</callout-info>
+
+That's as far as we're going to get in this step. Enjoy!
