@@ -1,1 +1,22 @@
 # Redirect Cookie
+
+Whenever the user is required to authenticate before performing an action, it
+can be very jarring to not be placed right back where they left off. We handled
+this in a previous exercise when we created a `redirectTo` query param on the
+`/login` and `/signup` routes. However, things get a little more tricky when it
+comes to third party auth.
+
+The problem is that we lose the `redirectTo` query param when we redirect to
+the third party auth provider. When the user finishes authenticating with the
+third party, they get sent back to our callback URL. However, at that point, we
+don't have the `redirectTo` query param anymore!
+
+To solve this problem, we're going to use a simple cookie. This doesn't even
+need to be very sophisticated because it's no big secret where the user's going.
+So while we do want it to be secure with `HTTPOnly` and `SameSite` directives,
+we don't need to worry about signing it or anything like that.
+
+All we need to do is make sure we keep track of the `redirectTo` query param
+that we're already sending to `/login` and `/signup`, get that into the cookie,
+retrieve that from the cookie when we get back to our callback URL, and delete
+the cookie when we redirect the user. Let's go!

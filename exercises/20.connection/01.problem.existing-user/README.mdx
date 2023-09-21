@@ -1,1 +1,23 @@
 # Existing User
+
+👨‍💼 Here's the scenario:
+
+1. A user with email address signs up for an account using email and password.
+1. That user has a GitHub account with the same email address.
+1. Later, that user clicks "Login with GitHub"
+1. We resolve their GitHub profile and find their GitHub email address matches
+   the email address they used to sign up for an account.
+1. We create a connection for them, and log them in.
+
+That's what you're going to do in this exercise. I also want you to give them
+a toast notification explaining what happened and send them to the
+`/settings/profile/connections` page so they can see their new connection.
+
+Don't forget you can use the `makeSession` utility Kellie 🧝‍♂️ put together for
+us to make this easier!
+
+🧝‍♂️ In this exercise, I've temporarily removed Kody's connection to a GitHub
+account from <InlineFile file="prisma/seed.ts" /> so we can test out the flow of
+an existing user who does not have a connection using login in with GitHub with
+a matching account. If it's not working, or you need to test it out again, you
+can run `npx prisma db seed` to reset the database.

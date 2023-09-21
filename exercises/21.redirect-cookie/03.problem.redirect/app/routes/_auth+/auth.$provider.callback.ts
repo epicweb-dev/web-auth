@@ -38,6 +38,7 @@ export async function loader({ request, params }: DataFunctionArgs) {
 		.catch(async error => {
 			console.error(error)
 			// 🐨 add the destroyRedirectTo headers here
+			// 💯 add the redirectTo query param to the /login redirect
 			throw await redirectWithToast('/login', {
 				type: 'error',
 				title: 'Auth Failed',

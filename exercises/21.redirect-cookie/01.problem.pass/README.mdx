@@ -1,1 +1,13 @@
 # Pass Redirect URL
+
+👨‍💼 We need to get the `redirectTo` URL forwarded on to the `/auth/github` route.
+So first, you'll need to update <InlineFile file="app/utils/connections.tsx" />
+to have the `ProviderConnectionForm` component accept a `redirectTo` prop and
+render a hidden input with the `redirectTo` value. Then update its usage
+in <InlineFile file="app/routes/_auth+/login.tsx" />
+and <InlineFile file="app/routes/_auth+/signup.tsx" /> to pass the `redirectTo`
+prop.
+
+This one should be pretty quick. You can verify things are working by being
+logged out, and going to <LinkToApp to="/settings/profile" />. There should be
+an `input` with that `redirectTo` value.

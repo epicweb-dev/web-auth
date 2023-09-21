@@ -1,1 +1,24 @@
 # Redirect
+
+👨‍💼 It's the moment we've all been waiting for! In this step we're going to do
+three basic things
+in <InlineFile file="app/routes/_auth+/auth.$provider.callback.ts" />:
+
+1. Read the `redirectTo` value from the `request` using the
+   `getRedirectCookieValue` utility
+1. Safely redirect the user to `redirectTo` wherever we're redirecting the user.
+1. Destroy the `redirectTo` cookie with the `destroyRedirectToHeader`
+
+The tricky bit here is we've got a couple places where we redirect the user, so
+we'll need to handle all of those. In some cases we'll even need to include a
+`redirectTo` query param to forward the `redirectTo` logic to the next step.
+
+Here's how you test this out:
+
+1. Be logged out
+1. Go to <LinkToApp to="/settings/profile" />
+1. You'll be redirected to `/login`
+1. Click "Login with GitHub"
+1. You should be redirected to `/settings/profile` and logged in
+
+Good luck!

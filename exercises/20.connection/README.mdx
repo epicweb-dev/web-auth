@@ -1,1 +1,21 @@
 # Connection Management
+
+A user who already has an account with your app may decide they wish to connect
+their profile to an account on a third party service. So it's important for you
+to be able to let an authenticated user connect with the third party. We can use
+the same auth flow for performing this action as we use for the login process.
+The primary difference is whether the user is currently logged in. If they are,
+then we know they are trying to connect an account, otherwise we can log them
+in or send them to onboarding.
+
+Also, in the previous exercise we talked about the following scenario:
+
+> The provider account they authenticated with is not connected with an account
+> in your app, but the email address they authenticated with matches the email
+> address of an account in your app, in which case you can connect the provider
+> account with that account and log them in.
+
+So this is another instance where we'll be creating a connection for an existing
+user.
+
+So let's get to it!

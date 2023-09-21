@@ -1,1 +1,15 @@
 # Add Connection
+
+👨‍💼 Now we want users to be able to add new connections from
+their <LinkToApp to="/settings/profile/connections" /> page.
+
+The rules are pretty simple... If there is no existing connection, but there is
+a user authenticated, then create the connection, and send them to the
+connections page with a toast message letting them know it was successful.
+
+Because we already handled error cases before, this should be a quick one!
+
+🧝‍♂️ I've updated the `code`
+in <InlineFile file="app/utils/providers/github.server.ts" /> to be for a GitHub
+user that doesn't have a connection yet. You can use this to test your code.
+If you want to test another user, then change the `code` and you should be set.

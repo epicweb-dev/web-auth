@@ -1,1 +1,24 @@
 # Set Cookie
+
+👨‍💼 Now that we're sending the `redirectTo` value to our `/auth/github` action,
+we can set that in the cookie. However, this is going to be a bit more tricky
+because we're not the ones creating the redirect `Response` object. To
+complicate things further, the response is actually `throw`n rather than simply
+`returned`, so we need to wrap stuff in `try/catch` and then test if the thrown
+thing is an `Response`. If it is, then we can append our `redirectCookie` to its
+headers.
+
+We also want to have the `redirectTo` default to whoever sent us here as well as
+a convenience, so you'll be using a utility called `getReferrerRoute`.
+
+When you're done, you should be able to observe the `set-cookie` header after
+performing these actions:
+
+1. Be logged out
+1. Go to <LinkToApp to="/settings/profile" />
+1. You'll be redirected to `/login`
+1. Click "Login with GitHub"
+
+The `set-cookie` header should appear on the redirect response.
+
+Good luck!

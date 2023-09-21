@@ -1,1 +1,17 @@
 # Add Connection
+
+👨‍💼 Great job! Our third party authentication flow is complete. Now that we have
+all of this set up, it's trivial to add more third parties!
+
+For example,
+[checkout the OpenID Connect Example](https://github.com/kentcdodds/epic-oidc)!
+
+Another thing you'll want to consider with this is now we have some users who
+do not have passwords. We allow users to delete their connections, but if they
+delete them all and they haven't added a password, they'll lose access to their
+account!
+
+Kellie 🧝‍♂️ already put in place a protection to prevent users deleting all their
+connections if they haven't added a password yet, but if you'd like to add a
+`/settings/profile/password/create` route for users to add a password, that
+would be super. If not, <DiffLink>Kellie 🧝‍♂️ will do it</DiffLink>.

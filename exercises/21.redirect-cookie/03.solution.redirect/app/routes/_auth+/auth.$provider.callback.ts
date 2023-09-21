@@ -35,8 +35,14 @@ export async function loader({ request, params }: DataFunctionArgs) {
 		.authenticate(providerName, request, { throwOnError: true })
 		.catch(async error => {
 			console.error(error)
-			throw await redirectWithToast(
+			const loginRedirect = [
 				'/login',
+				redirectTo ? new URLSearchParams({ redirectTo }) : null,
+			]
+				.filter(Boolean)
+				.join('?')
+			throw await redirectWithToast(
+				loginRedirect,
 				{
 					title: 'Auth Failed',
 					description: `There was an error authenticating with ${label}.`,
