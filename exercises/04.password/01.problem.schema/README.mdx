@@ -14,10 +14,12 @@ relationship to the `User` model. This way, the default of query the `User`
 will not include the password hash (at worst, it will include the `id` of the
 password which is not a concern).
 
-Unfortunately, it's not possible to enforce that a password is required on the
+Unfortunately, it's not possible to enforce a required value on both sides of a
+one-to-one relationship. So we can't enforce that a password is required on the
 `User` model at the database level. However, it's worth the tradeoff to avoid
-the risk of leaking passwords. 
-(see this [issue](https://github.com/epicweb-dev/web-auth/issues/7#issue-1912551875)for more information)
+the risk of leaking passwords. (see this
+[issue](https://github.com/epicweb-dev/web-auth/issues/7#issue-1912551875) for
+more information).
 
 🐨 Add the model in <InlineFile file="prisma/schema.prisma" />, then run:
 
