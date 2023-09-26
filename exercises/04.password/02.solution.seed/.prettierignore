@@ -11,6 +11,7 @@ tsconfig.tsbuildinfo
 /playwright-report/
 /playwright/.cache/
 /tests/fixtures/email/*.json
+/tests/fixtures/github/*.json
 /coverage
 
 package-lock.json

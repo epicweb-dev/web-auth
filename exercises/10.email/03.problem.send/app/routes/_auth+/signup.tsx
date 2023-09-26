@@ -121,9 +121,7 @@ export default function SignupRoute() {
 						errors={fields.email.errors}
 					/>
 
-							<input
-								{...conform.input(fields.redirectTo, { type: 'hidden' })}
-							/>
+					<input {...conform.input(fields.redirectTo, { type: 'hidden' })} />
 					<ErrorList errors={form.errors} id={form.errorId} />
 					<StatusButton
 						className="w-full"
