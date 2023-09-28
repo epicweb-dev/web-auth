@@ -1,4 +1,4 @@
-import { json } from '@remix-run/router'
+import { json } from '@remix-run/node'
 import { type DataFunctionArgs } from '@remix-run/server-runtime'
 import { requireUser } from '#app/utils/auth.server.ts'
 import { invariantResponse } from '#app/utils/misc.tsx'
