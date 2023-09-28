@@ -101,7 +101,7 @@ export default function LoginPage() {
 	const [form, fields] = useForm({
 		id: 'login-form',
 		constraint: getFieldsetConstraint(LoginFormSchema),
-		// 🐨 add a defaultValues object with the redirectTo
+		// 🐨 add a defaultValue object with the redirectTo
 		lastSubmission: actionData?.submission,
 		onValidate({ formData }) {
 			return parse(formData, { schema: LoginFormSchema })
