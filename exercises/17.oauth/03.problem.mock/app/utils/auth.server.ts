@@ -10,7 +10,7 @@ import { combineResponseInits } from './misc.tsx'
 import { sessionStorage } from './session.server.ts'
 import { redirectWithToast } from './toast.server.ts'
 
-export const SESSION_EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 30
+const SESSION_EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 30
 export const getSessionExpirationDate = () =>
 	new Date(Date.now() + SESSION_EXPIRATION_TIME)
 

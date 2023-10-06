@@ -2,9 +2,36 @@
 
 <EpicVideo url="https://www.epicweb.dev/workshops/authentication-strategies-and-implementation/password/enhancing-user-creation-by-adding-passwords/" />
 
-👨‍💼 Let's create a password record when we create a new user so that can be used
-when the user logs in. Jump into <InlineFile file="app/routes/_auth+/signup.tsx" />
-and follow the emoji.
+<callout-warning>
+	🦉 Our Remix routes are used to create both a client-side and a server-side
+	bundle. Remix is pretty good and splitting those things up for us, but using
+	modules that really should only be used on the server can potentially cause
+	issues.
+</callout-warning>
+
+You can read all about
+[Server vs. Client Code Execution](https://remix.run/docs/en/main/discussion/server-vs-client)
+in the Remix docs if you like. We're going to take advantage of Remix's feature
+to explicitly label a module as server-only by creating a file with `.server` in
+the name.
+
+We don't want `bcryptjs` to appear in the client at all (it requires `crypto`
+anyway). 🐨 So please
+create <InlineFile file="app/utils/auth.server.ts" /> and stick this in there:
+
+```tsx
+import bcrypt from 'bcryptjs'
+
+export { bcrypt }
+```
+
+Then in the client build `auth.server.ts` will be an empty module so none of the
+`bcryptjs` code or `crypto` code will be included in the client bundle.
+
+👨‍💼 Great! Thanks Olivia! Now, let's create a password record when we create a
+new user so that can be used when the user logs in.
+Jump into <InlineFile file="app/routes/_auth+/signup.tsx" /> and follow the
+emoji.
 
 Once you've done that, head to <LinkToApp to="/signup" /> and try signing up a
 new account. It should allow you to sign in and then you can check the database

@@ -12,8 +12,8 @@ expiration (you can configure the
 session storage object to have an expiration). Instead, we need to set the
 expiration when we commit the session in the login and signup routes.
 
-🐨 To promote reusability, let's create a variable in a new
-file <InlineFile file="app/utils/auth.server.ts" /> called
+🐨 To promote reusability, let's create a variable
+in <InlineFile file="app/utils/auth.server.ts" /> called
 `SESSION_EXPIRATION_TIME` that's set to 30 days in milliseconds which is
 `1000 * 60 * 60 * 24 * 30`. You can then make a `getSessionExpirationDate` which
 returns a new date that is `Date.now() + SESSION_EXPIRATION_TIME`.

@@ -1,11 +1,11 @@
 # Login
 
-<EpicVideo url="https://www.epicweb.dev/workshops/authentication-strategies-and-implementation/login/securing-ui-elements" />
+<EpicVideo url="https://www.epicweb.dev/workshops/authentication-strategies-and-implementation/login/secure-password-authentication-with-bcrypt-compare-in-nodejs" />
 
 👨‍💼 Let's verify the password now!
 
 ```ts
-import bcrypt from 'bcryptjs'
+import { bcrypt } from '#app/utils/auth.server.ts'
 
 const isValid = await bcrypt.compare(password, hash)
 ```
