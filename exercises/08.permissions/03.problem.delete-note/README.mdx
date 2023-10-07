@@ -15,8 +15,8 @@ const permission = await prisma.permission.findFirst({
 	select: { id: true },
 	where: {
 		roles: { some: { users: { some: { id: userId } } } },
-		entity: 'update',
-		action: 'user',
+		entity: 'user',
+		action: 'update',
 		access: 'own',
 		// or access: 'any',
 	},
