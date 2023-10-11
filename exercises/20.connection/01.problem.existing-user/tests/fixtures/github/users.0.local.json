@@ -3,25 +3,25 @@
     "code": "MOCK_GITHUB_CODE_KODY",
     "accessToken": "MOCK_GITHUB_CODE_KODY_mock_access_token",
     "profile": {
-      "login": "Gladys.Lynch",
+      "login": "Alexandre51",
       "id": "MOCK_GITHUB_CODE_KODY_profile_id",
-      "name": "Carlton Jones",
+      "name": "Mr. Glenn Powlowski",
       "avatar_url": "https://github.com/ghost.png",
       "emails": [
-        "Colleen7@gmail.com",
-        "Bertrand20@gmail.com",
+        "Ellie.Schmeler@gmail.com",
+        "Anna.Nienow34@gmail.com",
         "kody@kcd.dev"
       ]
     },
     "emails": [
       {
-        "email": "Colleen7@gmail.com",
+        "email": "Ellie.Schmeler@gmail.com",
         "verified": false,
         "primary": false,
         "visibility": "public"
       },
       {
-        "email": "Bertrand20@gmail.com",
+        "email": "Anna.Nienow34@gmail.com",
         "verified": true,
         "primary": false,
         "visibility": null

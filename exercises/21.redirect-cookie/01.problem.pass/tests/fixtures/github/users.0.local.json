@@ -3,25 +3,25 @@
     "code": "MOCK_GITHUB_CODE_KODY",
     "accessToken": "MOCK_GITHUB_CODE_KODY_mock_access_token",
     "profile": {
-      "login": "Aniya.Blick",
+      "login": "Alf.Botsford",
       "id": "MOCK_GITHUB_CODE_KODY_profile_id",
-      "name": "Dr. Kurt Christiansen",
+      "name": "Grace Prohaska",
       "avatar_url": "https://github.com/ghost.png",
       "emails": [
-        "Hayley.Metz@yahoo.com",
-        "Mable.Goldner@yahoo.com",
+        "Geo.Hilll@hotmail.com",
+        "Laverne.Mann84@gmail.com",
         "kody@kcd.dev"
       ]
     },
     "emails": [
       {
-        "email": "Hayley.Metz@yahoo.com",
+        "email": "Geo.Hilll@hotmail.com",
         "verified": false,
         "primary": false,
         "visibility": "public"
       },
       {
-        "email": "Mable.Goldner@yahoo.com",
+        "email": "Laverne.Mann84@gmail.com",
         "verified": true,
         "primary": false,
         "visibility": null
@@ -30,7 +30,7 @@
         "email": "kody@kcd.dev",
         "verified": true,
         "primary": true,
-        "visibility": null
+        "visibility": "public"
       }
     ],
     "primaryEmail": "kody@kcd.dev"

@@ -3,25 +3,25 @@
     "code": "MOCK_GITHUB_CODE_KODY",
     "accessToken": "MOCK_GITHUB_CODE_KODY_mock_access_token",
     "profile": {
-      "login": "Claude72",
+      "login": "Kameron_Kassulke26",
       "id": "MOCK_GITHUB_CODE_KODY_profile_id",
-      "name": "Jessie Spencer",
+      "name": "Sara Crooks",
       "avatar_url": "https://github.com/ghost.png",
       "emails": [
-        "Dianna_Osinski@hotmail.com",
-        "Ignatius.Kozey@gmail.com",
+        "Caden_Schoen46@hotmail.com",
+        "Keegan.Pfannerstill87@yahoo.com",
         "kody@kcd.dev"
       ]
     },
     "emails": [
       {
-        "email": "Dianna_Osinski@hotmail.com",
+        "email": "Caden_Schoen46@hotmail.com",
         "verified": false,
         "primary": false,
         "visibility": "public"
       },
       {
-        "email": "Ignatius.Kozey@gmail.com",
+        "email": "Keegan.Pfannerstill87@yahoo.com",
         "verified": true,
         "primary": false,
         "visibility": null
