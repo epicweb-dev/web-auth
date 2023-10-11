@@ -27,47 +27,7 @@ async function seed() {
 	console.time('🧹 Cleaned up the database...')
 	await prisma.user.deleteMany()
 	// 🐨 delete all the verifications
-	await prisma.role.deleteMany()
-	await prisma.permission.deleteMany()
 	console.timeEnd('🧹 Cleaned up the database...')
-
-	console.time('🔑 Created permissions...')
-	const entities = ['user', 'note']
-	const actions = ['create', 'read', 'update', 'delete']
-	const accesses = ['own', 'any'] as const
-	for (const entity of entities) {
-		for (const action of actions) {
-			for (const access of accesses) {
-				await prisma.permission.create({ data: { entity, action, access } })
-			}
-		}
-	}
-	console.timeEnd('🔑 Created permissions...')
-
-	console.time('👑 Created roles...')
-	await prisma.role.create({
-		data: {
-			name: 'admin',
-			permissions: {
-				connect: await prisma.permission.findMany({
-					select: { id: true },
-					where: { access: 'any' },
-				}),
-			},
-		},
-	})
-	await prisma.role.create({
-		data: {
-			name: 'user',
-			permissions: {
-				connect: await prisma.permission.findMany({
-					select: { id: true },
-					where: { access: 'own' },
-				}),
-			},
-		},
-	})
-	console.timeEnd('👑 Created roles...')
 
 	const totalUsers = 3
 	console.time(`👤 Created ${totalUsers} users...`)

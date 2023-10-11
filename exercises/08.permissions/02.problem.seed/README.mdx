@@ -8,14 +8,107 @@ but for now we really only have two roles:
 1. `admin` - which can do anything to everything
 2. `user` - which can do anything to their own data
 
-Our <InlineFile file="prisma/seed.ts" /> script should create these roles and
-permissions, and assign the "user" roles to the generated users and the "admin"
-role to the `Kody` user.
+We want to apply these roles and permissions to all new users who are created.
+That means that our database needs to have these values before we can create
+any users. Our <InlineFile file="prisma/seed.ts" /> is intended to seed the
+local development database, but we're going to need this seeding in production
+as well.
 
-Once you've finished updating the seed script, run it with:
+So, what we need is to manually update our the `migration.sql` file we just made
+for our permissions to create the roles and permissions. That way when we deploy
+our updates to production, the production database will automatically get these
+roles and permissions.
+
+The tricky bit is knowing how to write the SQL to create the roles and
+permissions. If you're a SQL wiz, feel free to write it by hand, but for the
+rest of us, here's a strategy:
+
+1. Create a temporary script file that generates a temporary database and seeds
+   it with the data we want:
+
+<details>
+
+<summary>Feel free to use my script</summary>
+
+```tsx filename=tmp.ignored.js
+import { PrismaClient } from '@prisma/client'
+import { execaCommand } from 'execa'
+
+const datasourceUrl = 'file:./tmp.ignored.db'
+console.time('🗄️ Created database...')
+await execaCommand('prisma migrate deploy', {
+	stdio: 'inherit',
+	env: { DATABASE_URL: datasourceUrl },
+})
+console.timeEnd('🗄️ Created database...')
+
+const prisma = new PrismaClient({ datasourceUrl })
+
+console.time('🔑 Created permissions...')
+const entities = ['user', 'note']
+const actions = ['create', 'read', 'update', 'delete']
+const accesses = ['own', 'any']
+for (const entity of entities) {
+	for (const action of actions) {
+		for (const access of accesses) {
+			await prisma.permission.create({ data: { entity, action, access } })
+		}
+	}
+}
+console.timeEnd('🔑 Created permissions...')
+
+console.time('👑 Created roles...')
+await prisma.role.create({
+	data: {
+		name: 'admin',
+		permissions: {
+			connect: await prisma.permission.findMany({
+				select: { id: true },
+				where: { access: 'any' },
+			}),
+		},
+	},
+})
+await prisma.role.create({
+	data: {
+		name: 'user',
+		permissions: {
+			connect: await prisma.permission.findMany({
+				select: { id: true },
+				where: { access: 'own' },
+			}),
+		},
+	},
+})
+console.timeEnd('👑 Created roles...')
+
+console.log('✅ all done')
+```
+
+</details>
+
+2. Run the script with `node tmp.ignored.js`
+3. Create a "dump" of all the data in the temporary database using
+   [`sqlite3`](https://www.sqlite.org/download.html) (install instructions in
+   [exercise 9 of the Data workshop](https://data.epicweb.dev/09)):
+
+   ```sh
+   sqlite3 tmp.ignored.db .dump > tmp.ignored.sql
+   ```
+
+4. Copy the `INSERT` statements (only the `INSERT` statements) from the
+   `tmp.ignored.sql` file into the permissions `migration.sql` file in
+   `prisma/migrations`.
+
+Once you've done that, you can update <InlineFile file="prisma/seed.ts" />
+to assign the "user" roles to the generated users and the "admin" and "user"
+roles to the `Kody` user.
+
+Once you've finished updating the seed script, you can reset the database and
+run the seed with:
 
 ```sh nonumber
-npx prisma db seed
+npx prisma migrate reset --force
 ```
 
 But before we wrap this up, you'll want to make sure we create all new users

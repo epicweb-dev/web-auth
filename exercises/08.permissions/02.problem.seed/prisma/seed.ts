@@ -26,19 +26,7 @@ async function seed() {
 
 	console.time('🧹 Cleaned up the database...')
 	await prisma.user.deleteMany()
-	// 🐨 delete all the roles and permissions here
 	console.timeEnd('🧹 Cleaned up the database...')
-
-	// 🐨 create permissions here. We should have one for each combination of:
-	// - entity: user, note
-	// - action: create, read, update, delete
-	// - access: own, any
-	// 💰 this means you'll be creating 16 permission records
-
-	// 🐨 create two roles here. One named "user" which has all the "own"
-	// permissions and one named "admin" which has all the "any" permissions
-	// then, add these roles to the users created below (both the regular users
-	// and the kody user)
 
 	const totalUsers = 3
 	console.time(`👤 Created ${totalUsers} users...`)
