@@ -149,10 +149,10 @@
       "path": "exercises/08.permissions/01.solution.schema"
     },
     {
-      "path": "exercises/08.permissions/02.problem.create"
+      "path": "exercises/08.permissions/02.problem.seed"
     },
     {
-      "path": "exercises/08.permissions/02.solution.create"
+      "path": "exercises/08.permissions/02.solution.seed"
     },
     {
       "path": "exercises/08.permissions/03.problem.delete-note"

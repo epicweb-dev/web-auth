@@ -3,25 +3,25 @@
     "code": "MOCK_GITHUB_CODE_KODY",
     "accessToken": "MOCK_GITHUB_CODE_KODY_mock_access_token",
     "profile": {
-      "login": "Axel56",
+      "login": "Claude72",
       "id": "MOCK_GITHUB_CODE_KODY_profile_id",
-      "name": "Jane Cremin",
+      "name": "Jessie Spencer",
       "avatar_url": "https://github.com/ghost.png",
       "emails": [
-        "Onie96@hotmail.com",
-        "Jayde_Carroll87@hotmail.com",
+        "Dianna_Osinski@hotmail.com",
+        "Ignatius.Kozey@gmail.com",
         "kody@kcd.dev"
       ]
     },
     "emails": [
       {
-        "email": "Onie96@hotmail.com",
+        "email": "Dianna_Osinski@hotmail.com",
         "verified": false,
         "primary": false,
         "visibility": "public"
       },
       {
-        "email": "Jayde_Carroll87@hotmail.com",
+        "email": "Ignatius.Kozey@gmail.com",
         "verified": true,
         "primary": false,
         "visibility": null

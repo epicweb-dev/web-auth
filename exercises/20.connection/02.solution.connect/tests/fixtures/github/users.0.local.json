@@ -3,21 +3,25 @@
     "code": "MOCK_GITHUB_CODE_KODY",
     "accessToken": "MOCK_GITHUB_CODE_KODY_mock_access_token",
     "profile": {
-      "login": "Florida_Schneider",
+      "login": "Aniya.Blick",
       "id": "MOCK_GITHUB_CODE_KODY_profile_id",
-      "name": "Sophie Skiles",
+      "name": "Dr. Kurt Christiansen",
       "avatar_url": "https://github.com/ghost.png",
-      "emails": ["Felicia5@yahoo.com", "Sonya91@yahoo.com", "kody@kcd.dev"]
+      "emails": [
+        "Hayley.Metz@yahoo.com",
+        "Mable.Goldner@yahoo.com",
+        "kody@kcd.dev"
+      ]
     },
     "emails": [
       {
-        "email": "Felicia5@yahoo.com",
+        "email": "Hayley.Metz@yahoo.com",
         "verified": false,
         "primary": false,
         "visibility": "public"
       },
       {
-        "email": "Sonya91@yahoo.com",
+        "email": "Mable.Goldner@yahoo.com",
         "verified": true,
         "primary": false,
         "visibility": null
