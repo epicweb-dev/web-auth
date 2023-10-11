@@ -7,3 +7,8 @@ good control over our session expiration.
 
 But what if the user's logged in and then their account gets deleted? Who knows!
 We'd probably better handle that gracefully.
+
+🦉 Depending on your use case, another thing you may consider is adding a
+mechanism to refresh the user's session timeout time when they interact with the
+site. For example, if they click a button or navigate to a new page, you could
+refresh their session timeout time.
