@@ -11,6 +11,8 @@ module.exports = {
 		'prettier',
 	],
 	rules: {
+		// playwright requires destructuring in fixtures even if you don't use anything 🤷‍♂️
+		'no-empty-pattern': 'off',
 		'@typescript-eslint/consistent-type-imports': [
 			'warn',
 			{

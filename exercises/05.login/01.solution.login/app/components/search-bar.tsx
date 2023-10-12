@@ -1,4 +1,5 @@
 import { Form, useSearchParams, useSubmit } from '@remix-run/react'
+import { useId } from 'react'
 import { useDebounce, useIsPending } from '#app/utils/misc.tsx'
 import { Icon } from './ui/icon.tsx'
 import { Input } from './ui/input.tsx'
@@ -14,9 +15,10 @@ export function SearchBar({
 	autoFocus?: boolean
 	autoSubmit?: boolean
 }) {
+	const id = useId()
 	const [searchParams] = useSearchParams()
 	const submit = useSubmit()
-	const isPending = useIsPending({
+	const isSubmitting = useIsPending({
 		formMethod: 'GET',
 		formAction: '/users',
 	})
@@ -33,13 +35,13 @@ export function SearchBar({
 			onChange={e => autoSubmit && handleFormChange(e.currentTarget)}
 		>
 			<div className="flex-1">
-				<Label htmlFor="search" className="sr-only">
+				<Label htmlFor={id} className="sr-only">
 					Search
 				</Label>
 				<Input
 					type="search"
 					name="search"
-					id="search"
+					id={id}
 					defaultValue={searchParams.get('search') ?? ''}
 					placeholder="Search"
 					className="w-full"
@@ -49,21 +51,9 @@ export function SearchBar({
 			<div>
 				<StatusButton
 					type="submit"
-					status={isPending ? 'pending' : status}
+					status={isSubmitting ? 'pending' : status}
 					className="flex w-full items-center justify-center"
 					size="sm"
-					onClick={event => {
-						if (event.metaKey) {
-							event.preventDefault()
-							// open in a new tab like a link
-							window.open(
-								`/users?search=${
-									// @ts-expect-error - meh 🤷‍♂️
-									event.currentTarget.form?.elements.search?.value ?? ''
-								}`,
-							)
-						}
-					}}
 				>
 					<Icon name="magnifying-glass" size="sm" />
 					<span className="sr-only">Search</span>
