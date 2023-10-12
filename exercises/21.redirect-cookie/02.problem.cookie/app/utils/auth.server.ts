@@ -176,6 +176,7 @@ export async function signupWithConnection({
 					email: email.toLowerCase(),
 					username: username.toLowerCase(),
 					name,
+					roles: { connect: { name: 'user' } },
 					connections: { create: { providerId, providerName } },
 					image: imageUrl
 						? { create: await downloadFile(imageUrl) }
