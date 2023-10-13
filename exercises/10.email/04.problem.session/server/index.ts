@@ -176,8 +176,27 @@ if (process.env.NODE_ENV === 'development') {
 	const dirname = path.dirname(fileURLToPath(import.meta.url))
 	const watchPath = path.join(dirname, WATCH_PATH).replace(/\\/g, '/')
 
-	chokidar
+	const buildWatcher = chokidar
 		.watch(watchPath, { ignoreInitial: true })
 		.on('add', reloadBuild)
 		.on('change', reloadBuild)
+
+	// this ensures that when you click "Set to playground" prisma disconnects from
+	// the database if it gets deleted.
+	const dbWatcher = chokidar.watch(
+		path.join(dirname, '../prisma/data.db').replace(/\\/g, '/'),
+		{ ignoreInitial: true },
+	)
+	let timeout: ReturnType<typeof setTimeout>
+	dbWatcher.on('change', () => {
+		clearTimeout(timeout)
+		timeout = setTimeout(async () => {
+			const { prisma } = await import('#app/utils/db.server.ts')
+			prisma.$disconnect()
+		}, 300)
+	})
+	closeWithGrace(async () => {
+		await buildWatcher.close()
+		await dbWatcher.close()
+	})
 }

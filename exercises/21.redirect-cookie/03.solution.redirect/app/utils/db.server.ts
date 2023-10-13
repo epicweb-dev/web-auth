@@ -11,7 +11,6 @@ const prisma = remember('prisma', () => {
 		log: [
 			{ level: 'query', emit: 'event' },
 			{ level: 'error', emit: 'stdout' },
-			{ level: 'info', emit: 'stdout' },
 			{ level: 'warn', emit: 'stdout' },
 		],
 	})
