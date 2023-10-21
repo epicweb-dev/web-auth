@@ -30,7 +30,7 @@ to initialize this session storage object.
 🐨 Configure the cookie option with the following properties:
 
 - `name`: `'en_toast'` - this is the name of the cookie that will be created and
-  should be unique relative to other cookies on your domain ("ec" is short for
+  should be unique relative to other cookies on your domain ("en" is short for
   "Epic Notes").
 - `sameSite`: `'lax'` - The cookie is sent with "safe" HTTP methods (like
   `GET`), and only when the request originates from the same site or when the
@@ -66,7 +66,7 @@ export const toastSessionStorage = createCookieSessionStorage({
 })
 ```
 
-There's not a great way to test that you've got this done correctly until the
+There's no straightforward way to test that you've got this done correctly until the
 next step, so you <Link to="?preview=diff">may check the diff</Link> to
 make sure you got it right before moving on.
 
