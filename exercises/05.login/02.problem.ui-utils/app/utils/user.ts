@@ -7,5 +7,5 @@
 // returns the user if it exists, otherwise return null.
 
 // 🐨 create a useUser function which calls useOptionalUser and if the user
-// does not exist, throws an error with a informative error message. Otherwise
+// does not exist, throws an error with an informative error message. Otherwise
 // return the user
