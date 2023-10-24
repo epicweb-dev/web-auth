@@ -11,7 +11,6 @@ export async function loader({ params }: DataFunctionArgs) {
 	const user = await prisma.user.findFirst({
 		select: {
 			// 🐨 add the id to the select here:
-			id: true,
 			name: true,
 			username: true,
 			createdAt: true,
