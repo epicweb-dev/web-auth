@@ -103,9 +103,6 @@
     "type-fest": "^4.4.0",
     "typescript": "^5.2.2"
   },
-  "engines": {
-    "node": "18"
-  },
   "prisma": {
     "seed": "npx tsx prisma/seed.ts"
   },
