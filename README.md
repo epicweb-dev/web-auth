@@ -1,5 +1,5 @@
 <div>
-  <h1 align="center"><a href="https://kentcdodds.com/workshops">🔐 Web Authentication</a></h1>
+  <h1 align="center"><a href="https://www.epicweb.dev/workshops/authentication-strategies-and-implementation">🔐 Web Authentication</a></h1>
   <strong>
     Take ownership of your application's authentication and authorization
   </strong>
