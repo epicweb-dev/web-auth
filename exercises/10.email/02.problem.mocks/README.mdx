@@ -19,31 +19,29 @@ Here's a simple example of setting up a mock for an API call (modified) from
 their docs:
 
 ```ts
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
 
 const server = setupServer(
 	// Describe the requests to mock.
-	rest.get('https://example.com/book/:bookId', (req, res, ctx) => {
-		return res(
-			ctx.json({
+	http.get(
+		'https://example.com/book/:bookId',
+		({ request, params, cookies }) => {
+			return HttpResponse.json({
 				title: 'Lord of the Rings',
 				author: 'J. R. R. Tolkien',
-			}),
-		)
-	}),
-	rest.post('/users/:userId', (req, res, ctx) => {
-		const { userId } = req.params
-		const data = await req.json()
+			})
+		},
+	),
+	http.post('/users/:userId', async ({ request, params, cookies }) => {
+		const { userId } = params
+		const data = await request.json()
 		// do something with the data
-
-		return res(
-			ctx.json({
-				id: userId,
-				firstName: 'John',
-				lastName: 'Maverick',
-			}),
-		)
+		return HttpResponse.json({
+			id: userId,
+			firstName: 'John',
+			lastName: 'Maverick',
+		})
 	}),
 )
 
