@@ -65,7 +65,7 @@ async function validateRequest(
 				// by the target and type and ensure it's not expired
 				// 🐨 if there's no verification, then add an issue to the code field
 				// that it's invalid (similar to the one below)
-				// 🐨 set codeIsValid to the result of calling verifyCode (from '@epic-web/totp')
+				// 🐨 set codeIsValid to the result of calling verifyTOTP (from '@epic-web/totp')
 				// with the verification config and the otp from the submitted data
 				const codeIsValid = true
 				if (!codeIsValid) {
