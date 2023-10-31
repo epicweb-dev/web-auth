@@ -7,6 +7,35 @@ have to compromise on the capabilities of our theme solution.
 
 Cookies sure are neat!
 
+🦉 [Remix version 2.2.0](https://github.com/remix-run/remix/releases/tag/remix%402.2.0)
+added a new feature which makes implementing this even easier. You can now
+provide a [`key`](https://remix.run/docs/en/main/hooks/use-fetcher#key) to the
+`useFetcher` hook and then use that same key to find the fetcher. So you could
+do something like this:
+
+<EpicVideo url="https://www.epicweb.dev/tips/use-fetcher-keys-for-registering-remix-fetchers" />
+
+Here's some updated code:
+
+```tsx lines=1,5,14 nonumber
+const themeFetcherKey = 'theme-fetcher'
+
+function useTheme() {
+	const data = useLoaderData<typeof loader>()
+	const themeFetcher = useFetcher<typeof action>({ key: themeFetcherKey })
+	const optimisticTheme = themeFetcher.formData?.get('theme')
+	if (optimisticTheme === 'light' || optimisticTheme === 'dark') {
+		return optimisticTheme
+	}
+	return data.theme
+}
+
+function ThemeSwitch({ userPreference }: { userPreference?: Theme }) {
+	const fetcher = useFetcher<typeof action>({ key: themeFetcherKey })
+	// ...
+}
+```
+
 🦉 If you want to take this further and implement the user's preference as a
 default theme, you can try that! It's just a little outside the scope of this
 auth workshop, so we'll leave that to you as a side-quest. You'll face an issue
