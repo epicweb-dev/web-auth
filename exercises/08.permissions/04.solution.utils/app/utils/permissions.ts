@@ -40,7 +40,14 @@ export async function requireUserWithPermission(
 	return user.id
 }
 
-export async function requireUserWithRole(request: Request, name: string) {
+const roles = {
+	user: 'user',
+	admin: 'admin'
+} as const
+
+type Role = keyof typeof roles
+
+export async function requireUserWithRole(request: Request, name: Role) {
 	const userId = await requireUserId(request)
 	const user = await prisma.user.findFirst({
 		select: { id: true },
@@ -94,7 +101,7 @@ export function userHasPermission(
 
 export function userHasRole(
 	user: Pick<ReturnType<typeof useUser>, 'roles'> | null,
-	role: string,
+	role: Role,
 ) {
 	if (!user) return false
 	return user.roles.some(r => r.name === role)
