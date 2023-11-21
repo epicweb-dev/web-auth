@@ -36,7 +36,7 @@ import { execaCommand } from 'execa'
 
 const datasourceUrl = 'file:./tmp.ignored.db'
 console.time('🗄️ Created database...')
-await execaCommand('prisma migrate deploy', {
+await execaCommand('npx prisma migrate deploy', {
 	stdio: 'inherit',
 	env: { DATABASE_URL: datasourceUrl },
 })
