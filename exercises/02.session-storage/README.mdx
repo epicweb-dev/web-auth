@@ -54,7 +54,7 @@ used to configure the cookie's behavior. The most common attributes are:
 Several of these are great to enable for security purposes. However, there is
 nothing built-into the specification to prevent cookie tampering.
 
-This is why we using the [cookie](https://www.npmjs.com/package/cookie) package
+This is why we are using the [cookie](https://www.npmjs.com/package/cookie) package
 which provides a `sign` function that will sign the cookie value using a
 cryptographic hash function. It also provides a `verify` function that will
 verify the signature. This way, if the user modifies the cookie value, the
