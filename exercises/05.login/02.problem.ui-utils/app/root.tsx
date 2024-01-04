@@ -75,7 +75,7 @@ export async function loader({ request }: DataFunctionArgs) {
 					image: { select: { id: true } },
 				},
 				where: { id: userId },
-		  })
+			})
 		: null
 	return json(
 		{
@@ -242,7 +242,7 @@ function useTheme() {
 	const data = useLoaderData<typeof loader>()
 	const fetchers = useFetchers()
 	const themeFetcher = fetchers.find(
-		f => f.formData?.get('intent') === 'update-theme',
+		fetcher => fetcher.formData?.get('intent') === 'update-theme',
 	)
 	const optimisticTheme = themeFetcher?.formData?.get('theme')
 	if (optimisticTheme === 'light' || optimisticTheme === 'dark') {
