@@ -5,10 +5,22 @@
 👨‍💼 Great work. Now we've got a pretty good pattern for handling toast
 notifications.
 
-🧝‍♂️ I'm going to refactor the code a bit to make utilities out of this we can
-use in other areas of the app in the future. In addition, I'm going to just
-destroy the toast cookie altogether after we've read its value to save on some
-bytes per request. If you're interested,
+🧝‍♂️ I found a bug! If you delete a second note, the toast notification doesn't
+show up. This is because we're not setting an `id` for the toast
+in <InlineFile file="app/routes/users+/$username_+/notes.$noteId.tsx" /> which
+means the `useEffect` in `ShowToast` in <InlineFile file="app/root.tsx" /> won't
+re-run (because all the other values are the same... dependency arrays 😩).
+
+Because this isn't necessary for your learning of managing sessions, you can
+safely leave this as-is and I'll fix it, or you can fix it before moving on if
+you'd like. You could use the `noteId` as the `id` for the toast, or you could
+generate one with `@paralleldrive/cuid2` which is already installed (that's what
+I do).
+
+In any case, I'm going to refactor the code a bit to make utilities out of this
+we can use in other areas of the app in the future. In addition, I'm going to
+just destroy the toast cookie altogether after we've read its value to save on
+some bytes per request. If you're interested,
 you can <DiffLink>review my changes</DiffLink>.
 
 The APIs you'll be able to use in the future are:
