@@ -12,11 +12,9 @@
 </div>
 
 <div align="center">
-  <a
-    alt="Epic Web logo with the words Deployed Version"
-    href="https://auth.epicweb.dev/"
-  >
+  <a href="https://auth.epicweb.dev/">
     <img
+      alt="Epic Web logo with the words Deployed Version"
       width="300px"
       src="https://github-production-user-asset-6210df.s3.amazonaws.com/1500684/254000390-447a3559-e7b9-4918-947a-1b326d239771.png"
     />
