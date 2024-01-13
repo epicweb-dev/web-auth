@@ -49,7 +49,7 @@ export async function loader({ request }: DataFunctionArgs) {
 	})
 
 	// 🐨 determine whether the user has 2fa by checking for a verification and
-	// by the type twoFAVerifyVerificationType and the target being the userId.
+	// by the type twoFAVerificationType and the target being the userId.
 	// 🐨 Set isTwoFAEnabled to true if it exists.
 	return json({ user, isTwoFAEnabled: false })
 }
