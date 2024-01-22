@@ -299,7 +299,7 @@ export default function LoginPage() {
 							<Link
 								to={
 									redirectTo
-										? `/signup?${encodeURIComponent(redirectTo)}`
+										? `/signup?redirectTo=${encodeURIComponent(redirectTo)}`
 										: '/signup'
 								}
 							>
