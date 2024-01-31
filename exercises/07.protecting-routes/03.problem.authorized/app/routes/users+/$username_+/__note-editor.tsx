@@ -17,7 +17,7 @@ import {
 	type DataFunctionArgs,
 	type SerializeFrom,
 } from '@remix-run/node'
-import { Form, useFetcher } from '@remix-run/react'
+import { Form, useActionData } from '@remix-run/react'
 import { useRef, useState } from 'react'
 import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { z } from 'zod'
@@ -31,7 +31,7 @@ import { StatusButton } from '#app/components/ui/status-button.tsx'
 import { Textarea } from '#app/components/ui/textarea.tsx'
 import { validateCSRF } from '#app/utils/csrf.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
-import { cn, getNoteImgSrc } from '#app/utils/misc.tsx'
+import { cn, getNoteImgSrc, useIsPending } from '#app/utils/misc.tsx'
 
 const titleMinLength = 1
 const titleMaxLength = 100
@@ -172,13 +172,13 @@ export function NoteEditor({
 		}
 	>
 }) {
-	const noteFetcher = useFetcher<typeof action>()
-	const isPending = noteFetcher.state !== 'idle'
+	const actionData = useActionData<typeof action>()
+	const isPending = useIsPending()
 
 	const [form, fields] = useForm({
 		id: 'note-editor',
 		constraint: getFieldsetConstraint(NoteEditorSchema),
-		lastSubmission: noteFetcher.data?.submission,
+		lastSubmission: actionData?.submission,
 		onValidate({ formData }) {
 			return parse(formData, { schema: NoteEditorSchema })
 		},
