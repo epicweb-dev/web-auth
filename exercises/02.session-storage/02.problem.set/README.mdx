@@ -7,7 +7,7 @@ need to use:
 
 ```tsx
 const cookie = request.headers.get('cookie')
-const cookieSession = await sessionStorage.getSession(cookie)
+const cookieSession = await toastSessionStorage.getSession(cookie)
 ```
 
 This will get the session data from the cookie. If no cookie is present, it will
@@ -21,10 +21,10 @@ cookieSession.set('tasty', { candy: 'twix' })
 ```
 
 Once you've set those values in the session storage, you can create a serialized
-cookie value out of it using the `sessionStorage.commitSession` method:
+cookie value out of it using the `toastSessionStorage.commitSession` method:
 
 ```tsx
-const setCookieHeader = await sessionStorage.commitSession(session)
+const setCookieHeader = await toastSessionStorage.commitSession(cookieSession)
 
 return redirect('/some/url', {
 	headers: {
@@ -36,11 +36,11 @@ return redirect('/some/url', {
 ```
 
 Once that's been set in the cookie, you can access it again using the
-`sessionStorage.getSession` method:
+`toastSessionStorage.getSession` method:
 
 ```tsx
 const cookie = request.headers.get('cookie')
-const cookieSession = await sessionStorage.getSession(cookie)
+const cookieSession = await toastSessionStorage.getSession(cookie)
 ```
 
 And then you can use `cookieSession.get` to get the values:
