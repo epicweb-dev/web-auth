@@ -23,7 +23,13 @@ export async function getUserId(request: Request) {
 		where: { id: sessionId, expirationDate: { gt: new Date() } },
 	})
 	if (!session?.user) {
-		throw await logout({ request })
+		// Perhaps user was deleted?
+		cookieSession.unset(userIdKey)
+		throw redirect('/', {
+			headers: {
+				'set-cookie': await sessionStorage.commitSession(cookieSession),
+			},
+		})
 	}
 	return session.user.id
 }
@@ -158,7 +164,7 @@ export async function logout(
 	const sessionId = cookieSession.get(sessionKey)
 	// delete the session if it exists, but don't wait for it, go ahead an log the user out
 	if (sessionId) {
-		void prisma.session.deleteMany({ where: { id: sessionId } }).catch(() => {})
+		void prisma.session.deleteMany({ where: { id: sessionId } }).catch(() => { })
 	}
 	throw redirect(
 		safeRedirect(redirectTo),
