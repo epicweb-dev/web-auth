@@ -23,7 +23,12 @@ export async function getUserId(request: Request) {
 		where: { id: sessionId, expirationDate: { gt: new Date() } },
 	})
 	if (!session?.user) {
-		throw await logout({ request })
+		cookieSession.unset(sessionKey)
+		throw redirect('/', {
+			headers: {
+				'set-cookie': await sessionStorage.commitSession(cookieSession),
+			},
+		})
 	}
 	return session.user.id
 }
