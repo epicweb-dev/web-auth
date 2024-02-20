@@ -8,7 +8,7 @@ import {
 	isProblemApp,
 	setPlayground,
 } from '@kentcdodds/workshop-utils/apps.server'
-import { getWatcher } from '@kentcdodds/workshop-utils/change-tracker'
+import { getWatcher } from '@kentcdodds/workshop-utils/change-tracker.server'
 
 const allApps = await getApps()
 const uniqueApps = allApps.filter(
