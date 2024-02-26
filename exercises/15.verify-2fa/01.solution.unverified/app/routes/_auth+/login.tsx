@@ -91,6 +91,7 @@ export async function action({ request }: DataFunctionArgs) {
 			request,
 			type: twoFAVerificationType,
 			target: session.userId,
+			redirectTo
 		})
 		return redirect(redirectUrl.toString(), {
 			headers: {
