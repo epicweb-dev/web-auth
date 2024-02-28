@@ -34,8 +34,8 @@ export async function loader({ request }: DataFunctionArgs) {
 	const userId = await requireUserId(request)
 	const verification = await prisma.verification.findUnique({
 		where: {
-			target_type: { type: twoFAVerifyVerificationType, target: userId },	
-			expiresAt: { gt: new Date() }
+			target_type: { type: twoFAVerifyVerificationType, target: userId },
+			expiresAt: { gt: new Date() },
 		},
 		select: {
 			id: true,
