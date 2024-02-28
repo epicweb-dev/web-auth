@@ -28,8 +28,8 @@ import { getRedirectToUrl } from './verify.tsx'
 
 // 🐨 add a handleVerification function here which takes a request and submission
 // 🐨 get use sessionStorage and verifySessionStorage to get those sessions
-// 🐨 check that the session exists in the database, if it doesn't send the user
-// to /login (💯 for extra credit use redirectWithToast to give them a toast message)
+// 🐨 check that the session exists in the database, and if it doesn't, send the user
+// to /login (💯 for extra credit, use redirectWithToast to give them a toast message)
 // 🐨 set the sessionKey on the cookieSession to the unverifiedSessionId from the verifySession
 // 🐨 get the remember preference from the verifySession
 // 🐨 create a Headers object that has a 'set-cookie' header for both sessions
