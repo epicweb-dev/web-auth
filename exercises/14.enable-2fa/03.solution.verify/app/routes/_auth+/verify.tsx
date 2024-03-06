@@ -172,7 +172,7 @@ async function validateRequest(
 				})
 				if (!codeIsValid) {
 					ctx.addIssue({
-						path: ['code'],
+						path: [codeQueryParam],
 						code: z.ZodIssueCode.custom,
 						message: `Invalid code`,
 					})
