@@ -133,12 +133,12 @@ a lot to get to the right place at the right time.
 
 This should just work™️, but if it doesn't it could be that our editor guessing
 isn't working for you. If that's the case, create a `.env` file in the root of
-this project and add an environment variable called `KCDSHOP_EDITOR` with the
+this project and add an environment variable called `EPICSHOP_EDITOR` with the
 value being set to the path to your editor's executable. For example, if you're
 using VS Code on Windows, you'd add this to your `.env` file:
 
 ```
-KCDSHOP_EDITOR="C:\Program Files\Microsoft VS Code\bin\code.cmd"
+EPICSHOP_EDITOR="C:\Program Files\Microsoft VS Code\bin\code.cmd"
 ```
 
 Make certain that if the path includes spaces that you wrap the path in quotes

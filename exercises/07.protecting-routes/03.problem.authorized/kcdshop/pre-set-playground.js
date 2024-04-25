@@ -4,34 +4,34 @@ import * as esbuild from 'esbuild'
 import fsExtra from 'fs-extra'
 
 const {
-	KCDSHOP_PLAYGROUND_TIMESTAMP,
-	KCDSHOP_PLAYGROUND_SRC_DIR,
-	KCDSHOP_PLAYGROUND_DEST_DIR,
+	EPICSHOP_PLAYGROUND_TIMESTAMP,
+	EPICSHOP_PLAYGROUND_SRC_DIR,
+	EPICSHOP_PLAYGROUND_DEST_DIR,
 } = process.env
 
 const tempDir = path.join(
 	os.tmpdir(),
-	'kcdshop',
+	'epicshop',
 	'playground-storage',
-	KCDSHOP_PLAYGROUND_TIMESTAMP,
+	EPICSHOP_PLAYGROUND_TIMESTAMP,
 )
 
 const schemaIsSame = await isSameFile(
-	path.join(KCDSHOP_PLAYGROUND_DEST_DIR, 'prisma', 'schema.prisma'),
-	path.join(KCDSHOP_PLAYGROUND_SRC_DIR, 'prisma', 'schema.prisma'),
+	path.join(EPICSHOP_PLAYGROUND_DEST_DIR, 'prisma', 'schema.prisma'),
+	path.join(EPICSHOP_PLAYGROUND_SRC_DIR, 'prisma', 'schema.prisma'),
 )
 
 if (schemaIsSame) {
 	await fsExtra.ensureDir(tempDir)
 	await fsExtra.copy(
-		path.join(KCDSHOP_PLAYGROUND_DEST_DIR, 'node_modules/.prisma'),
+		path.join(EPICSHOP_PLAYGROUND_DEST_DIR, 'node_modules/.prisma'),
 		path.join(tempDir, 'node_modules/.prisma'),
 	)
 }
 
 const seedIsSame = await isSameFile(
-	path.join(KCDSHOP_PLAYGROUND_DEST_DIR, 'prisma', 'seed.ts'),
-	path.join(KCDSHOP_PLAYGROUND_SRC_DIR, 'prisma', 'seed.ts'),
+	path.join(EPICSHOP_PLAYGROUND_DEST_DIR, 'prisma', 'seed.ts'),
+	path.join(EPICSHOP_PLAYGROUND_SRC_DIR, 'prisma', 'seed.ts'),
 )
 
 if (seedIsSame && schemaIsSame) {
@@ -39,7 +39,7 @@ if (seedIsSame && schemaIsSame) {
 	// restored in the post script.
 	await fsExtra.ensureDir(tempDir)
 	await fsExtra.copy(
-		path.join(KCDSHOP_PLAYGROUND_DEST_DIR, 'prisma', 'data.db'),
+		path.join(EPICSHOP_PLAYGROUND_DEST_DIR, 'prisma', 'data.db'),
 		path.join(tempDir, 'data.db'),
 	)
 }
