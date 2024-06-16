@@ -77,6 +77,7 @@ const DeleteFormSchema = z.object({
 
 export async function action({ request, params }: DataFunctionArgs) {
 	const user = await requireUser(request)
+	// 💣 since admins can delete notes, remove this
 	invariantResponse(user.username === params.username, 'Not authorized', {
 		status: 403,
 	})
