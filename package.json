@@ -3,9 +3,15 @@
   "private": true,
   "epicshop": {
     "title": "Web Authentication 🔐",
+    "subtitle": "Take ownership of your application's authentication and authorization",
     "githubRoot": "https://github.com/epicweb-dev/web-auth/blob/main",
     "root": true,
-    "epicWorkshopSlug": "authentication-strategies-and-implementation"
+    "epicWorkshopSlug": "authentication-strategies-and-implementation",
+    "instructor": {
+      "name": "Kent C. Dodds",
+      "avatar": "/images/instructor.png",
+      "𝕏": "kentcdodds"
+    }
   },
   "type": "module",
   "scripts": {
