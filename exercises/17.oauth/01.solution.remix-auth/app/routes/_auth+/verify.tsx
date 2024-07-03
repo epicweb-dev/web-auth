@@ -1,7 +1,11 @@
 import { conform, useForm, type Submission } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
 import { generateTOTP, verifyTOTP } from '@epic-web/totp'
-import { json, type DataFunctionArgs } from '@remix-run/node'
+import {
+	json,
+	type ActionFunctionArgs,
+	type LoaderFunctionArgs,
+} from '@remix-run/node'
 import {
 	Form,
 	useActionData,
@@ -43,7 +47,7 @@ const VerifySchema = z.object({
 	[redirectToQueryParam]: z.string().optional(),
 })
 
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
 	const params = new URL(request.url).searchParams
 	if (!params.has(codeQueryParam)) {
 		// we don't want to show an error message on page load if the otp hasn't be
@@ -60,7 +64,7 @@ export async function loader({ request }: DataFunctionArgs) {
 	return validateRequest(request, params)
 }
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	const formData = await request.formData()
 	await validateCSRF(formData, request.headers)
 	return validateRequest(request, formData)

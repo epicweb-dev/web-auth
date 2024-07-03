@@ -3,7 +3,8 @@ import { getFieldsetConstraint, parse } from '@conform-to/zod'
 import {
 	json,
 	redirect,
-	type DataFunctionArgs,
+	type ActionFunctionArgs,
+	type LoaderFunctionArgs,
 	type MetaFunction,
 } from '@remix-run/node'
 import {
@@ -56,14 +57,14 @@ const SignupFormSchema = z
 		}
 	})
 
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
 	await requireAnonymous(request)
 	// We'll do handle this later
 	const email = 'fake@email.com'
 	return json({ email })
 }
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	await requireAnonymous(request)
 	// We'll do handle this later
 	const email = 'fake@email.com'

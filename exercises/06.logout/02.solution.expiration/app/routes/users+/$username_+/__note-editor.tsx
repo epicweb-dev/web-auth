@@ -14,7 +14,7 @@ import {
 	json,
 	unstable_parseMultipartFormData as parseMultipartFormData,
 	redirect,
-	type DataFunctionArgs,
+	type ActionFunctionArgs,
 	type SerializeFrom,
 } from '@remix-run/node'
 import { Form, useActionData } from '@remix-run/react'
@@ -72,7 +72,7 @@ const NoteEditorSchema = z.object({
 	images: z.array(ImageFieldsetSchema).max(5).optional(),
 })
 
-export async function action({ request, params }: DataFunctionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
 	const formData = await parseMultipartFormData(
 		request,
 		createMemoryUploadHandler({ maxPartSize: MAX_UPLOAD_SIZE }),
@@ -226,7 +226,7 @@ export function NoteEditor({
 									className="relative border-b-2 border-muted-foreground"
 								>
 									<button
-										className="text-foreground-destructive absolute right-0 top-0"
+										className="absolute right-0 top-0 text-foreground-destructive"
 										{...list.remove(fields.images.name, { index })}
 									>
 										<span aria-hidden>

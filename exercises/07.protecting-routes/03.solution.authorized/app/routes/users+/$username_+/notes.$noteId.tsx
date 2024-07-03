@@ -1,6 +1,10 @@
 import { useForm } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
-import { json, type DataFunctionArgs } from '@remix-run/node'
+import {
+	json,
+	type ActionFunctionArgs,
+	type LoaderFunctionArgs,
+} from '@remix-run/node'
 import {
 	Form,
 	Link,
@@ -29,7 +33,7 @@ import { redirectWithToast } from '#app/utils/toast.server.ts'
 import { useOptionalUser } from '#app/utils/user.ts'
 import { type loader as notesLoader } from './notes.tsx'
 
-export async function loader({ params }: DataFunctionArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
 	const note = await prisma.note.findUnique({
 		where: { id: params.noteId },
 		select: {
@@ -63,7 +67,7 @@ const DeleteFormSchema = z.object({
 	noteId: z.string(),
 })
 
-export async function action({ request, params }: DataFunctionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
 	const user = await requireUser(request)
 	invariantResponse(user.username === params.username, 'Not authorized', {
 		status: 403,

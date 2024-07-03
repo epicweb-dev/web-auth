@@ -1,8 +1,8 @@
-import { type DataFunctionArgs } from '@remix-run/node'
+import { type LoaderFunctionArgs } from '@remix-run/node'
 import { prisma } from '#app/utils/db.server.ts'
 import { invariantResponse } from '#app/utils/misc.tsx'
 
-export async function loader({ params }: DataFunctionArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
 	invariantResponse(params.imageId, 'Image ID is required', { status: 400 })
 	const image = await prisma.noteImage.findUnique({
 		where: { id: params.imageId },

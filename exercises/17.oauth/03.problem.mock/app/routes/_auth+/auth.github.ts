@@ -1,11 +1,11 @@
-import { redirect, type DataFunctionArgs } from '@remix-run/node'
+import { redirect, type ActionFunctionArgs } from '@remix-run/node'
 import { authenticator } from '#app/utils/auth.server.ts'
 
 export async function loader() {
 	return redirect('/login')
 }
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	const providerName = 'github'
 
 	// 🐨 add an if statement here to check if the process.env.GITHUB_CLIENT_ID starts with "MOCK_"

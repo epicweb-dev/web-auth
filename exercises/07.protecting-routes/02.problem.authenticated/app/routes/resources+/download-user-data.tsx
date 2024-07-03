@@ -1,8 +1,8 @@
-import { json, type DataFunctionArgs } from '@remix-run/node'
+import { json, type LoaderFunctionArgs } from '@remix-run/node'
 import { prisma } from '#app/utils/db.server.ts'
 import { getDomainUrl } from '#app/utils/misc.tsx'
 
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
 	const userId = 'some_user_id' // 🐨 get the user with your requireUserId util
 	const user = await prisma.user.findUniqueOrThrow({
 		where: { id: userId },
@@ -45,7 +45,7 @@ export async function loader({ request }: DataFunctionArgs) {
 				? {
 						...user.image,
 						url: `${domain}/resources/user-images/${user.image.id}`,
-				  }
+					}
 				: null,
 			notes: user.notes.map(note => ({
 				...note,

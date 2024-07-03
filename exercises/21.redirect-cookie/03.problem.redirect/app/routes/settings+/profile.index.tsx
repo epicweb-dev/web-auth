@@ -1,6 +1,11 @@
 import { conform, useForm } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
-import { json, redirect, type DataFunctionArgs } from '@remix-run/node'
+import {
+	json,
+	redirect,
+	type ActionFunctionArgs,
+	type LoaderFunctionArgs,
+} from '@remix-run/node'
 import { Link, useFetcher, useLoaderData } from '@remix-run/react'
 import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { z } from 'zod'
@@ -25,7 +30,7 @@ const ProfileFormSchema = z.object({
 	username: UsernameSchema,
 })
 
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
 	const userId = await requireUserId(request)
 	const user = await prisma.user.findUniqueOrThrow({
 		where: { id: userId },
@@ -75,7 +80,7 @@ const profileUpdateActionIntent = 'update-profile'
 const signOutOfSessionsActionIntent = 'sign-out-of-sessions'
 const deleteDataActionIntent = 'delete-data'
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	const userId = await requireUserId(request)
 	const formData = await request.formData()
 	await validateCSRF(formData, request.headers)

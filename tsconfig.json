@@ -1,8 +1,6 @@
 {
   "files": [],
-  "exclude": [
-    "node_modules"
-  ],
+  "exclude": ["node_modules"],
   "references": [
     {
       "path": "exercises/01.cookies/01.problem.fetcher"

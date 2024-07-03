@@ -3,7 +3,8 @@ import { getFieldsetConstraint, parse } from '@conform-to/zod'
 import {
 	json,
 	redirect,
-	type DataFunctionArgs,
+	type ActionFunctionArgs,
+	type LoaderFunctionArgs,
 	type MetaFunction,
 } from '@remix-run/node'
 import {
@@ -56,7 +57,7 @@ const SignupFormSchema = z
 		}
 	})
 
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
 	await requireAnonymous(request)
 	// 🐨 verify the user has an onboarding email in their verifySession
 	// if they don't redirect them to /signup
@@ -66,7 +67,7 @@ export async function loader({ request }: DataFunctionArgs) {
 	return json({ email })
 }
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	await requireAnonymous(request)
 	// 🐨 get the email out of the verifySession. If it's not a string or not there
 	// then redirect the user to /signup

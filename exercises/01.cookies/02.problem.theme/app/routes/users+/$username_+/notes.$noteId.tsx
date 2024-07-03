@@ -1,6 +1,11 @@
 import { useForm } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
-import { json, redirect, type DataFunctionArgs } from '@remix-run/node'
+import {
+	json,
+	redirect,
+	type ActionFunctionArgs,
+	type LoaderFunctionArgs,
+} from '@remix-run/node'
 import {
 	Form,
 	Link,
@@ -26,7 +31,7 @@ import {
 } from '#app/utils/misc.tsx'
 import { type loader as notesLoader } from './notes.tsx'
 
-export async function loader({ params }: DataFunctionArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
 	const note = await prisma.note.findUnique({
 		where: { id: params.noteId },
 		select: {
@@ -60,7 +65,7 @@ const DeleteFormSchema = z.object({
 	noteId: z.string(),
 })
 
-export async function action({ request, params }: DataFunctionArgs) {
+export async function action({ request, params }: ActionFunctionArgs) {
 	const formData = await request.formData()
 	await validateCSRF(formData, request.headers)
 	const submission = parse(formData, {

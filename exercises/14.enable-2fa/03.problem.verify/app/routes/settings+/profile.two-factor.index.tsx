@@ -1,5 +1,10 @@
 import { generateTOTP } from '@epic-web/totp'
-import { json, redirect, type DataFunctionArgs } from '@remix-run/node'
+import {
+	json,
+	redirect,
+	type ActionFunctionArgs,
+	type LoaderFunctionArgs,
+} from '@remix-run/node'
 import { Link, Form, useLoaderData } from '@remix-run/react'
 import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { Icon } from '#app/components/ui/icon.tsx'
@@ -10,7 +15,7 @@ import { prisma } from '#app/utils/db.server.ts'
 import { useIsPending } from '#app/utils/misc.tsx'
 import { twoFAVerifyVerificationType } from './profile.two-factor.verify.tsx'
 
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
 	// 🐨 get the user's id from here:
 	await requireUserId(request)
 	// 🐨 determine whether the user has 2fa by checking for a verification and
@@ -19,7 +24,7 @@ export async function loader({ request }: DataFunctionArgs) {
 	return json({ isTwoFAEnabled: false })
 }
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	const userId = await requireUserId(request)
 	const formData = await request.formData()
 	await validateCSRF(formData, request.headers)

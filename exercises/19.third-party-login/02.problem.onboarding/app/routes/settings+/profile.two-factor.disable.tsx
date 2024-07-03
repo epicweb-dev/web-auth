@@ -1,4 +1,8 @@
-import { json, type DataFunctionArgs } from '@remix-run/node'
+import {
+	json,
+	type ActionFunctionArgs,
+	type LoaderFunctionArgs,
+} from '@remix-run/node'
 import { Form } from '@remix-run/react'
 import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { Icon } from '#app/components/ui/icon.tsx'
@@ -15,7 +19,7 @@ export const handle = {
 	breadcrumb: <Icon name="lock-open-1">Disable</Icon>,
 }
 
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
 	await requireRecentVerification({
 		request,
 		userId: await requireUserId(request),
@@ -23,7 +27,7 @@ export async function loader({ request }: DataFunctionArgs) {
 	return json({})
 }
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	const userId = await requireUserId(request)
 	await requireRecentVerification({ request, userId })
 	const formData = await request.formData()

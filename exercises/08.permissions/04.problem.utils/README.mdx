@@ -12,7 +12,7 @@ permissions module. Here's how you can use them:
 
 ```tsx lines=3,11,24,31
 // requireUserWithPermission
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
 	const userId = await requireUserWithPermission(request, 'update:user:own')
 	// it throws an error response if the user doesn't have this permission, so
 	// if you make it this far, you know they have it.
@@ -20,7 +20,7 @@ export async function loader({ request }: DataFunctionArgs) {
 	// ... do stuff
 }
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	const userId = await requireUserWithRole(request, 'admin')
 	// it throws an error response if the user doesn't have this role, so
 	// if you make it this far, you know they have it.

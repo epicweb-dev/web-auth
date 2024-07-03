@@ -1,4 +1,4 @@
-import { type DataFunctionArgs } from '@remix-run/node'
+import { type LoaderFunctionArgs } from '@remix-run/node'
 import {
 	authenticator,
 	getSessionExpirationDate,
@@ -15,7 +15,7 @@ import { handleNewSession } from './login.tsx'
 // 	providerIdKey,
 // } from './onboarding_.$provider.tsx'
 
-export async function loader({ request, params }: DataFunctionArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
 	const providerName = ProviderNameSchema.parse(params.provider)
 
 	const label = providerLabels[providerName]

@@ -1,9 +1,9 @@
-import { type DataFunctionArgs } from '@remix-run/node'
+import { type LoaderFunctionArgs } from '@remix-run/node'
 import { authenticator } from '#app/utils/auth.server.ts'
 import { ProviderNameSchema, providerLabels } from '#app/utils/connections.tsx'
 import { redirectWithToast } from '#app/utils/toast.server.ts'
 
-export async function loader({ request, params }: DataFunctionArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
 	const providerName = ProviderNameSchema.parse(params.provider)
 
 	const label = providerLabels[providerName]

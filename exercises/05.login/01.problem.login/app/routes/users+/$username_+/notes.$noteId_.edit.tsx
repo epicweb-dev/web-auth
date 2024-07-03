@@ -1,4 +1,4 @@
-import { json, type DataFunctionArgs } from '@remix-run/node'
+import { json, type LoaderFunctionArgs } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import { prisma } from '#app/utils/db.server.ts'
 import { invariantResponse } from '#app/utils/misc.tsx'
@@ -6,7 +6,7 @@ import { NoteEditor, action } from './__note-editor.tsx'
 
 export { action }
 
-export async function loader({ params }: DataFunctionArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
 	const note = await prisma.note.findFirst({
 		select: {
 			id: true,

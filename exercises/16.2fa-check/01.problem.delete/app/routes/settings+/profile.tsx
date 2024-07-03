@@ -1,4 +1,4 @@
-import { json, type DataFunctionArgs } from '@remix-run/node'
+import { json, type LoaderFunctionArgs } from '@remix-run/node'
 import { Link, Outlet, useMatches } from '@remix-run/react'
 import { z } from 'zod'
 import { Spacer } from '#app/components/spacer.tsx'
@@ -12,7 +12,7 @@ export const handle = {
 	breadcrumb: <Icon name="file-text">Edit Profile</Icon>,
 }
 
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
 	const userId = await requireUserId(request)
 	const user = await prisma.user.findUnique({
 		where: { id: userId },

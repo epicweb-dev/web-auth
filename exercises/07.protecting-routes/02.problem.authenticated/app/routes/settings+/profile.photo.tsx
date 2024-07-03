@@ -5,7 +5,7 @@ import {
 	redirect,
 	unstable_createMemoryUploadHandler,
 	unstable_parseMultipartFormData,
-	type DataFunctionArgs,
+	type ActionFunctionArgs,
 } from '@remix-run/node'
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
 import { useState } from 'react'
@@ -53,7 +53,7 @@ export async function loader() {
 	return json({ user })
 }
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	const userId = 'some_user_id' // 🐨 get the user with your requireUserId util
 	const formData = await unstable_parseMultipartFormData(
 		request,

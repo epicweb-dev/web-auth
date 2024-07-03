@@ -4,8 +4,8 @@
     "target": "es2022",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-		"allowJs": true,
+    "allowJs": true,
     "skipLibCheck": true,
-		"noEmit": true
+    "noEmit": true
   }
 }

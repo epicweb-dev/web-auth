@@ -5,7 +5,8 @@ import { cssBundleHref } from '@remix-run/css-bundle'
 import {
 	json,
 	redirect,
-	type DataFunctionArgs,
+	type ActionFunctionArgs,
+	type LoaderFunctionArgs,
 	type LinksFunction,
 } from '@remix-run/node'
 import {
@@ -71,7 +72,7 @@ export const links: LinksFunction = () => {
 	].filter(Boolean)
 }
 
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
 	const [csrfToken, csrfCookieHeader] = await csrf.commitToken(request)
 	const honeyProps = honeypot.getInputProps()
 	const { toast, headers: toastHeaders } = await getToast(request)
@@ -122,7 +123,7 @@ const ThemeFormSchema = z.object({
 	theme: z.enum(['light', 'dark']),
 })
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	const formData = await request.formData()
 	invariantResponse(
 		formData.get('intent') === 'update-theme',

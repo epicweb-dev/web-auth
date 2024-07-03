@@ -1,4 +1,8 @@
-import { json, type DataFunctionArgs } from '@remix-run/node'
+import {
+	json,
+	type ActionFunctionArgs,
+	type LoaderFunctionArgs,
+} from '@remix-run/node'
 import { Form } from '@remix-run/react'
 import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { Icon } from '#app/components/ui/icon.tsx'
@@ -22,13 +26,13 @@ export const handle = {
 // 💯 as a bonus, use redirectWithToast and let the user know why they're being
 // required to reverify.
 
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
 	await requireUserId(request)
 	// 🐨 call requireRecentVerification with the request and userId (from requireUserId)
 	return json({})
 }
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	const userId = await requireUserId(request)
 	// 🐨 call requireRecentVerification with the request and userId
 	const formData = await request.formData()

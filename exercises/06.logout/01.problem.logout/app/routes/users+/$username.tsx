@@ -1,4 +1,4 @@
-import { json, type DataFunctionArgs } from '@remix-run/node'
+import { json, type LoaderFunctionArgs } from '@remix-run/node'
 import { Form, Link, useLoaderData, type MetaFunction } from '@remix-run/react'
 // 💰 you're gonna need this:
 // import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
@@ -10,7 +10,7 @@ import { prisma } from '#app/utils/db.server.ts'
 import { getUserImgSrc, invariantResponse } from '#app/utils/misc.tsx'
 import { useOptionalUser } from '#app/utils/user.ts'
 
-export async function loader({ params }: DataFunctionArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
 	const user = await prisma.user.findFirst({
 		select: {
 			id: true,

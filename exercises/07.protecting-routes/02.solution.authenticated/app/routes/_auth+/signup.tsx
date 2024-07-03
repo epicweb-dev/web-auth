@@ -3,7 +3,8 @@ import { getFieldsetConstraint, parse } from '@conform-to/zod'
 import {
 	json,
 	redirect,
-	type DataFunctionArgs,
+	type ActionFunctionArgs,
+	type LoaderFunctionArgs,
 	type MetaFunction,
 } from '@remix-run/node'
 import { Form, useActionData } from '@remix-run/react'
@@ -54,12 +55,12 @@ const SignupFormSchema = z
 		}
 	})
 
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
 	await requireAnonymous(request)
 	return json({})
 }
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	await requireAnonymous(request)
 	const formData = await request.formData()
 	await validateCSRF(formData, request.headers)

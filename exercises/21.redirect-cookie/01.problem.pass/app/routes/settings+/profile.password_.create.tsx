@@ -1,6 +1,11 @@
 import { conform, useForm } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
-import { json, redirect, type DataFunctionArgs } from '@remix-run/node'
+import {
+	json,
+	redirect,
+	type ActionFunctionArgs,
+	type LoaderFunctionArgs,
+} from '@remix-run/node'
 import { Form, Link, useActionData } from '@remix-run/react'
 import { z } from 'zod'
 import { ErrorList, Field } from '#app/components/forms.tsx'
@@ -41,13 +46,13 @@ async function requireNoPassword(userId: string) {
 	}
 }
 
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
 	const userId = await requireUserId(request)
 	await requireNoPassword(userId)
 	return json({})
 }
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	const userId = await requireUserId(request)
 	await requireNoPassword(userId)
 	const formData = await request.formData()

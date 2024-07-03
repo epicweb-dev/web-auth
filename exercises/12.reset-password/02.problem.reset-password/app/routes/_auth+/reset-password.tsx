@@ -3,7 +3,8 @@ import { getFieldsetConstraint, parse } from '@conform-to/zod'
 import {
 	json,
 	redirect,
-	type DataFunctionArgs,
+	type ActionFunctionArgs,
+	type LoaderFunctionArgs,
 	type MetaFunction,
 } from '@remix-run/node'
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
@@ -57,14 +58,14 @@ const ResetPasswordSchema = z
 		path: ['confirmPassword'],
 	})
 
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
 	// 🐨 you could make a utility to get the resetPasswordUsername from the session
 	// because you need to do it in the action too.
 	const resetPasswordUsername = 'get this from the session'
 	return json({ resetPasswordUsername })
 }
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	// 🐨 you could make a utility to get the resetPasswordUsername from the session
 	// because you need to do it in the loader too.
 	const formData = await request.formData()

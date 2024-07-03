@@ -23,7 +23,7 @@ want to include this in the `action`s for good measure.
 need to return a `json` response, so you can do this:
 
 ```tsx
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
 	// use your utility here...
 	return json({}) // <-- just return an empty object
 }

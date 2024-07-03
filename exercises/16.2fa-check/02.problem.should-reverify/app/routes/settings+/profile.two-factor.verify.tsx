@@ -1,7 +1,12 @@
 import { conform, useForm } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
 import { getTOTPAuthUri } from '@epic-web/totp'
-import { json, redirect, type DataFunctionArgs } from '@remix-run/node'
+import {
+	json,
+	redirect,
+	type ActionFunctionArgs,
+	type LoaderFunctionArgs,
+} from '@remix-run/node'
 import {
 	Form,
 	useActionData,
@@ -32,7 +37,7 @@ const VerifySchema = z.object({
 
 export const twoFAVerifyVerificationType = '2fa-verify'
 
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
 	const userId = await requireUserId(request)
 	const verification = await prisma.verification.findUnique({
 		where: {
@@ -64,7 +69,7 @@ export async function loader({ request }: DataFunctionArgs) {
 	return json({ otpUri, qrCode })
 }
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	const userId = await requireUserId(request)
 	const formData = await request.formData()
 	await validateCSRF(formData, request.headers)

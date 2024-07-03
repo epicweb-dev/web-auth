@@ -3,7 +3,7 @@ import { getFieldsetConstraint, parse } from '@conform-to/zod'
 import {
 	json,
 	redirect,
-	type DataFunctionArgs,
+	type ActionFunctionArgs,
 	type MetaFunction,
 } from '@remix-run/node'
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
@@ -62,7 +62,7 @@ export async function loader() {
 	return json({ resetPasswordUsername })
 }
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	const formData = await request.formData()
 	const submission = parse(formData, {
 		schema: ResetPasswordSchema,

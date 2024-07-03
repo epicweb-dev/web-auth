@@ -1,4 +1,4 @@
-import { json, type DataFunctionArgs } from '@remix-run/node'
+import { json, type LoaderFunctionArgs } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import { requireUser } from '#app/utils/auth.server.ts'
 import { prisma } from '#app/utils/db.server.ts'
@@ -7,7 +7,7 @@ import { NoteEditor, action } from './__note-editor.tsx'
 
 export { action }
 
-export async function loader({ params, request }: DataFunctionArgs) {
+export async function loader({ params, request }: LoaderFunctionArgs) {
 	const user = await requireUser(request)
 	invariantResponse(user.username === params.username, 'Not authorized', {
 		status: 403,

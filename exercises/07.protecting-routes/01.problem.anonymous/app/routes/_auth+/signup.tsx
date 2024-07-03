@@ -3,7 +3,7 @@ import { getFieldsetConstraint, parse } from '@conform-to/zod'
 import {
 	json,
 	redirect,
-	type DataFunctionArgs,
+	type ActionFunctionArgs,
 	type MetaFunction,
 } from '@remix-run/node'
 import { Form, useActionData } from '@remix-run/react'
@@ -56,7 +56,7 @@ const SignupFormSchema = z
 // 🐨 create a loader here that uses the requireAnonymous utility and returns
 // an empty object of json.
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	// 🐨 add the requireAnonymous utility here
 	const formData = await request.formData()
 	await validateCSRF(formData, request.headers)

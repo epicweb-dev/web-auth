@@ -4,7 +4,8 @@ import * as E from '@react-email/components'
 import {
 	json,
 	redirect,
-	type DataFunctionArgs,
+	type ActionFunctionArgs,
+	type LoaderFunctionArgs,
 	type MetaFunction,
 } from '@remix-run/node'
 import { Form, useActionData, useSearchParams } from '@remix-run/react'
@@ -29,12 +30,12 @@ const SignupSchema = z.object({
 	redirectTo: z.string().optional(),
 })
 
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
 	await requireAnonymous(request)
 	return json({})
 }
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	const formData = await request.formData()
 	await validateCSRF(formData, request.headers)
 	checkHoneypot(formData)

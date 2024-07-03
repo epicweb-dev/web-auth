@@ -1,6 +1,6 @@
 import { conform, useForm } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
-import { json, redirect, type DataFunctionArgs } from '@remix-run/node'
+import { json, redirect, type ActionFunctionArgs } from '@remix-run/node'
 import { Form, Link, useActionData } from '@remix-run/react'
 import { AuthenticityTokenInput } from 'remix-utils/csrf/react'
 import { z } from 'zod'
@@ -34,7 +34,7 @@ const ChangePasswordForm = z
 		}
 	})
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	const userId = 'some_user_id' // we'll take care of this next
 	const formData = await request.formData()
 	await validateCSRF(formData, request.headers)

@@ -2,7 +2,7 @@ import {
 	isRouteErrorResponse,
 	useParams,
 	useRouteError,
-	type ErrorResponse
+	type ErrorResponse,
 } from '@remix-run/react'
 import { getErrorMessage } from '#app/utils/misc.tsx'
 
@@ -37,7 +37,7 @@ export function GeneralErrorBoundary({
 				? (statusHandlers?.[error.status] ?? defaultStatusHandler)({
 						error,
 						params,
-				  })
+					})
 				: unexpectedErrorHandler(error)}
 		</div>
 	)

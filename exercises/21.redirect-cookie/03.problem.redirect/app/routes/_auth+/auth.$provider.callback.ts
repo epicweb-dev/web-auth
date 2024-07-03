@@ -1,4 +1,4 @@
-import { redirect, type DataFunctionArgs } from '@remix-run/node'
+import { redirect, type LoaderFunctionArgs } from '@remix-run/node'
 import {
 	authenticator,
 	getSessionExpirationDate,
@@ -27,7 +27,7 @@ import {
 // 🐨 create a destroyRedirectTo header object:
 // 💰 { 'set-cookie': destroyRedirectToHeader }
 
-export async function loader({ request, params }: DataFunctionArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
 	const providerName = ProviderNameSchema.parse(params.provider)
 
 	// 🐨 get the redirectTo value from getRedirectCookieValue(request)

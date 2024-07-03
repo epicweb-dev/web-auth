@@ -1,6 +1,10 @@
 import { conform, useForm } from '@conform-to/react'
 import { getFieldsetConstraint, parse } from '@conform-to/zod'
-import { json, type DataFunctionArgs, type MetaFunction } from '@remix-run/node'
+import {
+	json,
+	type ActionFunctionArgs,
+	type MetaFunction,
+} from '@remix-run/node'
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
 import { z } from 'zod'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
@@ -41,7 +45,7 @@ export async function loader() {
 	return json({ resetPasswordUsername })
 }
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	const formData = await request.formData()
 	const submission = parse(formData, {
 		schema: ResetPasswordSchema,
