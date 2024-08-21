@@ -22,7 +22,7 @@ export async function handleVerification({
 	// find the user in the database.
 	// 💰 You'll probably want to use OR to match either the email or username
 	// 📜 https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#or
-	// 🐨 if the user doesn't exist, then set submission.error.code = 'Invalid code'
+	// 🐨 if the user doesn't exist, then set submission.error.code = ['Invalid code']
 	// and return a json response with a 400 status code
 	// 🐨 otherwise, get the verifySession from the request and set the
 	// user's username in the session
