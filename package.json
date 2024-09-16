@@ -5,8 +5,19 @@
     "title": "Web Authentication 🔐",
     "subtitle": "Take ownership of your application's authentication and authorization",
     "githubRoot": "https://github.com/epicweb-dev/web-auth/blob/main",
-    "root": true,
-    "epicWorkshopSlug": "authentication-strategies-and-implementation",
+    "product": {
+      "host": "www.epicweb.dev",
+      "slug": "authentication-strategies-and-implementation",
+      "displayName": "EpicWeb.dev",
+      "displayNameShort": "Epic Web",
+      "logo": "/logo.svg",
+      "discordChannelId": "1161045224907341972",
+      "discordTags": [
+        "1161046174439063593",
+        "1161045972684656760"
+      ]
+    },
+    "onboardingVideo": "https://www.epicweb.dev/tips/get-started-with-the-epic-workshop-app",
     "instructor": {
       "name": "Kent C. Dodds",
       "avatar": "/images/instructor.png",
