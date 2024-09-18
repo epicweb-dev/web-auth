@@ -23,7 +23,7 @@
     "@conform-to/zod": "^0.9.1",
     "@epic-web/remember": "^1.0.2",
     "@epic-web/totp": "^1.1.1",
-    "@epic-web/workshop-utils": "^4.27.1",
+    "@epic-web/workshop-utils": "^4.28.0",
     "@paralleldrive/cuid2": "^2.2.2",
     "@prisma/client": "^5.7.0",
     "@radix-ui/react-alert-dialog": "^1.0.5",
