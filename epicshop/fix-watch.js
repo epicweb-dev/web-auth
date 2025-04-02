@@ -55,7 +55,7 @@ async function run() {
 			stdio: 'inherit',
 			cwd: workshopRoot,
 			env: { SKIP_DB_FIX: true, ...process.env },
-		})`node ./scripts/fix.js`
+		})`node ./epicshop/fix.js`
 	} catch (error) {
 		throw error
 	} finally {
