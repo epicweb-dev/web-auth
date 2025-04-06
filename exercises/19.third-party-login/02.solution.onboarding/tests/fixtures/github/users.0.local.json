@@ -3,25 +3,25 @@
     "code": "MOCK_GITHUB_CODE_KODY",
     "accessToken": "MOCK_GITHUB_CODE_KODY_mock_access_token",
     "profile": {
-      "login": "Kameron_Kassulke26",
+      "login": "Meggie_Medhurst46",
       "id": "MOCK_GITHUB_CODE_KODY_profile_id",
-      "name": "Sara Crooks",
+      "name": "Greg King",
       "avatar_url": "https://github.com/ghost.png",
       "emails": [
-        "Caden_Schoen46@hotmail.com",
-        "Keegan.Pfannerstill87@yahoo.com",
+        "Arlie_Kiehn@hotmail.com",
+        "Rollin52@yahoo.com",
         "kody@kcd.dev"
       ]
     },
     "emails": [
       {
-        "email": "Caden_Schoen46@hotmail.com",
+        "email": "Arlie_Kiehn@hotmail.com",
         "verified": false,
         "primary": false,
         "visibility": "public"
       },
       {
-        "email": "Keegan.Pfannerstill87@yahoo.com",
+        "email": "Rollin52@yahoo.com",
         "verified": true,
         "primary": false,
         "visibility": null

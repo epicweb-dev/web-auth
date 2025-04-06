@@ -3,25 +3,25 @@
     "code": "MOCK_GITHUB_CODE_KODY",
     "accessToken": "MOCK_GITHUB_CODE_KODY_mock_access_token",
     "profile": {
-      "login": "Alf.Botsford",
+      "login": "Telly4",
       "id": "MOCK_GITHUB_CODE_KODY_profile_id",
-      "name": "Grace Prohaska",
+      "name": "Evan Tromp",
       "avatar_url": "https://github.com/ghost.png",
       "emails": [
-        "Geo.Hilll@hotmail.com",
-        "Laverne.Mann84@gmail.com",
+        "Dante.Bahringer@hotmail.com",
+        "Rosina_Kertzmann@gmail.com",
         "kody@kcd.dev"
       ]
     },
     "emails": [
       {
-        "email": "Geo.Hilll@hotmail.com",
+        "email": "Dante.Bahringer@hotmail.com",
         "verified": false,
         "primary": false,
         "visibility": "public"
       },
       {
-        "email": "Laverne.Mann84@gmail.com",
+        "email": "Rosina_Kertzmann@gmail.com",
         "verified": true,
         "primary": false,
         "visibility": null
@@ -30,7 +30,7 @@
         "email": "kody@kcd.dev",
         "verified": true,
         "primary": true,
-        "visibility": "public"
+        "visibility": null
       }
     ],
     "primaryEmail": "kody@kcd.dev"
