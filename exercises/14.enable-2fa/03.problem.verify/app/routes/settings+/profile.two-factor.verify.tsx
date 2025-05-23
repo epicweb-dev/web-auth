@@ -104,7 +104,7 @@ export async function action({ request }: ActionFunctionArgs) {
 		return json({ status: 'error', submission } as const, { status: 400 })
 	}
 
-	// 🐨 update the verification from the twoFAVerifyVerifycationType to the twoFAVerificationType
+	// 🐨 update the verification from the twoFAVerifyVerificationType to the twoFAVerificationType
 	// 🐨 set the expiresAt to null! This should never expire.
 
 	throw await redirectWithToast('/settings/profile/two-factor', {
