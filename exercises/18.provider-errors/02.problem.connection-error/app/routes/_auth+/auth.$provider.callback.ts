@@ -28,7 +28,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 	// 🐨 if there's an existing connection and a userId, then there's a conflict... Either:
 	// 1. The account is already connected to their own account
 	// 2. The account is already connected to someone else's account
-	// 🐨 redirect to the /settings/profile/connections route with an apprpropriate toast message
+	// 🐨 redirect to the /settings/profile/connections route with an appropriate toast message
 
 	throw await redirectWithToast('/login', {
 		title: 'Auth Success (jk)',
