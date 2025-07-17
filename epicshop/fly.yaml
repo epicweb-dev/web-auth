@@ -42,9 +42,9 @@ services:
         grace_period: 1s
 
     http_checks:
-      - interval: 10s
-        timeout: 2s
-        grace_period: 5s
+      - interval: 30s
+        timeout: 10s
+        grace_period: 30s
         method: get
         path: /resources/healthcheck
         protocol: http
