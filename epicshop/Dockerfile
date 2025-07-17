@@ -1,4 +1,6 @@
-FROM oven/bun:latest as base
+FROM node:24-bookworm-slim as base
+
+RUN apt-get update && apt-get install -y git
 
 ENV EPICSHOP_CONTEXT_CWD="/myapp/workshop-content"
 ENV EPICSHOP_DEPLOYED="true"
@@ -9,16 +11,13 @@ ENV NODE_ENV="production"
 
 WORKDIR /myapp
 
-# Install git for cloning the workshop template
-RUN apt-get update && apt-get install -y git
-
 # Clone the workshop repo during build time
 RUN git clone --depth 1 https://github.com/epicweb-dev/web-auth ${EPICSHOP_CONTEXT_CWD}
 
 ADD . .
 
-RUN rm -f package-lock.json && bun install --production
+RUN npm install --omit=dev
 
 CMD echo "Starting up..." && \
     cd ${EPICSHOP_CONTEXT_CWD} && \
-    bunx epicshop start
+    npx epicshop start
