@@ -12,12 +12,13 @@ WORKDIR /myapp
 # Install git for cloning the workshop template
 RUN apt-get update && apt-get install -y git
 
+# Clone the workshop repo during build time
+RUN git clone --depth 1 https://github.com/epicweb-dev/web-auth ${EPICSHOP_CONTEXT_CWD}
+
 ADD . .
 
 RUN rm -f package-lock.json && bun install --production
 
-CMD rm -rf ${EPICSHOP_CONTEXT_CWD} && \
-    git clone --depth 1 https://github.com/epicweb-dev/web-auth ${EPICSHOP_CONTEXT_CWD} && \
-    echo "repo cloned... Starting up." && \
+CMD echo "Starting up..." && \
     cd ${EPICSHOP_CONTEXT_CWD} && \
     bunx epicshop start
