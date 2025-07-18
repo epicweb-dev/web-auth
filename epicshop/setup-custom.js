@@ -8,6 +8,9 @@ import {
 	isProblemApp,
 	setPlayground,
 } from '@epic-web/workshop-utils/apps.server'
+import { warm } from '@epic-web/workshop-cli/warm'
+
+await warm()
 
 const allApps = await getApps()
 const uniqueApps = allApps.filter(

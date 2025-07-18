@@ -20,10 +20,8 @@ ADD . .
 
 RUN npm install --omit=dev
 
-RUN echo "🔥 Warming up cache..." && \
-    cd ${EPICSHOP_CONTEXT_CWD} && \
+RUN cd ${EPICSHOP_CONTEXT_CWD} && \
     npx epicshop warm
 
-CMD echo "⚡ Starting up..." && \
-    cd ${EPICSHOP_CONTEXT_CWD} && \
+CMD cd ${EPICSHOP_CONTEXT_CWD} && \
     npx epicshop start
