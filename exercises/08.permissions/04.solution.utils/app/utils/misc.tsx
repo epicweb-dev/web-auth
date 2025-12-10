@@ -302,7 +302,7 @@ export async function downloadFile(url: string, retries: number = 0) {
 			throw new Error(`Failed to fetch image with status ${response.status}`)
 		}
 		const contentType = response.headers.get('content-type') ?? 'image/jpg'
-		const blob = Buffer.from(await response.arrayBuffer())
+		const blob = new Uint8Array(await response.arrayBuffer())
 		return { contentType, blob }
 	} catch (e) {
 		if (retries > MAX_RETRIES) throw e

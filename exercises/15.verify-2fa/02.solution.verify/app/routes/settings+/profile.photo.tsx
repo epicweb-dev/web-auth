@@ -76,7 +76,7 @@ export async function action({ request }: ActionFunctionArgs) {
 			return {
 				image: {
 					contentType: data.photoFile.type,
-					blob: Buffer.from(await data.photoFile.arrayBuffer()),
+					blob: new Uint8Array(await data.photoFile.arrayBuffer()),
 				},
 			}
 		}),
@@ -162,7 +162,7 @@ export default function PhotoRoute() {
 					<div className="flex gap-4">
 						<StatusButton
 							type="submit"
-							status={isPending ? 'pending' : actionData?.status ?? 'idle'}
+							status={isPending ? 'pending' : (actionData?.status ?? 'idle')}
 							disabled={isPending}
 						>
 							Save Photo
