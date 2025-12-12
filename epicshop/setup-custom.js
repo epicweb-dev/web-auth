@@ -8,7 +8,7 @@ import {
 	isProblemApp,
 	setPlayground,
 } from '@epic-web/workshop-utils/apps.server'
-import { warm } from '@epic-web/workshop-cli/warm'
+import { warm } from 'epicshop/warm'
 
 await warm()
 
