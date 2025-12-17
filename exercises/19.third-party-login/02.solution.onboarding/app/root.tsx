@@ -34,7 +34,6 @@ import { SearchBar } from './components/search-bar.tsx'
 import { Spacer } from './components/spacer.tsx'
 import { Button } from './components/ui/button.tsx'
 import { Icon } from './components/ui/icon.tsx'
-import { EpicShop } from './epicshop.tsx'
 import fontStylestylesheetUrl from './styles/font.css'
 import tailwindStylesheetUrl from './styles/tailwind.css'
 import { getUserId } from './utils/auth.server.ts'
@@ -159,7 +158,6 @@ function Document({
 				<Toaster closeButton position="top-center" />
 				<ScrollRestoration />
 				<Scripts />
-				<EpicShop />
 				<LiveReload />
 			</body>
 		</html>
