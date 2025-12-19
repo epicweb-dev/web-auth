@@ -34,9 +34,15 @@ jobs:
           sparse-checkout-cone-mode: true
           # this is necessary because it's such a huge repo... I regret making this all in one workshop in retrospect...
           sparse-checkout: |
-            /
+            .
             epicshop
             exercises/01.cookies
+
+      - name: Verify sparse checkout
+        run: |
+          ls
+          ls epicshop
+          ls exercises
 
       - name: ⎔ Setup node
         uses: actions/setup-node@v4
