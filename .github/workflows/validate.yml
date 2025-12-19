@@ -54,6 +54,8 @@ jobs:
 
       - name: ▶️ Run setup script
         run: npm run setup
+        env:
+          SKIP_PLAYWRIGHT: true
 
       - name: ʦ TypeScript
         # running in individual workspaces otherwise we can run out of memory
