@@ -34,8 +34,16 @@ jobs:
       - name: Verify sparse checkout
         run: |
           ls
+          echo "---"
+          echo "epicshop"
           ls epicshop
+          echo "---"
           ls exercises
+          echo "---"
+          echo "exercises"
+          ls exercises/01.cookies
+          echo "---"
+          echo "exercises/01.cookies"
 
       - name: ⎔ Setup node
         uses: actions/setup-node@v4
