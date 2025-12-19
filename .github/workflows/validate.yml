@@ -29,7 +29,7 @@ jobs:
           sparse-checkout: |
             .
             epicshop
-            exercises/01.cookies
+            exercises/21.redirect-cookie
 
       - name: Verify sparse checkout
         run: |
@@ -41,8 +41,8 @@ jobs:
           echo "exercises"
           ls exercises
           echo "---"
-          echo "exercises/01.cookies"
-          ls exercises/01.cookies
+          echo "exercises/21.redirect-cookie"
+          ls exercises/21.redirect-cookie
 
       - name: ⎔ Setup node
         uses: actions/setup-node@v4
