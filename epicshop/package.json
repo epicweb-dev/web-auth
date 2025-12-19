@@ -1,10 +1,10 @@
 {
   "type": "module",
   "dependencies": {
-    "@epic-web/workshop-app": "^6.47.11",
-    "@epic-web/workshop-utils": "^6.47.11",
+    "@epic-web/workshop-app": "^6.47.12",
+    "@epic-web/workshop-utils": "^6.47.12",
     "chokidar": "^4.0.3",
-    "epicshop": "^6.47.11",
+    "epicshop": "^6.47.12",
     "execa": "^9.6.0",
     "fs-extra": "^11.3.0"
   }
