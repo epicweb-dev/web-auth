@@ -43,7 +43,7 @@ jobs:
           node-version: 24
 
       - name: 🔧 Run fix
-        run: node ./epicshop/fix.js
+        run: node ./epicshop/fix-ts-config.js
 
       - name: ▶️ Run setup script
         run: npm run setup
