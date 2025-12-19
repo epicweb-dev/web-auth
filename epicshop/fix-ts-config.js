@@ -6,6 +6,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const here = (...p) => path.join(__dirname, ...p)
 
 const workshopRoot = here('..')
+
+function relativeToWorkshopRoot(dir) {
+	return dir.replace(`${workshopRoot}${path.sep}`, '')
+}
+
 const exercises = (await readDir(here('../exercises')))
 	.map(name => here(`../exercises/${name}`))
 	.filter(filepath => fs.statSync(filepath).isDirectory())
@@ -46,4 +51,39 @@ if (written) {
 		await fs.promises.rm(cacheDir, { recursive: true })
 	}
 	console.log('all fixed up')
+}
+
+function exists(p) {
+	if (!p) return false
+	try {
+		fs.statSync(p)
+		return true
+	} catch (error) {
+		return false
+	}
+}
+
+async function readDir(dir) {
+	if (exists(dir)) {
+		return fs.promises.readdir(dir)
+	}
+	return []
+}
+
+async function writeIfNeeded(filepath, content) {
+	let oldContent = ''
+	try {
+		oldContent = await fs.promises.readFile(filepath, 'utf8')
+	} catch (error) {
+		// File doesn't exist, so we'll write it
+		oldContent = ''
+	}
+	if (oldContent !== content) {
+		await fs.promises.writeFile(filepath, content)
+	}
+	return oldContent !== content
+}
+
+function rel(dir) {
+	return path.relative(process.cwd(), dir)
 }

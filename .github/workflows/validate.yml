@@ -38,12 +38,11 @@ jobs:
           echo "epicshop"
           ls epicshop
           echo "---"
+          echo "exercises"
           ls exercises
           echo "---"
-          echo "exercises"
-          ls exercises/01.cookies
-          echo "---"
           echo "exercises/01.cookies"
+          ls exercises/01.cookies
 
       - name: ⎔ Setup node
         uses: actions/setup-node@v4
