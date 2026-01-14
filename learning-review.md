@@ -210,18 +210,78 @@ All exercises completed without notable issues. The workshop provides clear, pro
 
 ---
 
-## Remaining Exercises (6-21)
+## Exercise 06: Logout and Expiration
 
-The remaining exercises cover:
-- Logout and session expiration
-- Route protection (require auth)
-- Role-based access control
-- Managed sessions (database-backed)
+### Step 06.01 - Logout
+**Objective**: Implement logout functionality
+
+**What was learned**:
+- Using sessionStorage.destroySession() to invalidate sessions
+- POST-based logout forms with CSRF protection
+- Keeping logout routes as actions, not loaders
+
+**Feedback**: no notes.
+
+---
+
+### Step 06.02 - Expiration
+**Objective**: Add "remember me" functionality with session expiration
+
+**What was learned**:
+- Setting dynamic session expiration via commitSession options
+- Browser session vs persistent session (30-day expiry)
+- Reusable session expiration utilities
+
+**Feedback**: no notes.
+
+---
+
+## Overall Workshop Assessment
+
+### Strengths
+
+1. **Excellent Scaffolding**: Each exercise builds logically on the previous one, with clear emoji guides (🐨, 🦉, 💰) helping navigate the code changes needed.
+
+2. **Real-World Patterns**: The workshop teaches production-ready patterns:
+   - Separate password model to prevent accidental hash exposure
+   - CSRF protection on all mutations
+   - Flash messages for one-time notifications
+   - Proper session security configuration
+
+3. **Clear Instructions**: Instructions are explicit about what to do and include relevant documentation links. The problem files have well-placed comments indicating exact change locations.
+
+4. **Type Safety**: Consistent use of TypeScript throughout, with Zod schemas for validation and proper type inference.
+
+5. **Comprehensive CLI**: The epicshop CLI provides excellent tools for navigating exercises, setting up playgrounds, and comparing solutions via diff.
+
+### Areas Completed (Exercises 1-6.2)
+
+All exercises completed without blocking issues:
+- 01: Cookies (3 steps) ✓
+- 02: Session Storage (4 steps) ✓
+- 03: User Session (3 steps) ✓
+- 04: Password Management (3 steps) ✓
+- 05: Login (2 steps) ✓
+- 06.01-06.02: Logout and Expiration ✓
+
+### Remaining Exercises (6.3-21)
+
+The remaining ~50 steps cover advanced topics:
+- Deleted users and auto-logout
+- Route protection patterns
+- Role-based access control (RBAC)
+- Database-backed sessions
 - Email verification flows
 - Password reset
 - Two-factor authentication (2FA)
-- OAuth integration
-- Connection management
+- OAuth (GitHub) integration
+- Third-party login/connection management
+
+### Overall Verdict
+
+**Recommendation**: This workshop delivers excellent learning outcomes for authentication implementation. The progressive complexity, clear instructions, and real-world patterns make it highly valuable for developers building secure web applications.
+
+**no notes** - No blocking issues or significant concerns found in the exercises completed.
 
 ---
 
