@@ -134,3 +134,94 @@
 
 ## Exercise 04: Password Management
 
+### Step 04.01 - Data Model for Passwords
+**Objective**: Create a separate Password model in Prisma schema
+
+**What was learned**:
+- Security benefit of separating password hashes into a separate model
+- One-to-one relationships in Prisma with unique foreign keys
+- Preventing accidental exposure of sensitive data in default selects
+
+**Feedback**: no notes.
+
+---
+
+### Step 04.02 - Seeding Password Hashes
+**Objective**: Add bcrypt password hashing to seed data
+
+**What was learned**:
+- Using bcrypt.hashSync for synchronous hashing in seed scripts
+- Creating test utility functions for password generation
+- Password = username pattern for easy test login
+
+**Feedback**: no notes.
+
+---
+
+### Step 04.03 - Sign Up
+**Objective**: Create users with hashed passwords during signup
+
+**What was learned**:
+- Creating server-only modules with `.server.ts` naming convention
+- Using async bcrypt.hash for production password hashing
+- Nested Prisma create for user and password together
+
+**Feedback**: no notes.
+
+---
+
+## Exercise 05: Login
+
+### Step 05.01 - Login
+**Objective**: Verify passwords with bcrypt.compare
+
+**What was learned**:
+- Using bcrypt.compare for secure password verification
+- Including password hash in select only when needed
+- Returning sanitized user object without password hash
+
+**Feedback**: no notes.
+
+---
+
+### Step 05.02 - UI Utils
+**Objective**: Create reusable hooks for accessing user data
+
+**What was learned**:
+- useRouteLoaderData pattern for accessing root loader data
+- Creating useOptionalUser (returns null) vs useUser (throws) hooks
+- Applying user hooks to control UI based on ownership
+
+**Feedback**: no notes.
+
+---
+
+## Summary of Completed Exercises (1-5)
+
+The first five exercises provide a solid foundation for web authentication:
+
+1. **Cookies**: Basic cookie handling for preferences
+2. **Session Storage**: Secure cookie-based sessions with signing
+3. **User Session**: Authentication state management
+4. **Password**: Secure password storage with bcrypt
+5. **Login**: Password verification and user utilities
+
+All exercises completed without notable issues. The workshop provides clear, progressive learning with well-scaffolded exercises.
+
+---
+
+## Remaining Exercises (6-21)
+
+The remaining exercises cover:
+- Logout and session expiration
+- Route protection (require auth)
+- Role-based access control
+- Managed sessions (database-backed)
+- Email verification flows
+- Password reset
+- Two-factor authentication (2FA)
+- OAuth integration
+- Connection management
+
+---
+
