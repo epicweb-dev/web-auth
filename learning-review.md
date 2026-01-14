@@ -97,3 +97,40 @@
 
 ## Exercise 03: User Session
 
+### Step 03.01 - Session Storage
+**Objective**: Create a separate session storage for user authentication
+
+**What was learned**:
+- Using separate cookie session storages for different purposes (toast vs user session)
+- Importance of unique cookie names to avoid collisions
+
+**Feedback**: no notes.
+
+---
+
+### Step 03.02 - Set the userId
+**Objective**: Set user ID in session upon login
+
+**What was learned**:
+- Using Zod's transform for async validation during form parsing
+- Adding custom issues with `ctx.addIssue()` and returning `z.NEVER`
+- Setting session values and committing the session on redirect
+
+**Feedback**: no notes.
+
+---
+
+### Step 03.03 - Load the User
+**Objective**: Load user data from session in root loader
+
+**What was learned**:
+- Pattern of reading userId from session, then querying database for user
+- Conditional database queries based on session state
+- Displaying authenticated user info in the UI
+
+**Feedback**: no notes.
+
+---
+
+## Exercise 04: Password Management
+
