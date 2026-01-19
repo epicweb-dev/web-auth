@@ -13,3 +13,4 @@ workspace/
 # we're going to keep them around.
 # .env
 *.ignored.*
+saved-playgrounds
