@@ -26,9 +26,9 @@
   },
   "type": "module",
   "scripts": {
-    "postinstall": "cd ./epicshop && npm install",
-    "start": "npx --prefix ./epicshop epicshop start",
-    "dev": "npx --prefix ./epicshop epicshop start",
+    "postinstall": "cd ./epicshop && pkgmgr install",
+    "start": "pkgmgrx --prefix ./epicshop epicshop start",
+    "dev": "pkgmgrx --prefix ./epicshop epicshop start",
     "setup": "node ./epicshop/setup.js",
     "setup:custom": "node ./epicshop/setup-custom.js",
     "lint": "eslint .",
@@ -68,7 +68,8 @@
   },
   "devDependencies": {
     "execa": "^8.0.1",
-    "fs-extra": "^11.2.0"
+    "fs-extra": "^11.2.0",
+    "pkgmgr": "^1.1.1"
   },
   "prettier": {
     "arrowParens": "avoid",
