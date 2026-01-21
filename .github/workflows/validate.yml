@@ -52,8 +52,11 @@ jobs:
       - name: 🔧 Run fix
         run: node ./epicshop/fix-ts-config.js
 
+      - name: ⬇️ Install dependencies
+        run: npm ci
+
       - name: ▶️ Run setup script
-        run: npx epicshop setup
+        run: npm run setup
         env:
           SKIP_PLAYWRIGHT: true
 
