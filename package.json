@@ -40,6 +40,7 @@
   "license": "GPL-3.0-only",
   "dependencies": {
     "@prisma/client": "npm:noist@^1.0.0",
+    "@prisma/engines": "npm:noist@^1.0.0",
     "prisma": "npm:noist@^1.0.0"
   },
   "eslintIgnore": [
