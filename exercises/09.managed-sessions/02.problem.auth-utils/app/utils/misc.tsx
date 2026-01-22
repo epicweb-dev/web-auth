@@ -3,7 +3,7 @@ import { clsx, type ClassValue } from 'clsx'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSpinDelay } from 'spin-delay'
 import { twMerge } from 'tailwind-merge'
-import userFallback from '#app/assets/user.png'
+const userFallback = '/resources/user-images/fallback'
 
 export function getUserImgSrc(imageId?: string | null) {
 	return imageId ? `/resources/user-images/${imageId}` : userFallback
