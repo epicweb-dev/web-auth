@@ -47,7 +47,7 @@ jobs:
       - name: ⎔ Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 22
 
       - name: 🔧 Run fix
         run: node ./epicshop/fix-ts-config.js
